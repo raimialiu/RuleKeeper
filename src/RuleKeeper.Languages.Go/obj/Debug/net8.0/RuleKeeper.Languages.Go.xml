@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Languages.Go</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Languages.Go.GoLanguageAdapter">
+            <summary>
+            Language adapter for Go using ANTLR.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoLanguageAdapter.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoLanguageAdapter.SupportedExtensions">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoLanguageAdapter.DefaultIncludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoLanguageAdapter.DefaultExcludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Go.GoLanguageAdapter.ParseAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Go.GoLanguageAdapter.CreateTypeResolverAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Go.GoLanguageAdapter.CanHandle(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Go.GoLanguageAdapter.GetNativeContext(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,RuleKeeper.Sdk.Abstractions.ITypeResolver)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.Go.GoSimpleNode">
+            <summary>
+            A simple Go syntax node implementation using basic parsing.
+            This is a placeholder until ANTLR grammar integration is complete.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.Go.GoSimpleNode.#ctor(System.String,System.String)">
+            <summary>
+            Creates a root Go node from source code.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.Go.GoSimpleNode.#ctor(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind,System.String,System.String,System.Int32,System.Int32,System.Int32,System.Int32,RuleKeeper.Languages.Go.GoSimpleNode)">
+            <summary>
+            Creates a child Go node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.Location">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.Text">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.Parent">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.Children">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.NativeNode">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Go.GoSimpleNode.ContainsErrors">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

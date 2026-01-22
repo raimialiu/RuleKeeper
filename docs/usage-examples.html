@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usage Examples - RuleKeeper Documentation</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-nav a {
+            display: block;
+            padding: 10px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: background 0.2s;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--bg-color);
+        }
+
+        .sidebar-nav a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .sidebar-section {
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            padding-left: 15px;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px 60px;
+            max-width: 1000px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .example-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .example-card h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .example-card h4 .icon {
+            font-size: 1.3rem;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        :not(pre) > code {
+            background: var(--bg-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--secondary-color);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tag-language {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .tag-beginner {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tag-intermediate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tag-advanced {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .tag-cicd {
+            background: #f3e8ff;
+            color: #6b21a8;
+        }
+
+        .output-block {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .output-block .error {
+            color: #f87171;
+        }
+
+        .output-block .warning {
+            color: #fbbf24;
+        }
+
+        .output-block .success {
+            color: #4ade80;
+        }
+
+        .output-block .info {
+            color: #60a5fa;
+        }
+
+        .file-tree {
+            background: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .file-tree .folder {
+            color: var(--primary-color);
+        }
+
+        .file-tree .file {
+            color: var(--text-muted);
+        }
+
+        .step {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-content h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .tip {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .tip-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .warning-box {
+            background: #fefce8;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box .tip-title {
+            color: var(--warning-color);
+        }
+
+        .toc {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .toc h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .toc ul {
+            list-style: none;
+            columns: 2;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            .toc ul {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <a href="index.html" class="sidebar-logo">RuleKeeper</a>
+            <nav class="sidebar-nav">
+                <a href="index.html">Home</a>
+                <a href="cli-reference.html">CLI Reference</a>
+                <a href="rules-reference.html">Rules Reference</a>
+                <a href="sdk-reference.html">SDK Reference</a>
+                <a href="usage-examples.html" class="active">Usage Examples</a>
+
+                <div class="sidebar-section">Examples</div>
+                <a href="#quick-start">Quick Start</a>
+                <a href="#single-language">Single Language</a>
+                <a href="#multi-language">Multi-Language</a>
+                <a href="#configuration">Configuration</a>
+                <a href="#cicd">CI/CD Integration</a>
+                <a href="#custom-rules">Custom Rules</a>
+                <a href="#output-formats">Output Formats</a>
+                <a href="#common-workflows">Common Workflows</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <h1>Usage Examples</h1>
+            <p class="subtitle">Practical examples for using RuleKeeper in your projects</p>
+
+            <div class="toc">
+                <h4>On This Page</h4>
+                <ul>
+                    <li><a href="#quick-start">Quick Start</a></li>
+                    <li><a href="#single-language">Single Language Analysis</a></li>
+                    <li><a href="#multi-language">Multi-Language Analysis</a></li>
+                    <li><a href="#configuration">Configuration Examples</a></li>
+                    <li><a href="#cicd">CI/CD Integration</a></li>
+                    <li><a href="#custom-rules">Custom Rules</a></li>
+                    <li><a href="#output-formats">Output Formats</a></li>
+                    <li><a href="#common-workflows">Common Workflows</a></li>
+                </ul>
+            </div>
+
+            <!-- Quick Start -->
+            <h2 id="quick-start">Quick Start</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F680;</span> Your First Scan</h4>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <p>Get started with RuleKeeper in under a minute:</p>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Install RuleKeeper</h4>
+                        <pre>dotnet tool install -g RuleKeeper.Cli</pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Initialize Configuration</h4>
+                        <pre>rulekeeper init</pre>
+                        <p>This creates a <code>rulekeeper.yaml</code> file with sensible defaults.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Run Your First Scan</h4>
+                        <pre>rulekeeper scan ./src</pre>
+                    </div>
+                </div>
+
+                <div class="output-block">
+<span class="info">RuleKeeper v2.0.0 - Multi-Language Static Analysis</span>
+<span class="info">Scanning: ./src</span>
+<span class="info">Languages: C#, Python, JavaScript</span>
+
+Analyzing 47 files...
+
+<span class="warning">[CS-ASYNC-001] AsyncVoidAnalyzer.cs:45</span>
+  Avoid async void methods except for event handlers
+  Severity: Warning
+
+<span class="warning">[CROSS-LEN-001] UserService.cs:120</span>
+  Method 'ProcessUserData' has 67 lines (max: 50)
+  Severity: Warning
+
+<span class="error">[CS-SEC-001] DatabaseHelper.cs:89</span>
+  Potential SQL injection vulnerability detected
+  Severity: Error
+
+<span class="success">Analysis complete: 3 violations found</span>
+  Errors: 1 | Warnings: 2 | Info: 0
+                </div>
+            </div>
+
+            <!-- Single Language Analysis -->
+            <h2 id="single-language">Single Language Analysis</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4BB;</span> C# Project Analysis</h4>
+                <span class="tag tag-language">C#</span>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <p>Analyze a C# solution with full Roslyn semantic analysis:</p>
+
+                <pre># Analyze using solution file (recommended for C#)
+rulekeeper scan ./MyProject.sln --languages csharp
+
+# Analyze specific project
+rulekeeper scan ./src/MyProject/MyProject.csproj -L csharp
+
+# Analyze directory with C# files
+rulekeeper scan ./src -L csharp</pre>
+
+                <div class="tip">
+                    <div class="tip-title">Tip: Use Solution Files</div>
+                    <p>For C# projects, pointing to a <code>.sln</code> or <code>.csproj</code> file enables full semantic analysis including type resolution, which catches more issues.</p>
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F40D;</span> Python Project Analysis</h4>
+                <span class="tag tag-language">Python</span>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <p>Analyze Python code for PEP 8 compliance and common issues:</p>
+
+                <pre># Analyze Python project
+rulekeeper scan ./src -L python
+
+# Exclude virtual environments
+rulekeeper scan ./src -L python --exclude "**/venv/**" --exclude "**/.venv/**"
+
+# Analyze specific files
+rulekeeper scan ./src/app.py ./src/utils.py -L python</pre>
+
+                <div class="output-block">
+<span class="info">Scanning: ./src</span>
+<span class="info">Languages: Python</span>
+
+<span class="warning">[PY-NAME-001] user_service.py:15</span>
+  Class 'userManager' should use PascalCase: 'UserManager'
+  Severity: Low
+
+<span class="warning">[PY-DOC-001] utils.py:42</span>
+  Function 'calculate_total' is missing a docstring
+  Severity: Info
+
+<span class="success">Analysis complete: 2 violations found</span>
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4DC;</span> JavaScript/TypeScript Analysis</h4>
+                <span class="tag tag-language">JavaScript</span>
+                <span class="tag tag-language">TypeScript</span>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <pre># Analyze JavaScript files
+rulekeeper scan ./src -L javascript
+
+# Analyze TypeScript files
+rulekeeper scan ./src -L typescript
+
+# Analyze both JS and TS
+rulekeeper scan ./src -L javascript,typescript
+
+# Exclude node_modules and dist
+rulekeeper scan ./src -L typescript --exclude "**/node_modules/**" --exclude "**/dist/**"</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x2615;</span> Java Project Analysis</h4>
+                <span class="tag tag-language">Java</span>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <pre># Analyze Java source files
+rulekeeper scan ./src/main/java -L java
+
+# Exclude test files
+rulekeeper scan ./src -L java --exclude "**/test/**"
+
+# Analyze Maven project
+rulekeeper scan . -L java --exclude "**/target/**"</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F439;</span> Go Project Analysis</h4>
+                <span class="tag tag-language">Go</span>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <pre># Analyze Go project
+rulekeeper scan . -L go
+
+# Exclude vendor directory
+rulekeeper scan . -L go --exclude "**/vendor/**"
+
+# Analyze specific package
+rulekeeper scan ./pkg/api -L go</pre>
+            </div>
+
+            <!-- Multi-Language Analysis -->
+            <h2 id="multi-language">Multi-Language Analysis</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F310;</span> Polyglot Repository</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <p>Analyze a repository with multiple languages in a single scan:</p>
+
+                <pre># Analyze all supported languages
+rulekeeper scan . --languages csharp,python,typescript,java,go
+
+# Short form with multiple -L flags
+rulekeeper scan . -L csharp -L python -L typescript
+
+# Let RuleKeeper auto-detect languages (default behavior)
+rulekeeper scan .</pre>
+
+                <h4>Example Project Structure</h4>
+                <div class="file-tree">
+<span class="folder">my-project/</span>
+├── <span class="folder">backend/</span>
+│   ├── <span class="folder">api/</span>           <span class="file"># C# ASP.NET Core</span>
+│   │   └── Controllers/
+│   └── <span class="folder">services/</span>      <span class="file"># Python microservices</span>
+│       └── auth/
+├── <span class="folder">frontend/</span>          <span class="file"># TypeScript React</span>
+│   └── src/
+├── <span class="folder">mobile/</span>            <span class="file"># Java Android</span>
+│   └── app/
+└── <span class="folder">tools/</span>             <span class="file"># Go CLI tools</span>
+    └── cmd/
+                </div>
+
+                <pre># Scan entire polyglot project
+rulekeeper scan ./my-project \
+    --languages csharp,python,typescript,java,go \
+    --exclude "**/node_modules/**" \
+    --exclude "**/bin/**" \
+    --exclude "**/obj/**" \
+    --output sarif \
+    --output-file results.sarif</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F3AF;</span> Targeted Multi-Language Scan</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <p>Scan specific directories with different languages:</p>
+
+                <pre># Scan backend (C# + Python) with stricter rules
+rulekeeper scan ./backend \
+    -L csharp,python \
+    --min-severity warning \
+    --fail-on error
+
+# Scan frontend (TypeScript) with lenient rules
+rulekeeper scan ./frontend \
+    -L typescript \
+    --min-severity error</pre>
+            </div>
+
+            <!-- Configuration Examples -->
+            <h2 id="configuration">Configuration Examples</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x2699;</span> Basic Configuration</h4>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <p>Create a <code>rulekeeper.yaml</code> in your project root:</p>
+
+                <pre><span style="color:#93c5fd;"># rulekeeper.yaml - Basic configuration</span>
+version: "2.0"
+
+scan:
+  languages: [csharp, python, typescript]
+
+  include:
+    - "src/**/*"
+    - "lib/**/*"
+
+  exclude:
+    - "**/node_modules/**"
+    - "**/bin/**"
+    - "**/obj/**"
+    - "**/*.generated.cs"
+
+output:
+  format: console
+  verbosity: normal</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F527;</span> Language-Specific Settings</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;"># rulekeeper.yaml - Per-language configuration</span>
+version: "2.0"
+
+scan:
+  languages: [csharp, python, typescript, java, go]
+
+  language_settings:
+    csharp:
+      include: ["src/**/*.cs"]
+      exclude: ["**/obj/**", "**/bin/**", "**/*.Designer.cs"]
+      use_project_files: true
+
+    python:
+      include: ["**/*.py"]
+      exclude: ["**/venv/**", "**/.venv/**", "**/migrations/**"]
+
+    typescript:
+      include: ["**/*.ts", "**/*.tsx"]
+      exclude: ["**/node_modules/**", "**/dist/**", "**/*.d.ts"]
+      tsconfig_path: "./tsconfig.json"
+
+    java:
+      include: ["src/main/java/**/*.java"]
+      exclude: ["**/target/**", "**/build/**"]
+
+    go:
+      include: ["**/*.go"]
+      exclude: ["**/vendor/**", "**/*_test.go"]</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4CB;</span> Rule Configuration</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;"># rulekeeper.yaml - Custom rule settings</span>
+version: "2.0"
+
+<span style="color:#93c5fd;"># Cross-language rules (apply to all languages)</span>
+cross_language_rules:
+  method_length:
+    enabled: true
+    severity: warning
+    parameters:
+      max_lines: 50
+
+  cyclomatic_complexity:
+    enabled: true
+    severity: warning
+    parameters:
+      max_complexity: 10
+
+  parameter_count:
+    enabled: true
+    parameters:
+      max_parameters: 5
+
+  naming_conventions:
+    enabled: true
+    severity: info
+
+<span style="color:#93c5fd;"># Language-specific rules</span>
+language_rules:
+  csharp:
+    async_void:
+      enabled: true
+      severity: error
+
+    sql_injection:
+      enabled: true
+      severity: error
+
+    service_locator:
+      enabled: false  <span style="color:#93c5fd;"># Disabled for this project</span>
+
+  python:
+    pep8_naming:
+      enabled: true
+      severity: warning
+
+    missing_docstring:
+      enabled: true
+      severity: info
+      parameters:
+        require_module_docstring: true
+        require_class_docstring: true
+        require_function_docstring: false
+
+  javascript:
+    no_console_log:
+      enabled: true
+      severity: warning
+      parameters:
+        allow_in_tests: true
+
+    prefer_const_let:
+      enabled: true
+      severity: warning</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F6A8;</span> Strict Enterprise Configuration</h4>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <pre><span style="color:#93c5fd;"># rulekeeper.yaml - Strict enterprise settings</span>
+version: "2.0"
+
+scan:
+  languages: [csharp, typescript]
+  parallel: true
+  cache: true
+
+thresholds:
+  fail_on: error
+  max_warnings: 10
+  max_violations: 50
+
+cross_language_rules:
+  method_length:
+    enabled: true
+    severity: error  <span style="color:#93c5fd;"># Fail build on long methods</span>
+    parameters:
+      max_lines: 30  <span style="color:#93c5fd;"># Stricter limit</span>
+
+  cyclomatic_complexity:
+    enabled: true
+    severity: error
+    parameters:
+      max_complexity: 8
+
+language_rules:
+  csharp:
+    <span style="color:#93c5fd;"># Enable all security rules as errors</span>
+    sql_injection:
+      enabled: true
+      severity: error
+    hardcoded_secrets:
+      enabled: true
+      severity: error
+
+    <span style="color:#93c5fd;"># Strict async patterns</span>
+    async_void:
+      enabled: true
+      severity: error
+    async_suffix:
+      enabled: true
+      severity: warning
+
+output:
+  format: sarif
+  file: "./reports/rulekeeper-results.sarif"
+
+  <span style="color:#93c5fd;"># Also generate HTML report</span>
+  additional_outputs:
+    - format: html
+      file: "./reports/rulekeeper-report.html"</pre>
+            </div>
+
+            <!-- CI/CD Integration -->
+            <h2 id="cicd">CI/CD Integration</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F41F;</span> GitHub Actions</h4>
+                <span class="tag tag-cicd">CI/CD</span>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;"># .github/workflows/code-quality.yml</span>
+name: Code Quality
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  rulekeeper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install RuleKeeper
+        run: dotnet tool install -g RuleKeeper.Cli
+
+      - name: Run Analysis
+        run: |
+          rulekeeper scan . \
+            --languages csharp,typescript,python \
+            --output sarif \
+            --output-file results.sarif \
+            --fail-on error
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: results.sarif</pre>
+
+                <div class="tip">
+                    <div class="tip-title">Tip: Upload SARIF for Code Scanning</div>
+                    <p>When you upload SARIF results to GitHub, violations appear directly in the Security tab and as annotations on pull requests.</p>
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F433;</span> Azure DevOps Pipeline</h4>
+                <span class="tag tag-cicd">CI/CD</span>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;"># azure-pipelines.yml</span>
+trigger:
+  - main
+  - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '8.0.x'
+
+  - script: dotnet tool install -g RuleKeeper.Cli
+    displayName: 'Install RuleKeeper'
+
+  - script: |
+      rulekeeper scan $(Build.SourcesDirectory) \
+        --languages csharp,typescript \
+        --output sarif \
+        --output-file $(Build.ArtifactStagingDirectory)/rulekeeper.sarif \
+        --fail-on error
+    displayName: 'Run RuleKeeper Analysis'
+    continueOnError: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'CodeAnalysis'</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F98A;</span> GitLab CI</h4>
+                <span class="tag tag-cicd">CI/CD</span>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;"># .gitlab-ci.yml</span>
+stages:
+  - quality
+
+code_analysis:
+  stage: quality
+  image: mcr.microsoft.com/dotnet/sdk:8.0
+  script:
+    - dotnet tool install -g RuleKeeper.Cli
+    - export PATH="$PATH:$HOME/.dotnet/tools"
+    - rulekeeper scan .
+        --languages csharp,python,typescript
+        --output json
+        --output-file rulekeeper-results.json
+        --fail-on error
+  artifacts:
+    reports:
+      codequality: rulekeeper-results.json
+    when: always</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F6A2;</span> Jenkins Pipeline</h4>
+                <span class="tag tag-cicd">CI/CD</span>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;">// Jenkinsfile</span>
+pipeline {
+    agent any
+
+    stages {
+        stage('Install Tools') {
+            steps {
+                sh 'dotnet tool install -g RuleKeeper.Cli || true'
+            }
+        }
+
+        stage('Code Analysis') {
+            steps {
+                sh '''
+                    export PATH="$PATH:$HOME/.dotnet/tools"
+                    rulekeeper scan . \
+                        --languages csharp,java,python \
+                        --output html \
+                        --output-file reports/rulekeeper-report.html \
+                        --min-severity warning
+                '''
+            }
+            post {
+                always {
+                    publishHTML(target: [
+                        reportDir: 'reports',
+                        reportFiles: 'rulekeeper-report.html',
+                        reportName: 'RuleKeeper Analysis'
+                    ])
+                }
+            }
+        }
+    }
+}</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4E6;</span> Docker Integration</h4>
+                <span class="tag tag-cicd">CI/CD</span>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <pre><span style="color:#93c5fd;"># Dockerfile.analysis</span>
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS analyzer
+
+RUN dotnet tool install -g RuleKeeper.Cli
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+WORKDIR /src
+COPY . .
+
+RUN rulekeeper scan . \
+    --languages csharp,python,typescript \
+    --output sarif \
+    --output-file /results/analysis.sarif
+
+<span style="color:#93c5fd;"># Use in CI:</span>
+<span style="color:#93c5fd;"># docker build -f Dockerfile.analysis -t analysis .</span>
+<span style="color:#93c5fd;"># docker run -v $(pwd)/results:/results analysis</span></pre>
+            </div>
+
+            <!-- Custom Rules -->
+            <h2 id="custom-rules">Custom Rules</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F3D7;</span> Cross-Language Custom Rule</h4>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <p>Create a rule that works across all languages:</p>
+
+                <pre><span style="color:#93c5fd;">// TodoCommentAnalyzer.cs - Detects TODO comments in any language</span>
+using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.Abstractions;
+using RuleKeeper.Sdk.Rules;
+
+[Rule("CUSTOM-TODO-001",
+    Name = "TODO Comment Detected",
+    Description = "Finds TODO, FIXME, and HACK comments",
+    Severity = SeverityLevel.Info,
+    Category = "maintainability")]
+[SupportedLanguages(
+    Language.CSharp,
+    Language.Python,
+    Language.JavaScript,
+    Language.TypeScript,
+    Language.Java,
+    Language.Go)]
+public class TodoCommentAnalyzer : BaseCrossLanguageRule
+{
+    private string[] _keywords = { "TODO", "FIXME", "HACK", "XXX" };
+
+    public override void Initialize(Dictionary&lt;string, object&gt; parameters)
+    {
+        base.Initialize(parameters);
+
+        if (parameters.TryGetValue("keywords", out var keywords))
+        {
+            _keywords = ((IEnumerable&lt;object&gt;)keywords)
+                .Select(k => k.ToString()!)
+                .ToArray();
+        }
+    }
+
+    public override IEnumerable&lt;Violation&gt; Analyze(UnifiedAnalysisContext context)
+    {
+        var root = context.SyntaxRoot;
+        var sourceText = context.SourceText;
+        var lines = sourceText.Split('\n');
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            var line = lines[i];
+            foreach (var keyword in _keywords)
+            {
+                var index = line.IndexOf(keyword, StringComparison.OrdinalIgnoreCase);
+                if (index >= 0 && IsInComment(line, index, context.Language))
+                {
+                    yield return new Violation
+                    {
+                        RuleId = RuleId,
+                        RuleName = RuleName,
+                        Message = $"{keyword} comment found: {line.Trim()}",
+                        Severity = DefaultSeverity,
+                        Language = context.Language,
+                        Location = new SourceLocation
+                        {
+                            FilePath = context.FilePath,
+                            StartLine = i + 1,
+                            StartColumn = index + 1,
+                            EndLine = i + 1,
+                            EndColumn = index + keyword.Length + 1
+                        }
+                    };
+                }
+            }
+        }
+    }
+
+    private bool IsInComment(string line, int index, Language language)
+    {
+        <span style="color:#93c5fd;">// Check if position is within a comment based on language</span>
+        var beforeIndex = line.Substring(0, index);
+
+        return language switch
+        {
+            Language.Python => beforeIndex.Contains('#'),
+            _ => beforeIndex.Contains("//") || beforeIndex.Contains("/*")
+        };
+    }
+}</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F3AF;</span> C#-Specific Custom Rule</h4>
+                <span class="tag tag-advanced">Advanced</span>
+                <span class="tag tag-language">C#</span>
+
+                <pre><span style="color:#93c5fd;">// PublicFieldAnalyzer.cs - C#-specific rule using Roslyn</span>
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.CSharp;
+
+[Rule("CS-DESIGN-010",
+    Name = "Avoid Public Fields",
+    Description = "Public fields should be properties instead",
+    Severity = SeverityLevel.Warning,
+    Category = "design")]
+public class PublicFieldAnalyzer : BaseCSharpRuleAnalyzer
+{
+    public override IEnumerable&lt;Violation&gt; Analyze(AnalysisContext context)
+    {
+        var fields = context.Root
+            .DescendantNodes()
+            .OfType&lt;FieldDeclarationSyntax&gt;()
+            .Where(f => f.Modifiers.Any(SyntaxKind.PublicKeyword))
+            .Where(f => !f.Modifiers.Any(SyntaxKind.ConstKeyword))
+            .Where(f => !f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword));
+
+        foreach (var field in fields)
+        {
+            foreach (var variable in field.Declaration.Variables)
+            {
+                var location = variable.GetLocation();
+                var lineSpan = location.GetLineSpan();
+
+                yield return new Violation
+                {
+                    RuleId = RuleId,
+                    RuleName = RuleName,
+                    Message = $"Public field '{variable.Identifier}' should be a property",
+                    Severity = DefaultSeverity,
+                    Language = Language.CSharp,
+                    Location = SourceLocation.FromRoslyn(location),
+                    FixHint = $"Convert to: public {field.Declaration.Type} " +
+                              $"{variable.Identifier} {{ get; set; }}"
+                };
+            }
+        }
+    }
+}</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4E6;</span> Packaging Custom Rules</h4>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <pre><span style="color:#93c5fd;"># Create a custom rules project</span>
+dotnet new classlib -n MyCompany.RuleKeeper.Rules
+cd MyCompany.RuleKeeper.Rules
+
+<span style="color:#93c5fd;"># Add RuleKeeper SDK reference</span>
+dotnet add package RuleKeeper.Sdk
+dotnet add package RuleKeeper.Sdk.CSharp  <span style="color:#93c5fd;"># For C#-specific rules</span>
+
+<span style="color:#93c5fd;"># Build the rules package</span>
+dotnet build -c Release
+
+<span style="color:#93c5fd;"># Use in rulekeeper.yaml</span></pre>
+
+                <pre><span style="color:#93c5fd;"># rulekeeper.yaml</span>
+version: "2.0"
+
+custom_rules:
+  - path: "./rules/MyCompany.RuleKeeper.Rules.dll"
+  - nuget: "MyCompany.RuleKeeper.Rules"  <span style="color:#93c5fd;"># Or from NuGet</span>
+
+language_rules:
+  csharp:
+    <span style="color:#93c5fd;"># Configure your custom rule</span>
+    public_fields:
+      enabled: true
+      severity: warning</pre>
+            </div>
+
+            <!-- Output Formats -->
+            <h2 id="output-formats">Output Formats</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4BB;</span> Console Output</h4>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <pre><span style="color:#93c5fd;"># Default console output</span>
+rulekeeper scan . --output console
+
+<span style="color:#93c5fd;"># Verbose output with more details</span>
+rulekeeper scan . --output console --verbosity detailed
+
+<span style="color:#93c5fd;"># Minimal output (errors only)</span>
+rulekeeper scan . --output console --min-severity error</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4C4;</span> JSON Output</h4>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <pre><span style="color:#93c5fd;"># Output to JSON file</span>
+rulekeeper scan . --output json --output-file results.json
+
+<span style="color:#93c5fd;"># Pretty-printed JSON to stdout</span>
+rulekeeper scan . --output json</pre>
+
+                <p>Example JSON output:</p>
+                <pre>{
+  "summary": {
+    "totalFiles": 47,
+    "totalViolations": 12,
+    "errors": 2,
+    "warnings": 8,
+    "info": 2,
+    "languages": ["csharp", "python", "typescript"]
+  },
+  "violations": [
+    {
+      "ruleId": "CS-ASYNC-001",
+      "ruleName": "Avoid Async Void",
+      "message": "Avoid async void methods except for event handlers",
+      "severity": "warning",
+      "language": "csharp",
+      "location": {
+        "filePath": "src/Services/UserService.cs",
+        "startLine": 45,
+        "startColumn": 5,
+        "endLine": 45,
+        "endColumn": 52
+      },
+      "fixHint": "Change return type to Task"
+    }
+  ]
+}</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F50D;</span> SARIF Output</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <p>SARIF (Static Analysis Results Interchange Format) is the industry standard for static analysis tools:</p>
+
+                <pre><span style="color:#93c5fd;"># Generate SARIF report</span>
+rulekeeper scan . --output sarif --output-file results.sarif
+
+<span style="color:#93c5fd;"># SARIF with embedded source snippets</span>
+rulekeeper scan . --output sarif --output-file results.sarif --include-snippets</pre>
+
+                <div class="tip">
+                    <div class="tip-title">SARIF Compatibility</div>
+                    <p>SARIF output works with GitHub Code Scanning, Azure DevOps, VS Code SARIF Viewer, and many other tools.</p>
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4CA;</span> HTML Report</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;"># Generate HTML report</span>
+rulekeeper scan . --output html --output-file report.html
+
+<span style="color:#93c5fd;"># HTML report with charts and trends</span>
+rulekeeper scan . --output html --output-file report.html --include-charts</pre>
+
+                <p>HTML reports include:</p>
+                <ul>
+                    <li>Executive summary with violation counts</li>
+                    <li>Breakdown by language and category</li>
+                    <li>Sortable and filterable violation table</li>
+                    <li>Source code snippets with highlighting</li>
+                    <li>Fix suggestions where available</li>
+                </ul>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4DD;</span> Multiple Outputs</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <pre><span style="color:#93c5fd;"># Generate multiple output formats</span>
+rulekeeper scan . \
+    --output console \
+    --output sarif --output-file results.sarif \
+    --output html --output-file report.html</pre>
+
+                <p>Or configure in YAML:</p>
+                <pre><span style="color:#93c5fd;"># rulekeeper.yaml</span>
+output:
+  format: console
+
+  additional_outputs:
+    - format: sarif
+      file: "./reports/results.sarif"
+    - format: html
+      file: "./reports/report.html"
+    - format: json
+      file: "./reports/results.json"</pre>
+            </div>
+
+            <!-- Common Workflows -->
+            <h2 id="common-workflows">Common Workflows</h2>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F50E;</span> Pre-Commit Hook</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <p>Run RuleKeeper before committing changes:</p>
+
+                <pre><span style="color:#93c5fd;"># .git/hooks/pre-commit (make executable: chmod +x)</span>
+#!/bin/bash
+
+echo "Running RuleKeeper analysis..."
+
+<span style="color:#93c5fd;"># Get list of staged files</span>
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+<span style="color:#93c5fd;"># Run RuleKeeper on staged files only</span>
+rulekeeper scan $STAGED_FILES \
+    --min-severity warning \
+    --fail-on error \
+    --output console
+
+if [ $? -ne 0 ]; then
+    echo "RuleKeeper found errors. Please fix before committing."
+    exit 1
+fi
+
+exit 0</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F504;</span> Baseline Workflow</h4>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <p>Establish a baseline of existing violations and only fail on new ones:</p>
+
+                <pre><span style="color:#93c5fd;"># Step 1: Generate baseline from current state</span>
+rulekeeper scan . --output json --output-file baseline.json
+
+<span style="color:#93c5fd;"># Step 2: In CI, compare against baseline</span>
+rulekeeper scan . \
+    --baseline baseline.json \
+    --fail-on-new \
+    --output console
+
+<span style="color:#93c5fd;"># Only fails if NEW violations are introduced</span></pre>
+
+                <div class="tip">
+                    <div class="tip-title">Baseline Strategy</div>
+                    <p>Use baselines when adopting RuleKeeper in existing projects. This lets you enforce quality standards on new code while gradually fixing legacy issues.</p>
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F527;</span> IDE Integration</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <h4>VS Code</h4>
+                <pre><span style="color:#93c5fd;">// .vscode/tasks.json</span>
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "RuleKeeper: Analyze",
+      "type": "shell",
+      "command": "rulekeeper",
+      "args": [
+        "scan",
+        "${workspaceFolder}",
+        "--output", "sarif",
+        "--output-file", "${workspaceFolder}/.rulekeeper/results.sarif"
+      ],
+      "problemMatcher": {
+        "owner": "rulekeeper",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^\\[(.*)\\] (.*):(\\d+)$",
+          "file": 2,
+          "line": 3,
+          "message": 1
+        }
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}</pre>
+
+                <h4>JetBrains (Rider/IntelliJ)</h4>
+                <pre><span style="color:#93c5fd;">Add as External Tool:</span>
+Program: rulekeeper
+Arguments: scan $ProjectFileDir$ --output console
+Working directory: $ProjectFileDir$</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4C8;</span> Trend Analysis</h4>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <p>Track code quality over time:</p>
+
+                <pre><span style="color:#93c5fd;"># Generate timestamped reports</span>
+DATE=$(date +%Y-%m-%d)
+rulekeeper scan . \
+    --output json \
+    --output-file "./reports/rulekeeper-${DATE}.json"
+
+<span style="color:#93c5fd;"># Compare with previous report</span>
+rulekeeper compare \
+    --previous "./reports/rulekeeper-2024-01-01.json" \
+    --current "./reports/rulekeeper-${DATE}.json" \
+    --output markdown</pre>
+
+                <div class="output-block">
+## Code Quality Trend Report
+
+| Metric | Previous | Current | Change |
+|--------|----------|---------|--------|
+| Total Violations | 45 | 38 | <span class="success">-7 (-15.5%)</span> |
+| Errors | 5 | 3 | <span class="success">-2 (-40%)</span> |
+| Warnings | 28 | 25 | <span class="success">-3 (-10.7%)</span> |
+| Info | 12 | 10 | <span class="success">-2 (-16.7%)</span> |
+
+<span class="success">Overall: Code quality improved!</span>
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4DA;</span> Monorepo Setup</h4>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <p>Configure RuleKeeper for monorepo projects:</p>
+
+                <div class="file-tree">
+<span class="folder">monorepo/</span>
+├── <span class="file">rulekeeper.yaml</span>          <span style="color:var(--text-muted);"># Root config</span>
+├── <span class="folder">packages/</span>
+│   ├── <span class="folder">api/</span>
+│   │   ├── <span class="file">rulekeeper.yaml</span>   <span style="color:var(--text-muted);"># API-specific overrides</span>
+│   │   └── src/
+│   ├── <span class="folder">web/</span>
+│   │   ├── <span class="file">rulekeeper.yaml</span>   <span style="color:var(--text-muted);"># Web-specific overrides</span>
+│   │   └── src/
+│   └── <span class="folder">shared/</span>
+│       └── src/
+└── <span class="folder">services/</span>
+    ├── <span class="folder">auth/</span>
+    └── <span class="folder">payments/</span>
+                </div>
+
+                <pre><span style="color:#93c5fd;"># Root rulekeeper.yaml - shared settings</span>
+version: "2.0"
+
+<span style="color:#93c5fd;"># Base configuration inherited by all packages</span>
+scan:
+  languages: [typescript, python]
+
+cross_language_rules:
+  method_length:
+    parameters:
+      max_lines: 50
+
+<span style="color:#93c5fd;"># packages/api/rulekeeper.yaml - API overrides</span>
+version: "2.0"
+extends: "../../rulekeeper.yaml"
+
+scan:
+  languages: [python]
+
+language_rules:
+  python:
+    missing_docstring:
+      enabled: true
+      severity: error  <span style="color:#93c5fd;"># Stricter for API</span></pre>
+
+                <pre><span style="color:#93c5fd;"># Scan entire monorepo</span>
+rulekeeper scan . --recursive
+
+<span style="color:#93c5fd;"># Scan specific package</span>
+rulekeeper scan ./packages/api
+
+<span style="color:#93c5fd;"># Scan multiple packages in parallel</span>
+rulekeeper scan ./packages/api ./packages/web ./services --parallel</pre>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

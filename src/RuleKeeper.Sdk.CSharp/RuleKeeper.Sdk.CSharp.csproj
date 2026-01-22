@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>RuleKeeper.Sdk.CSharp</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>RuleKeeper.Sdk.CSharp</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <Description>C#-specific SDK for creating RuleKeeper rules using Roslyn. Build powerful analyzers with full semantic analysis support.</Description>
+    <PackageTags>static-analysis;sdk;roslyn;csharp;analyzers;code-quality</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/your-org/rulekeeper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/your-org/rulekeeper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RuleKeeper.Sdk\RuleKeeper.Sdk.csproj" />
+  </ItemGroup>
+
+</Project>

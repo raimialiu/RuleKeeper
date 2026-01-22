@@ -1,4 +1,5 @@
 using Microsoft.CodeAnalysis;
+using RuleKeeper.Sdk.Abstractions;
 
 namespace RuleKeeper.Sdk;
 
@@ -63,8 +64,107 @@ public class Violation
     public string? CodeSnippet { get; init; }
 
     /// <summary>
+    /// The programming language of the source file where the violation occurred.
+    /// </summary>
+    public Language Language { get; init; } = Language.CSharp;
+
+    /// <summary>
+    /// Creates a Violation from a SourceLocation.
+    /// </summary>
+    /// <param name="location">The source location.</param>
+    /// <param name="ruleId">The rule ID.</param>
+    /// <param name="ruleName">The rule name.</param>
+    /// <param name="message">The violation message.</param>
+    /// <param name="severity">The severity level.</param>
+    /// <param name="language">The programming language.</param>
+    /// <param name="fixHint">Optional fix hint.</param>
+    /// <param name="codeSnippet">Optional code snippet.</param>
+    /// <returns>A new Violation instance.</returns>
+    public static Violation FromSourceLocation(
+        SourceLocation location,
+        string ruleId,
+        string ruleName,
+        string message,
+        SeverityLevel severity,
+        Language language = Language.CSharp,
+        string? fixHint = null,
+        string? codeSnippet = null)
+    {
+        return new Violation
+        {
+            RuleId = ruleId,
+            RuleName = ruleName,
+            Message = message,
+            Severity = severity,
+            Language = language,
+            FilePath = location.FilePath,
+            StartLine = location.StartLine,
+            StartColumn = location.StartColumn,
+            EndLine = location.EndLine,
+            EndColumn = location.EndColumn,
+            FixHint = fixHint,
+            CodeSnippet = codeSnippet
+        };
+    }
+
+    /// <summary>
+    /// Creates a Violation from a unified syntax node.
+    /// </summary>
+    /// <param name="node">The syntax node where the violation occurred.</param>
+    /// <param name="ruleId">The rule ID.</param>
+    /// <param name="ruleName">The rule name.</param>
+    /// <param name="message">The violation message.</param>
+    /// <param name="severity">The severity level.</param>
+    /// <param name="fixHint">Optional fix hint.</param>
+    /// <param name="sourceText">Optional source text for snippet extraction.</param>
+    /// <returns>A new Violation instance.</returns>
+    public static Violation FromUnifiedNode(
+        IUnifiedSyntaxNode node,
+        string ruleId,
+        string ruleName,
+        string message,
+        SeverityLevel severity,
+        string? fixHint = null,
+        string? sourceText = null)
+    {
+        string? codeSnippet = null;
+        if (sourceText != null && node.Location.IsValid)
+        {
+            var lines = sourceText.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            var lineIndex = node.Location.StartLine - 1;
+            if (lineIndex >= 0 && lineIndex < lines.Length)
+            {
+                codeSnippet = lines[lineIndex];
+            }
+        }
+
+        return new Violation
+        {
+            RuleId = ruleId,
+            RuleName = ruleName,
+            Message = message,
+            Severity = severity,
+            Language = node.Language,
+            FilePath = node.Location.FilePath,
+            StartLine = node.Location.StartLine,
+            StartColumn = node.Location.StartColumn,
+            EndLine = node.Location.EndLine,
+            EndColumn = node.Location.EndColumn,
+            FixHint = fixHint,
+            CodeSnippet = codeSnippet
+        };
+    }
+
+    /// <summary>
     /// Creates a Violation from a Roslyn Location.
     /// </summary>
+    /// <param name="location">The Roslyn location.</param>
+    /// <param name="ruleId">The rule ID.</param>
+    /// <param name="ruleName">The rule name.</param>
+    /// <param name="message">The violation message.</param>
+    /// <param name="severity">The severity level.</param>
+    /// <param name="fixHint">Optional fix hint.</param>
+    /// <returns>A new Violation instance.</returns>
     public static Violation FromLocation(
         Location location,
         string ruleId,
@@ -80,8 +180,12 @@ public class Violation
         if (sourceTree != null)
         {
             var text = sourceTree.GetText();
-            var line = text.Lines[lineSpan.StartLinePosition.Line];
-            codeSnippet = line.ToString();
+            var lineIndex = lineSpan.StartLinePosition.Line;
+            if (lineIndex >= 0 && lineIndex < text.Lines.Count)
+            {
+                var line = text.Lines[lineIndex];
+                codeSnippet = line.ToString();
+            }
         }
 
         return new Violation
@@ -90,6 +194,7 @@ public class Violation
             RuleName = ruleName,
             Message = message,
             Severity = severity,
+            Language = Language.CSharp,
             FilePath = lineSpan.Path ?? location.SourceTree?.FilePath ?? "unknown",
             StartLine = lineSpan.StartLinePosition.Line + 1,
             StartColumn = lineSpan.StartLinePosition.Character + 1,

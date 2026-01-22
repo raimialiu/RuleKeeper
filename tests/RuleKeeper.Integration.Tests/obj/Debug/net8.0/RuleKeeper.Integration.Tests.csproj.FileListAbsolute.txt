@@ -209,3 +209,5 @@
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Integration.Tests/obj/Debug/net8.0/RuleKeeper.Integration.Tests.pdb
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Integration.Tests/obj/Debug/net8.0/RuleKeeper.Integration.Tests.genruntimeconfig.cache
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Integration.Tests/obj/Debug/net8.0/ref/RuleKeeper.Integration.Tests.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Integration.Tests/bin/Debug/net8.0/RuleKeeper.Sdk.xml
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Integration.Tests/obj/Debug/net8.0/RuleKeeper.Integration.Tests.sourcelink.json

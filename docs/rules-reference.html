@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper Rules Reference</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --critical: #dc2626;
+            --high: #ea580c;
+            --medium: #ca8a04;
+            --low: #0891b2;
+            --info: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav.sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        nav.sidebar h3 {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 20px 0 10px;
+        }
+
+        nav.sidebar a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        nav.sidebar a:hover {
+            background: var(--bg-color);
+        }
+
+        main {
+            margin-left: 280px;
+            padding: 40px;
+        }
+
+        section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.75rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 {
+            color: var(--text-color);
+            font-size: 1.25rem;
+            margin: 25px 0 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        code {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover {
+            background: var(--bg-color);
+        }
+
+        .severity {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .severity-critical { background: var(--critical); color: white; }
+        .severity-high { background: var(--high); color: white; }
+        .severity-medium { background: var(--medium); color: white; }
+        .severity-low { background: var(--low); color: white; }
+        .severity-info { background: var(--info); color: white; }
+
+        .language-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .lang-csharp { background: #68217a; color: white; }
+        .lang-python { background: #3776ab; color: white; }
+        .lang-javascript { background: #f7df1e; color: black; }
+        .lang-typescript { background: #3178c6; color: white; }
+        .lang-java { background: #007396; color: white; }
+        .lang-go { background: #00add8; color: white; }
+        .lang-all { background: #22c55e; color: white; }
+
+        .rule-card {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .rule-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .rule-card .rule-id {
+            font-family: 'SF Mono', monospace;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .rule-card .description {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .rule-card .parameters {
+            background: var(--card-bg);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .rule-card .parameters h5 {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .param-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .param-name {
+            font-family: 'SF Mono', monospace;
+            color: var(--accent-color);
+        }
+
+        .param-default {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-card .label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            nav.sidebar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <h2 style="color: var(--primary-color); margin-bottom: 20px;">Rules</h2>
+
+        <h3>Overview</h3>
+        <a href="#overview">Introduction</a>
+        <a href="#severity-levels">Severity Levels</a>
+
+        <h3>Cross-Language</h3>
+        <a href="#cross-language">All Languages</a>
+
+        <h3>C# Rules</h3>
+        <a href="#csharp-naming">Naming</a>
+        <a href="#csharp-security">Security</a>
+        <a href="#csharp-async">Async</a>
+        <a href="#csharp-design">Design</a>
+        <a href="#csharp-exceptions">Exceptions</a>
+        <a href="#csharp-di">Dependency Injection</a>
+
+        <h3>Python Rules</h3>
+        <a href="#python-naming">PEP 8 Naming</a>
+        <a href="#python-docs">Documentation</a>
+
+        <h3>JavaScript Rules</h3>
+        <a href="#js-debug">Debugging</a>
+        <a href="#js-best-practices">Best Practices</a>
+    </nav>
+
+    <main>
+        <header style="margin-left: -40px; margin-right: -40px; margin-top: -40px;">
+            <div class="container">
+                <h1>RuleKeeper Rules Reference</h1>
+                <p>Complete documentation of all built-in rules across all supported languages</p>
+            </div>
+        </header>
+
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>RuleKeeper provides a comprehensive set of rules for static code analysis across multiple programming languages. Rules are categorized by type and can be configured individually.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number">28+</div>
+                    <div class="label">Total Rules</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">6</div>
+                    <div class="label">Languages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">4</div>
+                    <div class="label">Cross-Language Rules</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">8</div>
+                    <div class="label">Categories</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="severity-levels">
+            <h2>Severity Levels</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Description</th>
+                        <th>Typical Use</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="severity severity-critical">Critical</span></td>
+                        <td>Must be fixed immediately</td>
+                        <td>Security vulnerabilities, blocking async calls</td>
+                    </tr>
+                    <tr>
+                        <td><span class="severity severity-high">High</span></td>
+                        <td>Should be fixed soon</td>
+                        <td>Async void, empty catch blocks, service locator</td>
+                    </tr>
+                    <tr>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Should be addressed</td>
+                        <td>Naming conventions, design issues, complexity</td>
+                    </tr>
+                    <tr>
+                        <td><span class="severity severity-low">Low</span></td>
+                        <td>Nice to fix</td>
+                        <td>Style issues, minor conventions</td>
+                    </tr>
+                    <tr>
+                        <td><span class="severity severity-info">Info</span></td>
+                        <td>Informational</td>
+                        <td>Suggestions, best practices</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="cross-language">
+            <h2>Cross-Language Rules</h2>
+            <p>These rules work across all supported languages using the unified AST.</p>
+
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-all">All Languages</span>
+                <span class="language-tag lang-csharp">C#</span>
+                <span class="language-tag lang-python">Python</span>
+                <span class="language-tag lang-javascript">JavaScript</span>
+                <span class="language-tag lang-typescript">TypeScript</span>
+                <span class="language-tag lang-java">Java</span>
+                <span class="language-tag lang-go">Go</span>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">XL-DESIGN-001</span>
+                    <span class="severity severity-medium">Medium</span>
+                </h4>
+                <div class="rule-name"><strong>Method Length</strong></div>
+                <div class="description">Methods should not exceed a maximum number of lines. Long methods are harder to understand and maintain.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">max_lines</span>
+                        <span>Maximum lines per method</span>
+                        <span class="param-default">(default: 50)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">XL-DESIGN-002</span>
+                    <span class="severity severity-medium">Medium</span>
+                </h4>
+                <div class="rule-name"><strong>Cyclomatic Complexity</strong></div>
+                <div class="description">Methods should not have high cyclomatic complexity. Complex methods are harder to test and maintain.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">max_complexity</span>
+                        <span>Maximum complexity score</span>
+                        <span class="param-default">(default: 10)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">XL-DESIGN-003</span>
+                    <span class="severity severity-medium">Medium</span>
+                </h4>
+                <div class="rule-name"><strong>Parameter Count</strong></div>
+                <div class="description">Methods should not have too many parameters. Consider using a parameter object instead.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">max_parameters</span>
+                        <span>Maximum parameters allowed</span>
+                        <span class="param-default">(default: 5)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">XL-NAME-001</span>
+                    <span class="severity severity-low">Low</span>
+                </h4>
+                <div class="rule-name"><strong>Naming Conventions</strong></div>
+                <div class="description">Checks naming conventions for classes, methods, and variables according to language-specific standards.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">class_style</span>
+                        <span>Naming style for classes</span>
+                        <span class="param-default">(default: pascal)</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-name">method_style</span>
+                        <span>Naming style for methods</span>
+                        <span class="param-default">(default: auto)</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-name">variable_style</span>
+                        <span>Naming style for variables</span>
+                        <span class="param-default">(default: auto)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="csharp-naming">
+            <h2>C# Naming Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-csharp">C#</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Name</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CS-NAME-001</code></td>
+                        <td>Class Naming</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Classes must use PascalCase naming</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-NAME-002</code></td>
+                        <td>Method Naming</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Methods must use PascalCase naming</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-NAME-003</code></td>
+                        <td>Async Method Naming</td>
+                        <td><span class="severity severity-low">Low</span></td>
+                        <td>Async methods should end with "Async" suffix</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-NAME-004</code></td>
+                        <td>Private Field Naming</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Private fields should use _camelCase</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-NAME-005</code></td>
+                        <td>Constant Naming</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Constants should use PascalCase</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-NAME-006</code></td>
+                        <td>Property Naming</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Properties must use PascalCase</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-NAME-007</code></td>
+                        <td>Interface Naming</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Interfaces must start with "I" prefix</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="csharp-security">
+            <h2>C# Security Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-csharp">C#</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Name</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CS-SEC-001</code></td>
+                        <td>SQL Injection</td>
+                        <td><span class="severity severity-critical">Critical</span></td>
+                        <td>Detects potential SQL injection vulnerabilities</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-SEC-002</code></td>
+                        <td>Hardcoded Secrets</td>
+                        <td><span class="severity severity-critical">Critical</span></td>
+                        <td>Detects hardcoded passwords, API keys, and secrets</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-SEC-003</code></td>
+                        <td>Sensitive Data Logging</td>
+                        <td><span class="severity severity-high">High</span></td>
+                        <td>Prevents logging of sensitive data</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-SEC-004</code></td>
+                        <td>XSS Prevention</td>
+                        <td><span class="severity severity-critical">Critical</span></td>
+                        <td>Detects potential XSS vulnerabilities</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-SEC-005</code></td>
+                        <td>Path Traversal</td>
+                        <td><span class="severity severity-high">High</span></td>
+                        <td>Detects path traversal vulnerabilities</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="csharp-async">
+            <h2>C# Async Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-csharp">C#</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Name</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CS-ASYNC-001</code></td>
+                        <td>Async Void</td>
+                        <td><span class="severity severity-high">High</span></td>
+                        <td>Avoid async void methods (except event handlers)</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-ASYNC-002</code></td>
+                        <td>Blocking Async</td>
+                        <td><span class="severity severity-critical">Critical</span></td>
+                        <td>Avoid .Result and .Wait() on tasks</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-ASYNC-003</code></td>
+                        <td>ConfigureAwait</td>
+                        <td><span class="severity severity-low">Low</span></td>
+                        <td>Use ConfigureAwait(false) in library code</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="csharp-design">
+            <h2>C# Design Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-csharp">C#</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Name</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CS-DESIGN-001</code></td>
+                        <td>Method Length</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Methods should not exceed max lines</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-DESIGN-002</code></td>
+                        <td>Parameter Count</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Methods should not have too many parameters</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-DESIGN-003</code></td>
+                        <td>Cyclomatic Complexity</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Methods should have low complexity</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-DESIGN-004</code></td>
+                        <td>Class Length</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Classes should not exceed max lines</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="csharp-exceptions">
+            <h2>C# Exception Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-csharp">C#</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Name</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CS-EXC-001</code></td>
+                        <td>Empty Catch</td>
+                        <td><span class="severity severity-high">High</span></td>
+                        <td>Catch blocks should not be empty</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-EXC-002</code></td>
+                        <td>Catch Base Exception</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Avoid catching System.Exception</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-EXC-003</code></td>
+                        <td>Throw in Finally</td>
+                        <td><span class="severity severity-high">High</span></td>
+                        <td>Avoid throwing in finally blocks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="csharp-di">
+            <h2>C# Dependency Injection Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-csharp">C#</span>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Name</th>
+                        <th>Severity</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CS-DI-001</code></td>
+                        <td>Concrete Type Injection</td>
+                        <td><span class="severity severity-medium">Medium</span></td>
+                        <td>Prefer interface injection over concrete types</td>
+                    </tr>
+                    <tr>
+                        <td><code>CS-DI-002</code></td>
+                        <td>Service Locator</td>
+                        <td><span class="severity severity-high">High</span></td>
+                        <td>Avoid service locator anti-pattern</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="python-naming">
+            <h2>Python Naming Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-python">Python</span>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">PY-NAME-001</span>
+                    <span class="severity severity-low">Low</span>
+                </h4>
+                <div class="rule-name"><strong>PEP 8 Naming Conventions</strong></div>
+                <div class="description">Enforces Python PEP 8 naming conventions: snake_case for functions and variables, PascalCase for classes, UPPER_CASE for constants.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">allow_private_underscore</span>
+                        <span>Allow single leading underscore for private</span>
+                        <span class="param-default">(default: true)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="python-docs">
+            <h2>Python Documentation Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-python">Python</span>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">PY-DOC-001</span>
+                    <span class="severity severity-low">Low</span>
+                </h4>
+                <div class="rule-name"><strong>Missing Docstring</strong></div>
+                <div class="description">Public functions and classes should have docstrings describing their purpose, parameters, and return values.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">require_class_docstring</span>
+                        <span>Require docstrings for classes</span>
+                        <span class="param-default">(default: true)</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-name">require_function_docstring</span>
+                        <span>Require docstrings for functions</span>
+                        <span class="param-default">(default: true)</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-name">min_function_length</span>
+                        <span>Min lines before requiring docstring</span>
+                        <span class="param-default">(default: 5)</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-name">skip_private</span>
+                        <span>Skip private functions</span>
+                        <span class="param-default">(default: true)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="js-debug">
+            <h2>JavaScript Debugging Rules</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-javascript">JavaScript</span>
+                <span class="language-tag lang-typescript">TypeScript</span>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">JS-DEBUG-001</span>
+                    <span class="severity severity-low">Low</span>
+                </h4>
+                <div class="rule-name"><strong>No Console Log</strong></div>
+                <div class="description">console.log statements should not be committed to production code. Use a proper logging framework instead.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">allow_error_warn</span>
+                        <span>Allow console.error and console.warn</span>
+                        <span class="param-default">(default: true)</span>
+                    </div>
+                    <div class="param-item">
+                        <span class="param-name">exclude_patterns</span>
+                        <span>File patterns to exclude</span>
+                        <span class="param-default">(default: *.test.js,*.spec.js)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="js-best-practices">
+            <h2>JavaScript Best Practices</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="language-tag lang-javascript">JavaScript</span>
+                <span class="language-tag lang-typescript">TypeScript</span>
+            </div>
+
+            <div class="rule-card">
+                <h4>
+                    <span class="rule-id">JS-VAR-001</span>
+                    <span class="severity severity-medium">Medium</span>
+                </h4>
+                <div class="rule-name"><strong>Prefer Const/Let</strong></div>
+                <div class="description">Use const or let instead of var for variable declarations. var has function scope which can lead to unexpected behavior.</div>
+                <div class="parameters">
+                    <h5>Parameters</h5>
+                    <div class="param-item">
+                        <span class="param-name">prefer_const</span>
+                        <span>Suggest const as preferred</span>
+                        <span class="param-default">(default: true)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>RuleKeeper Documentation &copy; 2024</p>
+        </footer>
+    </main>
+</body>
+</html>

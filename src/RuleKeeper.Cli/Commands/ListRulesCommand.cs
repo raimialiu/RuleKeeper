@@ -74,6 +74,7 @@ public static class ListRulesCommand
         table.AddColumn("Name");
         table.AddColumn("Category");
         table.AddColumn("Severity");
+        table.AddColumn("Languages");
         table.AddColumn("Description");
 
         foreach (var rule in rules.OrderBy(r => r.Category).ThenBy(r => r.RuleId))
@@ -88,18 +89,30 @@ public static class ListRulesCommand
                 _ => "white"
             };
 
+            var languageDisplay = rule.IsCrossLanguage
+                ? $"[green]{Truncate(rule.SupportedLanguagesDisplay, 15)}[/]"
+                : Truncate(rule.SupportedLanguagesDisplay, 15);
+
             table.AddRow(
                 $"[bold]{rule.RuleId}[/]",
                 rule.Name,
                 rule.Category,
                 $"[{severityColor}]{rule.DefaultSeverity}[/]",
-                Truncate(rule.Description, 40)
+                languageDisplay,
+                Truncate(rule.Description, 35)
             );
         }
 
         AnsiConsole.Write(table);
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine($"Total: [bold]{rules.Count}[/] rules");
+
+        // Show language summary
+        var crossLanguageCount = rules.Count(r => r.IsCrossLanguage);
+        if (crossLanguageCount > 0)
+        {
+            AnsiConsole.MarkupLine($"[green]Cross-language rules:[/] {crossLanguageCount}");
+        }
     }
 
     private static void OutputJson(List<RuleInfo> rules)
@@ -111,7 +124,9 @@ public static class ListRulesCommand
                 r.Name,
                 r.Category,
                 Severity = r.DefaultSeverity.ToString(),
-                r.Description
+                r.Description,
+                Languages = r.SupportedLanguages.Select(l => l.ToString()).ToArray(),
+                r.IsCrossLanguage
             }),
             new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
@@ -129,12 +144,13 @@ public static class ListRulesCommand
         {
             Console.WriteLine($"## {category.Key}");
             Console.WriteLine();
-            Console.WriteLine("| Rule ID | Name | Severity | Description |");
-            Console.WriteLine("|---------|------|----------|-------------|");
+            Console.WriteLine("| Rule ID | Name | Severity | Languages | Description |");
+            Console.WriteLine("|---------|------|----------|-----------|-------------|");
 
             foreach (var rule in category.OrderBy(r => r.RuleId))
             {
-                Console.WriteLine($"| `{rule.RuleId}` | {rule.Name} | {rule.DefaultSeverity} | {rule.Description} |");
+                var langInfo = rule.IsCrossLanguage ? $"**{rule.SupportedLanguagesDisplay}**" : rule.SupportedLanguagesDisplay;
+                Console.WriteLine($"| `{rule.RuleId}` | {rule.Name} | {rule.DefaultSeverity} | {langInfo} | {rule.Description} |");
             }
 
             Console.WriteLine();

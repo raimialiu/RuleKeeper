@@ -2,6 +2,7 @@ using System.Reflection;
 using RuleKeeper.Core.Configuration.Models;
 using RuleKeeper.Sdk;
 using RuleKeeper.Sdk.Attributes;
+using RuleKeeper.Sdk.Rules;
 
 namespace RuleKeeper.Core.Rules;
 
@@ -185,6 +186,13 @@ public class RuleRegistry
 
     private RuleInfo CreateRuleInfo(Type type, string ruleId, RuleAttribute? attr)
     {
+        // Get supported languages from attribute
+        var supportedLangsAttr = type.GetCustomAttribute<SupportedLanguagesAttribute>();
+        var supportedLanguages = supportedLangsAttr?.Languages ?? new[] { Language.CSharp };
+
+        // Check if this is a cross-language rule
+        var isCrossLanguage = typeof(ICrossLanguageRule).IsAssignableFrom(type);
+
         return new RuleInfo
         {
             RuleId = ruleId,
@@ -192,7 +200,9 @@ public class RuleRegistry
             Description = attr?.Description ?? "",
             Category = attr?.Category ?? "General",
             DefaultSeverity = attr?.Severity ?? SeverityLevel.Medium,
-            Type = type
+            Type = type,
+            SupportedLanguages = supportedLanguages,
+            IsCrossLanguage = isCrossLanguage
         };
     }
 }
@@ -208,4 +218,22 @@ public class RuleInfo
     public required string Category { get; init; }
     public required SeverityLevel DefaultSeverity { get; init; }
     public required Type Type { get; init; }
+
+    /// <summary>
+    /// Gets the languages this rule supports.
+    /// </summary>
+    public Language[] SupportedLanguages { get; init; } = new[] { Language.CSharp };
+
+    /// <summary>
+    /// Gets whether this rule is a cross-language rule.
+    /// </summary>
+    public bool IsCrossLanguage { get; init; }
+
+    /// <summary>
+    /// Gets a formatted string of supported languages.
+    /// </summary>
+    public string SupportedLanguagesDisplay =>
+        SupportedLanguages.Length == 0
+            ? "All"
+            : string.Join(", ", SupportedLanguages.Select(l => l.ToString()));
 }

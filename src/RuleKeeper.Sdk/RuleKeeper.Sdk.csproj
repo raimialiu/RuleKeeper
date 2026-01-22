@@ -5,8 +5,25 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>RuleKeeper.Sdk</RootNamespace>
-    <Description>SDK for creating custom RuleKeeper rules</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>RuleKeeper.Sdk</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <Description>SDK for creating custom RuleKeeper rules. Build cross-language or language-specific analyzers for C#, Python, JavaScript, TypeScript, Java, and Go.</Description>
+    <PackageTags>static-analysis;sdk;code-quality;roslyn;custom-rules;analyzers</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/your-org/rulekeeper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/your-org/rulekeeper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />

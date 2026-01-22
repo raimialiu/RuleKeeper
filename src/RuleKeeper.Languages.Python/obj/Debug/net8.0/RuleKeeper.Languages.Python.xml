@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Languages.Python</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Languages.Python.PythonLanguageAdapter">
+            <summary>
+            Language adapter for Python using ANTLR.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonLanguageAdapter.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonLanguageAdapter.SupportedExtensions">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonLanguageAdapter.DefaultIncludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonLanguageAdapter.DefaultExcludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Python.PythonLanguageAdapter.ParseAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Python.PythonLanguageAdapter.CreateTypeResolverAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Python.PythonLanguageAdapter.CanHandle(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Python.PythonLanguageAdapter.GetNativeContext(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,RuleKeeper.Sdk.Abstractions.ITypeResolver)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.Python.PythonSimpleNode">
+            <summary>
+            A simple Python syntax node implementation using basic parsing.
+            This is a placeholder until ANTLR grammar integration is complete.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.Python.PythonSimpleNode.#ctor(System.String,System.String)">
+            <summary>
+            Creates a root Python node from source code.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.Python.PythonSimpleNode.#ctor(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind,System.String,System.String,System.Int32,System.Int32,System.Int32,System.Int32,RuleKeeper.Languages.Python.PythonSimpleNode)">
+            <summary>
+            Creates a child Python node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.Location">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.Text">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.Parent">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.Children">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.NativeNode">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Python.PythonSimpleNode.ContainsErrors">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper CLI Reference</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .badge-primary { background: var(--accent-color); color: white; }
+        .badge-success { background: var(--success-color); color: white; }
+        .badge-warning { background: var(--warning-color); color: white; }
+
+        nav.sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        nav.sidebar h3 {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 20px 0 10px;
+        }
+
+        nav.sidebar a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+        }
+
+        nav.sidebar a:hover {
+            background: var(--bg-color);
+        }
+
+        nav.sidebar a.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        main {
+            margin-left: 300px;
+            padding: 40px;
+        }
+
+        section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.75rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 {
+            color: var(--text-color);
+            font-size: 1.25rem;
+            margin: 25px 0 15px;
+        }
+
+        h4 {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        code {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        tr:hover {
+            background: var(--bg-color);
+        }
+
+        .command-box {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .command-box .command {
+            color: var(--success-color);
+            font-family: 'SF Mono', monospace;
+            font-size: 1.1rem;
+        }
+
+        .command-box .description {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        .option-group {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .option-name {
+            font-family: 'SF Mono', monospace;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .option-alias {
+            color: var(--text-muted);
+            font-family: 'SF Mono', monospace;
+        }
+
+        .example-box {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+
+        .example-box h4 {
+            color: var(--accent-color);
+        }
+
+        .language-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .lang-csharp { background: #68217a; color: white; }
+        .lang-python { background: #3776ab; color: white; }
+        .lang-javascript { background: #f7df1e; color: black; }
+        .lang-typescript { background: #3178c6; color: white; }
+        .lang-java { background: #007396; color: white; }
+        .lang-go { background: #00add8; color: white; }
+
+        @media (max-width: 900px) {
+            nav.sidebar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <h2 style="color: var(--primary-color); margin-bottom: 20px;">RuleKeeper</h2>
+        <h3>Getting Started</h3>
+        <a href="#installation">Installation</a>
+        <a href="#quick-start">Quick Start</a>
+
+        <h3>Commands</h3>
+        <a href="#scan">scan</a>
+        <a href="#init">init</a>
+        <a href="#list-rules">list-rules</a>
+        <a href="#explain">explain</a>
+        <a href="#validate">validate</a>
+        <a href="#generate-editorconfig">generate-editorconfig</a>
+
+        <h3>Options</h3>
+        <a href="#global-options">Global Options</a>
+        <a href="#language-options">Language Options</a>
+        <a href="#output-options">Output Options</a>
+        <a href="#threshold-options">Threshold Options</a>
+
+        <h3>Examples</h3>
+        <a href="#basic-examples">Basic Usage</a>
+        <a href="#multi-language">Multi-Language</a>
+        <a href="#ci-cd">CI/CD Integration</a>
+    </nav>
+
+    <main>
+        <header style="margin-left: -40px; margin-right: -40px; margin-top: -40px;">
+            <div class="container">
+                <h1>RuleKeeper CLI Reference</h1>
+                <p>Command-line interface for multi-language static code analysis</p>
+                <div style="margin-top: 20px;">
+                    <span class="badge badge-primary">v2.0</span>
+                    <span class="badge badge-success">Multi-Language</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="installation">
+            <h2>Installation</h2>
+
+            <h3>As a .NET Global Tool</h3>
+            <pre><code>dotnet tool install -g RuleKeeper.Cli</code></pre>
+
+            <h3>From Source</h3>
+            <pre><code>git clone https://github.com/your-org/rulekeeper.git
+cd rulekeeper
+dotnet build
+dotnet run --project src/RuleKeeper.Cli -- --help</code></pre>
+        </section>
+
+        <section id="quick-start">
+            <h2>Quick Start</h2>
+
+            <div class="command-box">
+                <div class="command">rulekeeper init</div>
+                <div class="description">Creates a rulekeeper.yaml configuration file</div>
+            </div>
+
+            <div class="command-box">
+                <div class="command">rulekeeper scan ./src</div>
+                <div class="description">Scans the ./src directory for policy violations</div>
+            </div>
+
+            <div class="command-box">
+                <div class="command">rulekeeper scan ./src -L csharp,python,javascript</div>
+                <div class="description">Scans multiple languages in your codebase</div>
+            </div>
+        </section>
+
+        <section id="scan">
+            <h2>scan Command</h2>
+            <p>Scans code for policy violations across one or more programming languages.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper scan &lt;path&gt; [options]</div>
+            </div>
+
+            <h3>Arguments</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Argument</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>&lt;path&gt;</code></td>
+                        <td>Path to scan (file, directory, project, or solution)</td>
+                        <td><code>.</code> (current directory)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Options</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Alias</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--config</code></td>
+                        <td><code>-c</code></td>
+                        <td>Path to configuration file</td>
+                        <td>Auto-detected</td>
+                    </tr>
+                    <tr>
+                        <td><code>--output</code></td>
+                        <td><code>-o</code></td>
+                        <td>Output format (console, json, sarif, html)</td>
+                        <td><code>console</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--format</code></td>
+                        <td><code>-F</code></td>
+                        <td>Additional output formats to generate</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><code>--language</code></td>
+                        <td><code>-l</code></td>
+                        <td>Primary programming language</td>
+                        <td><code>CSharp</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--languages</code></td>
+                        <td><code>-L</code></td>
+                        <td>Multiple languages (comma-separated)</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><code>--severity</code></td>
+                        <td><code>-s</code></td>
+                        <td>Minimum severity to report</td>
+                        <td><code>Info</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--fail-on</code></td>
+                        <td><code>-f</code></td>
+                        <td>Severity that causes non-zero exit</td>
+                        <td><code>High</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--output-file</code></td>
+                        <td></td>
+                        <td>Output file path</td>
+                        <td>stdout</td>
+                    </tr>
+                    <tr>
+                        <td><code>--include</code></td>
+                        <td><code>-i</code></td>
+                        <td>File patterns to include</td>
+                        <td>All files</td>
+                    </tr>
+                    <tr>
+                        <td><code>--exclude</code></td>
+                        <td><code>-e</code></td>
+                        <td>File patterns to exclude</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><code>--parallel</code></td>
+                        <td><code>-p</code></td>
+                        <td>Enable parallel analysis</td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--verbose</code></td>
+                        <td><code>-v</code></td>
+                        <td>Verbose output</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--no-cache</code></td>
+                        <td></td>
+                        <td>Disable caching</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--no-color</code></td>
+                        <td></td>
+                        <td>Disable colored output</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--no-viz</code></td>
+                        <td></td>
+                        <td>Disable visualization</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--no-table</code></td>
+                        <td></td>
+                        <td>Disable tabular summary</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--summary-only</code></td>
+                        <td></td>
+                        <td>Show only summary</td>
+                        <td><code>false</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Threshold Options</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Alias</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--threshold-percent</code></td>
+                        <td><code>--tp</code></td>
+                        <td>Maximum violation percentage (0-100)</td>
+                        <td><code>0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--critical-threshold</code></td>
+                        <td><code>--ct</code></td>
+                        <td>Maximum critical violations allowed</td>
+                        <td><code>0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--high-threshold</code></td>
+                        <td><code>--ht</code></td>
+                        <td>Maximum high severity violations</td>
+                        <td><code>0</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--total-threshold</code></td>
+                        <td><code>--tt</code></td>
+                        <td>Maximum total violations</td>
+                        <td><code>0</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="init">
+            <h2>init Command</h2>
+            <p>Creates a new RuleKeeper configuration file with sensible defaults.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper init [options]</div>
+            </div>
+
+            <h3>Options</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--output</code></td>
+                        <td>Output file path</td>
+                        <td><code>rulekeeper.yaml</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--force</code></td>
+                        <td>Overwrite existing file</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--minimal</code></td>
+                        <td>Create minimal configuration</td>
+                        <td><code>false</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="list-rules">
+            <h2>list-rules Command</h2>
+            <p>Lists all available rules with their supported languages.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper list-rules [options]</div>
+            </div>
+
+            <h3>Options</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Alias</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--category</code></td>
+                        <td><code>-c</code></td>
+                        <td>Filter by category</td>
+                    </tr>
+                    <tr>
+                        <td><code>--format</code></td>
+                        <td><code>-f</code></td>
+                        <td>Output format (table, json, markdown)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="explain">
+            <h2>explain Command</h2>
+            <p>Shows detailed information about a specific rule.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper explain &lt;rule-id&gt;</div>
+            </div>
+
+            <div class="example-box">
+                <h4>Example</h4>
+                <pre><code>rulekeeper explain CS-ASYNC-001</code></pre>
+            </div>
+        </section>
+
+        <section id="validate">
+            <h2>validate Command</h2>
+            <p>Validates a configuration file for syntax and semantic errors.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper validate &lt;config-path&gt;</div>
+            </div>
+        </section>
+
+        <section id="generate-editorconfig">
+            <h2>generate-editorconfig Command</h2>
+            <p>Generates an .editorconfig file based on RuleKeeper rules.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper generate-editorconfig [options]</div>
+            </div>
+
+            <h3>Options</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Alias</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--output</code></td>
+                        <td><code>-o</code></td>
+                        <td>Output file path (default: .editorconfig)</td>
+                    </tr>
+                    <tr>
+                        <td><code>--config</code></td>
+                        <td><code>-c</code></td>
+                        <td>RuleKeeper config to base settings on</td>
+                    </tr>
+                    <tr>
+                        <td><code>--append</code></td>
+                        <td><code>-a</code></td>
+                        <td>Append to existing file</td>
+                    </tr>
+                    <tr>
+                        <td><code>--force</code></td>
+                        <td><code>-f</code></td>
+                        <td>Overwrite without prompting</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="language-options">
+            <h2>Language Options</h2>
+            <p>RuleKeeper supports analyzing multiple programming languages.</p>
+
+            <h3>Supported Languages</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>Value</th>
+                        <th>File Extensions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="language-tag lang-csharp">C#</span></td>
+                        <td><code>CSharp</code></td>
+                        <td>.cs</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-python">Python</span></td>
+                        <td><code>Python</code></td>
+                        <td>.py, .pyw</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-javascript">JavaScript</span></td>
+                        <td><code>JavaScript</code></td>
+                        <td>.js, .jsx, .mjs</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-typescript">TypeScript</span></td>
+                        <td><code>TypeScript</code></td>
+                        <td>.ts, .tsx, .mts</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-java">Java</span></td>
+                        <td><code>Java</code></td>
+                        <td>.java</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-go">Go</span></td>
+                        <td><code>Go</code></td>
+                        <td>.go</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Single Language</h3>
+            <pre><code>rulekeeper scan ./src -l Python</code></pre>
+
+            <h3>Multiple Languages</h3>
+            <pre><code>rulekeeper scan ./src -L csharp,python,javascript,typescript</code></pre>
+        </section>
+
+        <section id="basic-examples">
+            <h2>Basic Examples</h2>
+
+            <div class="example-box">
+                <h4>Basic scan with console output</h4>
+                <pre><code>rulekeeper scan ./src</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Scan with JSON output</h4>
+                <pre><code>rulekeeper scan ./src -o json --output-file report.json</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Scan with multiple output formats</h4>
+                <pre><code>rulekeeper scan ./src -o console -F json -F sarif -F html</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Scan specific file patterns</h4>
+                <pre><code>rulekeeper scan ./src -i "**/*Service.cs" -e "**/Tests/**"</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Verbose output with custom config</h4>
+                <pre><code>rulekeeper scan ./src -c ./policies/strict.yaml -v</code></pre>
+            </div>
+        </section>
+
+        <section id="multi-language">
+            <h2>Multi-Language Examples</h2>
+
+            <div class="example-box">
+                <h4>Scan Python codebase</h4>
+                <pre><code>rulekeeper scan ./src -l Python</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Scan polyglot project</h4>
+                <pre><code>rulekeeper scan ./project -L csharp,python,typescript,java,go</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h4>Scan frontend and backend</h4>
+                <pre><code># Frontend (TypeScript/JavaScript)
+rulekeeper scan ./frontend -L typescript,javascript
+
+# Backend (C#)
+rulekeeper scan ./backend -l CSharp</code></pre>
+            </div>
+        </section>
+
+        <section id="ci-cd">
+            <h2>CI/CD Integration</h2>
+
+            <h3>GitHub Actions</h3>
+            <pre><code>name: Code Analysis
+on: [push, pull_request]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install RuleKeeper
+        run: dotnet tool install -g RuleKeeper.Cli
+
+      - name: Run Analysis
+        run: |
+          rulekeeper scan ./src \
+            -L csharp,python,typescript \
+            -o sarif \
+            --output-file results.sarif.json \
+            --fail-on High \
+            --no-color
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: results.sarif.json</code></pre>
+
+            <h3>Azure DevOps</h3>
+            <pre><code>trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '8.0.x'
+
+  - script: dotnet tool install -g RuleKeeper.Cli
+    displayName: 'Install RuleKeeper'
+
+  - script: |
+      rulekeeper scan ./src \
+        -o sarif \
+        --output-file $(Build.ArtifactStagingDirectory)/results.sarif.json \
+        --fail-on High \
+        --no-color
+    displayName: 'Run Analysis'</code></pre>
+        </section>
+
+        <footer style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>RuleKeeper Documentation &copy; 2024</p>
+        </footer>
+    </main>
+</body>
+</html>

@@ -7,6 +7,7 @@ using RuleKeeper.Core.Reporting;
 using RuleKeeper.Core.Rules;
 using RuleKeeper.Sdk;
 using Spectre.Console;
+using Language = RuleKeeper.Sdk.Language;
 
 namespace RuleKeeper.Cli.Commands;
 
@@ -20,30 +21,30 @@ public static class ScanCommand
             getDefaultValue: () => ".");
 
         var configOption = new Option<string?>(
-            aliases: new[] { "--config", "-c" },
+            aliases: ["--config", "-c"],
             description: "Path to configuration file");
 
         var outputOption = new Option<string>(
-            aliases: new[] { "--output", "-o" },
+            aliases: ["--output", "-o"],
             description: "Output format (console, json, sarif, html)",
             getDefaultValue: () => "console");
 
         var additionalFormatsOption = new Option<string[]>(
-            aliases: new[] { "--format", "-F" },
+            aliases: ["--format", "-F"],
             description: "Additional output formats to generate (json, sarif, html)")
         { AllowMultipleArgumentsPerToken = true };
 
         var severityOption = new Option<SeverityLevel?>(
-            aliases: new[] { "--severity", "-s" },
+            aliases: ["--severity", "-s"],
             description: "Minimum severity to report");
 
         var failOnOption = new Option<SeverityLevel?>(
-            aliases: new[] { "--fail-on", "-f" },
+            aliases: ["--fail-on", "-f"],
             description: "Severity level that causes non-zero exit code");
 
         // Threshold options
         var thresholdPercentOption = new Option<double>(
-            aliases: new[] { "--threshold-percent", "--tp" },
+            aliases: ["--threshold-percent", "--tp"],
             description: "Maximum allowed violation percentage (0-100). Default 0 means any violation fails",
             getDefaultValue: () => 0);
 
@@ -106,11 +107,16 @@ public static class ScanCommand
             aliases: new[] { "--summary-only", "--summary" },
             description: "Show only summary tables without individual violation details");
 
-        // Language option (optional, defaults to C#)
+        // Language options
         var languageOption = new Option<Language>(
             aliases: new[] { "--language", "-l" },
-            description: "Programming language to analyze (currently only CSharp supported)",
+            description: "Primary programming language to analyze (csharp, python, javascript, typescript, java, go)",
             getDefaultValue: () => Language.CSharp);
+
+        var languagesOption = new Option<string[]>(
+            aliases: new[] { "--languages", "-L" },
+            description: "Multiple programming languages to analyze (comma-separated or repeated)")
+        { AllowMultipleArgumentsPerToken = true };
 
         var command = new Command("scan", "Scan code for policy violations")
         {
@@ -134,7 +140,8 @@ public static class ScanCommand
             noVisualizationOption,
             noTableOption,
             summaryOnlyOption,
-            languageOption
+            languageOption,
+            languagesOption
         };
 
         command.SetHandler(async (InvocationContext context) =>
@@ -160,18 +167,50 @@ public static class ScanCommand
             var noTable = context.ParseResult.GetValueForOption(noTableOption);
             var summaryOnly = context.ParseResult.GetValueForOption(summaryOnlyOption);
             var language = context.ParseResult.GetValueForOption(languageOption);
+            var languagesStr = context.ParseResult.GetValueForOption(languagesOption) ?? Array.Empty<string>();
+
+            // Parse languages from string array
+            var languages = ParseLanguages(languagesStr, language);
 
             var exitCode = await ExecuteAsync(
                 path, configPath, outputFormat, additionalFormats, minSeverity, failOn,
                 thresholdPercent, criticalThreshold, highThreshold, totalThreshold,
                 outputFile, includes, excludes, parallel, verbose, noCache, noColor,
-                noVisualization, noTable, summaryOnly, language,
+                noVisualization, noTable, summaryOnly, languages,
                 context.GetCancellationToken());
 
             context.ExitCode = exitCode;
         });
 
         return command;
+    }
+
+    private static List<Language> ParseLanguages(string[] languagesStr, Language defaultLanguage)
+    {
+        if (languagesStr.Length == 0)
+        {
+            return [defaultLanguage];
+        }
+
+        var languages = new List<Language>();
+        foreach (var langStr in languagesStr)
+        {
+            var parts = langStr.Split(',', StringSplitOptions.RemoveEmptyEntries); // Comma Seperated Values
+            foreach (var part in parts)
+            {
+                if (Enum.TryParse<Language>(part.Trim(), ignoreCase: true, out var lang))
+                {
+                    if (!languages.Contains(lang))
+                        languages.Add(lang);
+                }
+                else
+                {
+                    AnsiConsole.MarkupLine($"[yellow]Warning:[/] Unknown language '{part.Trim()}', skipping.");
+                }
+            }
+        }
+
+        return languages.Count > 0 ? languages : [defaultLanguage];
     }
 
     private static async Task<int> ExecuteAsync(
@@ -195,7 +234,7 @@ public static class ScanCommand
         bool noVisualization,
         bool noTable,
         bool summaryOnly,
-        Language language,
+        List<Language> languages,
         CancellationToken cancellationToken)
     {
         try
@@ -227,14 +266,14 @@ public static class ScanCommand
             // Apply command-line overrides
             ApplyOverrides(config, minSeverity, failOn, thresholdPercent, criticalThreshold,
                 highThreshold, totalThreshold, includes, excludes, parallel, noCache, noColor,
-                noVisualization, noTable, summaryOnly, language, additionalFormats);
+                noVisualization, noTable, summaryOnly, languages, additionalFormats);
 
             if (verbose)
             {
                 AnsiConsole.MarkupLine($"[blue]Path:[/] {path}");
                 AnsiConsole.MarkupLine($"[blue]Config:[/] {usedConfigPath ?? "default"}");
                 AnsiConsole.MarkupLine($"[blue]Output:[/] {outputFormat}");
-                AnsiConsole.MarkupLine($"[blue]Language:[/] {language}");
+                AnsiConsole.MarkupLine($"[blue]Languages:[/] {string.Join(", ", languages)}");
                 if (additionalFormats.Length > 0)
                     AnsiConsole.MarkupLine($"[blue]Additional formats:[/] {string.Join(", ", additionalFormats)}");
                 if (thresholdPercent > 0 || criticalThreshold > 0 || highThreshold > 0 || totalThreshold > 0)
@@ -242,12 +281,6 @@ public static class ScanCommand
                     AnsiConsole.MarkupLine($"[blue]Thresholds:[/] Critical={criticalThreshold}, High={highThreshold}, Total={totalThreshold}, Percent={thresholdPercent}%");
                 }
                 AnsiConsole.WriteLine();
-            }
-
-            // Validate language support
-            if (language != Language.CSharp)
-            {
-                AnsiConsole.MarkupLine($"[yellow]Warning:[/] Only C# is currently supported. Using C# analyzer.");
             }
 
             // Initialize rule registry
@@ -395,7 +428,7 @@ public static class ScanCommand
         bool noVisualization,
         bool noTable,
         bool summaryOnly,
-        Language language,
+        List<Language> languages,
         string[] additionalFormats)
     {
         if (minSeverity.HasValue)
@@ -426,7 +459,14 @@ public static class ScanCommand
         config.Output.Visualization = !noVisualization;
         config.Output.ShowTable = !noTable;
         config.Output.SummaryOnly = summaryOnly;
-        config.Scan.Language = language;
+
+        // Apply languages
+        if (languages.Count > 0)
+        {
+            config.Scan.Languages = languages;
+            // Also set the primary language for backward compatibility
+            config.Scan.Language = languages[0];
+        }
 
         if (additionalFormats.Length > 0)
             config.Output.AdditionalFormats = additionalFormats.ToList();

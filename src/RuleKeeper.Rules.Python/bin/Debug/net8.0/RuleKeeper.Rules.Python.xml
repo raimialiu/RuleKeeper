@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Rules.Python</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Rules.Python.MissingDocstringAnalyzer">
+            <summary>
+            Python-specific rule that checks for missing docstrings.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.Python.MissingDocstringAnalyzer.TargetLanguage">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Rules.Python.MissingDocstringAnalyzer.RequireClassDocstring">
+            <summary>
+            Whether to require docstrings for public classes.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.Python.MissingDocstringAnalyzer.RequireFunctionDocstring">
+            <summary>
+            Whether to require docstrings for public functions.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.Python.MissingDocstringAnalyzer.MinFunctionLength">
+            <summary>
+            Minimum function length before requiring a docstring.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.Python.MissingDocstringAnalyzer.SkipPrivate">
+            <summary>
+            Whether to skip private functions (starting with _).
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Rules.Python.MissingDocstringAnalyzer.Analyze(RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Rules.Python.Pep8NamingAnalyzer">
+            <summary>
+            Python-specific rule that enforces PEP 8 naming conventions.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.Python.Pep8NamingAnalyzer.TargetLanguage">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Rules.Python.Pep8NamingAnalyzer.AllowPrivateUnderscore">
+            <summary>
+            Whether to allow leading underscores for private members.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Rules.Python.Pep8NamingAnalyzer.Analyze(RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

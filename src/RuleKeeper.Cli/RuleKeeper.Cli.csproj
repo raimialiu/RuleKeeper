@@ -6,9 +6,30 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>RuleKeeper.Cli</RootNamespace>
+
+    <!-- Tool Configuration -->
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>rulekeeper</ToolCommandName>
+
+    <!-- NuGet Package Metadata -->
+    <PackageId>RuleKeeper.Cli</PackageId>
+    <Version>2.0.0</Version>
+    <Authors>Your Name</Authors>
+    <Company>Your Company</Company>
+    <Description>Multi-language policy-as-code static analysis CLI. Supports C#, Python, JavaScript, TypeScript, Java, and Go.</Description>
+    <PackageTags>static-analysis;linter;code-quality;roslyn;dotnet-tool;csharp;python;javascript;typescript;java;go</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/your-org/rulekeeper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/your-org/rulekeeper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+    <None Include="../../icon.png" Pack="true" PackagePath="/" Condition="Exists('../../icon.png')" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />

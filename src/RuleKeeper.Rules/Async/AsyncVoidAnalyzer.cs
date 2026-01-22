@@ -31,8 +31,7 @@ public class AsyncVoidAnalyzer : BaseRuleAnalyzer
 
             if (returnType != "void")
                 continue;
-
-            // Check if it's an event handler
+            
             if (AllowEventHandlers && IsEventHandler(method))
                 continue;
 
@@ -50,12 +49,11 @@ public class AsyncVoidAnalyzer : BaseRuleAnalyzer
         var parameters = method.ParameterList.Parameters;
         if (parameters.Count != 2)
             return false;
-
-        // Check for standard event handler signature
+        
         var firstParam = parameters[0].Type?.ToString();
         var secondParam = parameters[1].Type?.ToString();
 
-        return (firstParam == "object" || firstParam == "object?") &&
+        return firstParam is "object" or "object?" &&
                (secondParam?.EndsWith("EventArgs") == true || secondParam == "EventArgs");
     }
 }

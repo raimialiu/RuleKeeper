@@ -117,3 +117,5 @@
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Cli/obj/Debug/net8.0/RuleKeeper.Cli.pdb
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Cli/obj/Debug/net8.0/RuleKeeper.Cli.genruntimeconfig.cache
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Cli/obj/Debug/net8.0/ref/RuleKeeper.Cli.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Cli/obj/Debug/net8.0/RuleKeeper.Cli.sourcelink.json
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Cli/bin/Debug/net8.0/RuleKeeper.Sdk.xml

@@ -1,18 +1,31 @@
 # RuleKeeper
 
-**RuleKeeper** is a powerful, policy-as-code CLI tool for C# that uses Roslyn for deep semantic analysis of source code against configurable YAML policies. It helps teams enforce coding standards, security practices, and architectural guidelines automatically.
+**RuleKeeper** is a powerful, **multi-language policy-as-code CLI tool** that performs deep semantic analysis of source code against configurable YAML policies. It supports **C#, Python, JavaScript/TypeScript, Java, and Go**, helping teams enforce coding standards, security practices, and architectural guidelines automatically across polyglot codebases.
 
 ## Features
 
-- **Deep Semantic Analysis**: Uses Roslyn for AST and semantic model analysis
+- **Multi-Language Support**: Analyze C#, Python, JavaScript, TypeScript, Java, and Go
+- **Deep Semantic Analysis**: Uses Roslyn for C# and ANTLR-based parsers for other languages
+- **Unified AST**: Cross-language rules work across all supported languages
 - **YAML-Based Configuration**: Highly configurable rules via YAML files
-- **24+ Built-in Rules**: Covering naming, security, async patterns, design, exceptions, and DI
+- **28+ Built-in Rules**: Including cross-language rules for naming, design, and complexity
 - **Multiple Output Formats**: Console (tabular), JSON, SARIF, HTML
 - **Configurable Thresholds**: Set acceptable violation limits before CI/CD failure
 - **Visual Reports**: Bar charts and tables for violation distribution
 - **Extensible**: Create custom rules using the RuleKeeper SDK
 - **CI/CD Ready**: SARIF output for GitHub/Azure DevOps integration
 - **EditorConfig Generation**: Generate IDE-compatible settings
+
+## Supported Languages
+
+| Language | Adapter | Semantic Analysis |
+|----------|---------|-------------------|
+| C# | Roslyn | Full (types, symbols, flow) |
+| Python | ANTLR | Structural (AST-based) |
+| JavaScript | ANTLR | Structural (AST-based) |
+| TypeScript | ANTLR | Structural (AST-based) |
+| Java | ANTLR | Structural (AST-based) |
+| Go | ANTLR | Structural (AST-based) |
 
 ## Installation
 
@@ -88,7 +101,8 @@ rulekeeper scan <path> [options]
 | `--no-color` | | Disable colored output |
 | `--no-viz` | `--no-visualization` | Disable visualization in reports |
 | `--no-table` | | Disable tabular summary |
-| `--language` | `-l` | Programming language (default: `CSharp`) |
+| `--language` | `-l` | Primary programming language (default: `CSharp`) |
+| `--languages` | `-L` | Multiple languages to analyze (comma-separated) |
 
 **Examples:**
 
@@ -116,6 +130,15 @@ rulekeeper scan ./src -c ./policies/strict.yaml -v
 
 # Disable visualization for cleaner CI output
 rulekeeper scan ./src --no-viz --no-color
+
+# Scan Python files
+rulekeeper scan ./src -l Python
+
+# Scan multiple languages
+rulekeeper scan ./src -L csharp,python,javascript
+
+# Scan a polyglot project
+rulekeeper scan ./project -L csharp,python,typescript,java,go
 ```
 
 ### `init` - Create Configuration File
@@ -320,16 +343,72 @@ rulekeeper scan ./src -o console -F json -F sarif --output-file report
 
 ### Language Configuration
 
-RuleKeeper currently supports C# (default). Language can be configured for future extensibility:
+RuleKeeper supports multiple programming languages. Configure which languages to analyze:
 
 ```yaml
 scan_config:
-  language: CSharp  # Currently only CSharp is supported
+  # Single language (backward compatible)
+  language: CSharp
+
+  # Multiple languages
+  languages:
+    - CSharp
+    - Python
+    - JavaScript
+    - TypeScript
+    - Java
+    - Go
+
+  # Per-language settings
+  language_settings:
+    csharp:
+      include: ["**/*.cs"]
+      exclude: ["**/obj/**", "**/bin/**"]
+    python:
+      include: ["**/*.py"]
+      exclude: ["**/venv/**", "**/__pycache__/**"]
+    javascript:
+      include: ["**/*.js", "**/*.jsx"]
+      exclude: ["**/node_modules/**", "**/dist/**"]
+    typescript:
+      include: ["**/*.ts", "**/*.tsx"]
+      exclude: ["**/node_modules/**", "**/*.d.ts"]
+    java:
+      include: ["**/*.java"]
+      exclude: ["**/target/**", "**/build/**"]
+    go:
+      include: ["**/*.go"]
+      exclude: ["**/vendor/**"]
 ```
 
 ## Built-in Rules
 
-### Naming Conventions (`naming`)
+### Cross-Language Rules
+
+These rules work across all supported languages (C#, Python, JavaScript, TypeScript, Java, Go):
+
+| Rule ID | Name | Default Severity | Description |
+|---------|------|------------------|-------------|
+| XL-DESIGN-001 | Method Length | Medium | Methods should not exceed max lines |
+| XL-DESIGN-002 | Cyclomatic Complexity | Medium | Methods should not have high complexity |
+| XL-DESIGN-003 | Parameter Count | Medium | Methods should not have too many parameters |
+| XL-NAME-001 | Naming Conventions | Low | Checks naming conventions per language |
+
+### Python-Specific Rules
+
+| Rule ID | Name | Default Severity | Description |
+|---------|------|------------------|-------------|
+| PY-NAME-001 | PEP 8 Naming | Low | Enforces PEP 8 naming conventions |
+| PY-DOC-001 | Missing Docstring | Low | Functions and classes should have docstrings |
+
+### JavaScript/TypeScript Rules
+
+| Rule ID | Name | Default Severity | Description |
+|---------|------|------------------|-------------|
+| JS-DEBUG-001 | No Console Log | Low | Disallow console.log in production |
+| JS-VAR-001 | Prefer Const/Let | Medium | Use const/let instead of var |
+
+### C# Naming Conventions (`naming`)
 
 | Rule ID | Name | Default Severity |
 |---------|------|------------------|
@@ -503,7 +582,9 @@ code-analysis:
 
 ## Custom Rules
 
-Create custom rules by implementing `IRuleAnalyzer`:
+### C#-Specific Rules
+
+Create C#-specific rules by implementing `BaseRuleAnalyzer`:
 
 ```csharp
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -544,6 +625,44 @@ public class NoConsoleWriteLineAnalyzer : BaseRuleAnalyzer
 }
 ```
 
+### Cross-Language Rules
+
+Create rules that work across multiple languages using `BaseCrossLanguageRule`:
+
+```csharp
+using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.Abstractions;
+using RuleKeeper.Sdk.Attributes;
+using RuleKeeper.Sdk.Rules;
+
+[Rule("CUSTOM-XL-001",
+    Name = "Max File Length",
+    Description = "Files should not exceed maximum line count",
+    Severity = SeverityLevel.Medium,
+    Category = "design")]
+[SupportedLanguages(Language.CSharp, Language.Python, Language.JavaScript, Language.TypeScript)]
+public class MaxFileLengthAnalyzer : BaseCrossLanguageRule
+{
+    [RuleParameter("max_lines", Description = "Maximum lines per file", DefaultValue = 500)]
+    public int MaxLines { get; set; } = 500;
+
+    public override IEnumerable<Violation> Analyze(UnifiedAnalysisContext context)
+    {
+        var lineCount = context.SourceText?.Split('\n').Length ?? 0;
+
+        if (lineCount > MaxLines)
+        {
+            yield return CreateViolation(
+                context.Root,
+                $"File has {lineCount} lines (max: {MaxLines})",
+                context,
+                "Consider splitting into smaller files"
+            );
+        }
+    }
+}
+```
+
 Then reference your assembly in the configuration:
 
 ```yaml
@@ -574,16 +693,26 @@ The generated file includes:
 ```
 RuleKeeper/
 ├── src/
-│   ├── RuleKeeper.Cli/          # CLI application
-│   ├── RuleKeeper.Core/         # Core analysis engine
-│   ├── RuleKeeper.Rules/        # Built-in rule analyzers
-│   └── RuleKeeper.Sdk/          # SDK for custom rules
+│   ├── RuleKeeper.Cli/                    # CLI application
+│   ├── RuleKeeper.Core/                   # Core analysis engine
+│   ├── RuleKeeper.Sdk/                    # Language-agnostic SDK
+│   ├── RuleKeeper.Sdk.CSharp/             # C#-specific SDK (Roslyn)
+│   │
+│   ├── RuleKeeper.Languages.CSharp/       # C# language adapter
+│   ├── RuleKeeper.Languages.Python/       # Python language adapter
+│   ├── RuleKeeper.Languages.JavaScript/   # JS/TS language adapter
+│   ├── RuleKeeper.Languages.Java/         # Java language adapter
+│   ├── RuleKeeper.Languages.Go/           # Go language adapter
+│   │
+│   ├── RuleKeeper.Rules/                  # C# rules + cross-language rules
+│   ├── RuleKeeper.Rules.Python/           # Python-specific rules
+│   └── RuleKeeper.Rules.JavaScript/       # JS/TS-specific rules
 ├── tests/
 │   ├── RuleKeeper.Core.Tests/
 │   ├── RuleKeeper.Rules.Tests/
 │   └── RuleKeeper.Integration.Tests/
 └── samples/
-    └── rulekeeper.yaml          # Sample configuration
+    └── rulekeeper.yaml                    # Sample configuration
 ```
 
 ## Troubleshooting

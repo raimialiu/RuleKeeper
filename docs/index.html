@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper Documentation</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .badges {
+            margin-top: 25px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 5px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        main {
+            padding: 60px 0;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .doc-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+        }
+
+        .doc-card .icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .doc-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .doc-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .doc-card .tags {
+            margin-top: 15px;
+        }
+
+        .doc-card .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--bg-color);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .features {
+            background: var(--card-bg);
+            padding: 60px 0;
+            margin-top: 60px;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .feature .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .feature p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .language-support {
+            padding: 60px 0;
+        }
+
+        .language-support h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+        }
+
+        .languages {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .language-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .language-item .lang-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .lang-csharp { background: #68217a; color: white; }
+        .lang-python { background: #3776ab; color: white; }
+        .lang-javascript { background: #f7df1e; color: black; }
+        .lang-typescript { background: #3178c6; color: white; }
+        .lang-java { background: #007396; color: white; }
+        .lang-go { background: #00add8; color: white; }
+
+        footer {
+            background: var(--card-bg);
+            padding: 40px 0;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>RuleKeeper</h1>
+            <p>Multi-language policy-as-code static analysis for modern development teams</p>
+            <div class="badges">
+                <span class="badge">v2.0</span>
+                <span class="badge">6 Languages</span>
+                <span class="badge">28+ Rules</span>
+                <span class="badge">Cross-Platform</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="docs-grid">
+                <a href="cli-reference.html" class="doc-card">
+                    <div class="icon">&#x1F4BB;</div>
+                    <h3>CLI Reference</h3>
+                    <p>Complete command-line interface documentation. Learn all available commands, options, and usage examples.</p>
+                    <div class="tags">
+                        <span class="tag">Commands</span>
+                        <span class="tag">Options</span>
+                        <span class="tag">CI/CD</span>
+                    </div>
+                </a>
+
+                <a href="rules-reference.html" class="doc-card">
+                    <div class="icon">&#x1F4CB;</div>
+                    <h3>Rules Reference</h3>
+                    <p>Documentation for all built-in rules across all supported languages. Includes severity levels and parameters.</p>
+                    <div class="tags">
+                        <span class="tag">28+ Rules</span>
+                        <span class="tag">Cross-Language</span>
+                        <span class="tag">Configurable</span>
+                    </div>
+                </a>
+
+                <a href="sdk-reference.html" class="doc-card">
+                    <div class="icon">&#x1F6E0;</div>
+                    <h3>SDK Reference</h3>
+                    <p>Build custom rules with the RuleKeeper SDK. Create C#-specific or cross-language rules for your team.</p>
+                    <div class="tags">
+                        <span class="tag">Custom Rules</span>
+                        <span class="tag">API Reference</span>
+                        <span class="tag">Examples</span>
+                    </div>
+                </a>
+
+                <a href="usage-examples.html" class="doc-card">
+                    <div class="icon">&#x1F4D6;</div>
+                    <h3>Usage Examples</h3>
+                    <p>Practical examples for common scenarios: CI/CD integration, multi-language analysis, configuration, and custom rules.</p>
+                    <div class="tags">
+                        <span class="tag">Quick Start</span>
+                        <span class="tag">CI/CD</span>
+                        <span class="tag">Workflows</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <section class="language-support">
+        <div class="container">
+            <h2>Supported Languages</h2>
+            <div class="languages">
+                <div class="language-item">
+                    <div class="lang-icon lang-csharp">C#</div>
+                    <div>
+                        <strong>C#</strong>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">Full Roslyn analysis</div>
+                    </div>
+                </div>
+                <div class="language-item">
+                    <div class="lang-icon lang-python">Py</div>
+                    <div>
+                        <strong>Python</strong>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">ANTLR-based</div>
+                    </div>
+                </div>
+                <div class="language-item">
+                    <div class="lang-icon lang-javascript">JS</div>
+                    <div>
+                        <strong>JavaScript</strong>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">ANTLR-based</div>
+                    </div>
+                </div>
+                <div class="language-item">
+                    <div class="lang-icon lang-typescript">TS</div>
+                    <div>
+                        <strong>TypeScript</strong>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">ANTLR-based</div>
+                    </div>
+                </div>
+                <div class="language-item">
+                    <div class="lang-icon lang-java">Jv</div>
+                    <div>
+                        <strong>Java</strong>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">ANTLR-based</div>
+                    </div>
+                </div>
+                <div class="language-item">
+                    <div class="lang-icon lang-go">Go</div>
+                    <div>
+                        <strong>Go</strong>
+                        <div style="color: var(--text-muted); font-size: 0.85rem;">ANTLR-based</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="icon">&#x1F310;</div>
+                    <h4>Multi-Language</h4>
+                    <p>Analyze code across C#, Python, JavaScript, TypeScript, Java, and Go in a single scan.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">&#x1F527;</div>
+                    <h4>Extensible</h4>
+                    <p>Create custom rules using the SDK. Build language-specific or cross-language analyzers.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">&#x1F4CA;</div>
+                    <h4>SARIF Output</h4>
+                    <p>Generate SARIF reports for GitHub Code Scanning, Azure DevOps, and other CI/CD tools.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">&#x2699;</div>
+                    <h4>Configurable</h4>
+                    <p>Fine-tune every rule with YAML configuration. Set thresholds, severities, and parameters.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">&#x1F680;</div>
+                    <h4>Fast</h4>
+                    <p>Parallel analysis with intelligent caching for fast feedback in large codebases.</p>
+                </div>
+                <div class="feature">
+                    <div class="icon">&#x1F4DD;</div>
+                    <h4>Detailed Reports</h4>
+                    <p>Console, JSON, SARIF, and HTML reports with code snippets and fix suggestions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>RuleKeeper Documentation &copy; 2024</p>
+            <p style="margin-top: 10px;">
+                <a href="https://github.com/your-org/rulekeeper">GitHub</a> &middot;
+                <a href="https://github.com/your-org/rulekeeper/issues">Issues</a> &middot;
+                <a href="https://github.com/your-org/rulekeeper/discussions">Discussions</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -238,3 +238,5 @@
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Rules.Tests/obj/Debug/net8.0/RuleKeeper.Rules.Tests.genruntimeconfig.cache
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Rules.Tests/obj/Debug/net8.0/ref/RuleKeeper.Rules.Tests.dll
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Rules.Tests/bin/Debug/net8.0/Spectre.Console.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Rules.Tests/bin/Debug/net8.0/RuleKeeper.Sdk.xml
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/tests/RuleKeeper.Rules.Tests/obj/Debug/net8.0/RuleKeeper.Rules.Tests.sourcelink.json

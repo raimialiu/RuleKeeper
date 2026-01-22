@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>RuleKeeper.Rules.JavaScript</RootNamespace>
+    <Description>JavaScript and TypeScript specific rules for RuleKeeper static analysis.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RuleKeeper.Sdk\RuleKeeper.Sdk.csproj" />
+  </ItemGroup>
+
+</Project>

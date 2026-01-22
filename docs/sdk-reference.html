@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper SDK Reference</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #e2e8f0;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav.sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        nav.sidebar h3 {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin: 20px 0 10px;
+        }
+
+        nav.sidebar a {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+
+        nav.sidebar a:hover {
+            background: var(--bg-color);
+        }
+
+        main {
+            margin-left: 300px;
+            padding: 40px;
+        }
+
+        section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.75rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 {
+            color: var(--text-color);
+            font-size: 1.25rem;
+            margin: 25px 0 15px;
+        }
+
+        h4 {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        code {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        tr:hover {
+            background: var(--bg-color);
+        }
+
+        .api-signature {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'SF Mono', monospace;
+            color: var(--code-text);
+        }
+
+        .api-signature .keyword {
+            color: #c084fc;
+        }
+
+        .api-signature .type {
+            color: #4ade80;
+        }
+
+        .api-signature .name {
+            color: #60a5fa;
+        }
+
+        .api-signature .param {
+            color: #fbbf24;
+        }
+
+        .note {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning-color);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .note strong {
+            color: var(--warning-color);
+        }
+
+        .tip {
+            background: #dcfce7;
+            border-left: 4px solid var(--success-color);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .tip strong {
+            color: var(--success-color);
+        }
+
+        .package-card {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .package-card h4 {
+            color: var(--primary-color);
+            margin: 0 0 10px;
+        }
+
+        .package-card .description {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .language-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .lang-csharp { background: #68217a; color: white; }
+        .lang-python { background: #3776ab; color: white; }
+        .lang-javascript { background: #f7df1e; color: black; }
+        .lang-typescript { background: #3178c6; color: white; }
+        .lang-java { background: #007396; color: white; }
+        .lang-go { background: #00add8; color: white; }
+        .lang-all { background: #22c55e; color: white; }
+
+        .interface-box {
+            background: var(--bg-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .interface-box h4 {
+            font-family: 'SF Mono', monospace;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .member-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .member-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-family: 'SF Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .member-list li:last-child {
+            border-bottom: none;
+        }
+
+        .member-type {
+            color: var(--success-color);
+        }
+
+        .member-name {
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 900px) {
+            nav.sidebar {
+                display: none;
+            }
+            main {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <h2 style="color: var(--primary-color); margin-bottom: 20px;">SDK</h2>
+
+        <h3>Getting Started</h3>
+        <a href="#overview">Overview</a>
+        <a href="#packages">Packages</a>
+        <a href="#installation">Installation</a>
+
+        <h3>Core Abstractions</h3>
+        <a href="#iunifiedsyntaxnode">IUnifiedSyntaxNode</a>
+        <a href="#unifiedsyntaxkind">UnifiedSyntaxKind</a>
+        <a href="#sourcelocation">SourceLocation</a>
+        <a href="#ilanguageadapter">ILanguageAdapter</a>
+
+        <h3>Rule Development</h3>
+        <a href="#iruleanalyzer">IRuleAnalyzer</a>
+        <a href="#icrosslanguagerule">ICrossLanguageRule</a>
+        <a href="#baseruleanalyzer">BaseRuleAnalyzer</a>
+        <a href="#basecrosslanguagerule">BaseCrossLanguageRule</a>
+
+        <h3>Attributes</h3>
+        <a href="#ruleattribute">RuleAttribute</a>
+        <a href="#ruleparameter">RuleParameterAttribute</a>
+        <a href="#supportedlanguages">SupportedLanguagesAttribute</a>
+
+        <h3>Context & Results</h3>
+        <a href="#analysiscontext">AnalysisContext</a>
+        <a href="#unifiedanalysiscontext">UnifiedAnalysisContext</a>
+        <a href="#violation">Violation</a>
+
+        <h3>Examples</h3>
+        <a href="#csharp-rule-example">C# Rule Example</a>
+        <a href="#cross-language-example">Cross-Language Example</a>
+    </nav>
+
+    <main>
+        <header style="margin-left: -40px; margin-right: -40px; margin-top: -40px;">
+            <div class="container">
+                <h1>RuleKeeper SDK Reference</h1>
+                <p>Build custom rules for multi-language static code analysis</p>
+            </div>
+        </header>
+
+        <section id="overview">
+            <h2>Overview</h2>
+            <p>The RuleKeeper SDK provides the building blocks for creating custom static analysis rules. With the SDK, you can:</p>
+            <ul style="margin-left: 20px; margin-bottom: 20px;">
+                <li>Create <strong>C#-specific rules</strong> using Roslyn's full semantic analysis</li>
+                <li>Create <strong>cross-language rules</strong> that work across all supported languages</li>
+                <li>Configure rule parameters via YAML configuration</li>
+                <li>Generate violations with code snippets and fix hints</li>
+            </ul>
+
+            <div class="tip">
+                <strong>Tip:</strong> For rules that check structural patterns (method length, parameter count, naming), use cross-language rules. For language-specific semantic analysis (type checking, symbol resolution), use language-specific rules.
+            </div>
+        </section>
+
+        <section id="packages">
+            <h2>SDK Packages</h2>
+
+            <div class="package-card">
+                <h4>RuleKeeper.Sdk</h4>
+                <div class="description">
+                    Core SDK with language-agnostic abstractions. Contains unified AST interfaces, rule interfaces, attributes, and violation types. Use this for cross-language rules.
+                </div>
+                <pre><code>dotnet add package RuleKeeper.Sdk</code></pre>
+            </div>
+
+            <div class="package-card">
+                <h4>RuleKeeper.Sdk.CSharp</h4>
+                <div class="description">
+                    C#-specific SDK with Roslyn integration. Provides full semantic analysis, type resolution, and access to Roslyn's rich API. Use this for C#-only rules.
+                </div>
+                <pre><code>dotnet add package RuleKeeper.Sdk.CSharp</code></pre>
+            </div>
+        </section>
+
+        <section id="installation">
+            <h2>Installation</h2>
+
+            <h3>Create a Custom Rules Project</h3>
+            <pre><code>dotnet new classlib -n MyCompany.RuleKeeper.Rules
+cd MyCompany.RuleKeeper.Rules
+
+# For cross-language rules
+dotnet add package RuleKeeper.Sdk
+
+# For C#-specific rules (includes RuleKeeper.Sdk)
+dotnet add package RuleKeeper.Sdk.CSharp</code></pre>
+
+            <h3>Project Configuration</h3>
+            <pre><code>&lt;Project Sdk="Microsoft.NET.Sdk"&gt;
+  &lt;PropertyGroup&gt;
+    &lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
+    &lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
+    &lt;Nullable&gt;enable&lt;/Nullable&gt;
+  &lt;/PropertyGroup&gt;
+
+  &lt;ItemGroup&gt;
+    &lt;PackageReference Include="RuleKeeper.Sdk" Version="2.0.0" /&gt;
+    &lt;!-- Or for C#-specific rules: --&gt;
+    &lt;!-- &lt;PackageReference Include="RuleKeeper.Sdk.CSharp" Version="2.0.0" /&gt; --&gt;
+  &lt;/ItemGroup&gt;
+&lt;/Project&gt;</code></pre>
+        </section>
+
+        <section id="iunifiedsyntaxnode">
+            <h2>IUnifiedSyntaxNode</h2>
+            <p>The core interface representing a node in the unified abstract syntax tree. Works across all supported languages.</p>
+
+            <div class="interface-box">
+                <h4>interface IUnifiedSyntaxNode</h4>
+                <ul class="member-list">
+                    <li><span class="member-type">UnifiedSyntaxKind</span> <span class="member-name">Kind</span> { get; }</li>
+                    <li><span class="member-type">SourceLocation</span> <span class="member-name">Location</span> { get; }</li>
+                    <li><span class="member-type">string</span> <span class="member-name">Text</span> { get; }</li>
+                    <li><span class="member-type">IUnifiedSyntaxNode?</span> <span class="member-name">Parent</span> { get; }</li>
+                    <li><span class="member-type">IEnumerable&lt;IUnifiedSyntaxNode&gt;</span> <span class="member-name">Children</span> { get; }</li>
+                    <li><span class="member-type">Language</span> <span class="member-name">Language</span> { get; }</li>
+                    <li><span class="member-type">bool</span> <span class="member-name">ContainsErrors</span> { get; }</li>
+                    <li><span class="member-type">object?</span> <span class="member-name">NativeNode</span> { get; }</li>
+                </ul>
+            </div>
+
+            <h3>Extension Methods</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Descendants()</code></td>
+                        <td>Gets all descendant nodes</td>
+                    </tr>
+                    <tr>
+                        <td><code>DescendantsOfKind(kind)</code></td>
+                        <td>Gets descendants of a specific kind</td>
+                    </tr>
+                    <tr>
+                        <td><code>FirstChildOfKind(kind)</code></td>
+                        <td>Gets the first child of a specific kind</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ancestors()</code></td>
+                        <td>Gets all ancestor nodes</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="unifiedsyntaxkind">
+            <h2>UnifiedSyntaxKind</h2>
+            <p>Enumeration of common syntax node kinds across all languages.</p>
+
+            <h3>Type Declarations</h3>
+            <pre><code>ClassDeclaration, StructDeclaration, InterfaceDeclaration,
+EnumDeclaration, RecordDeclaration, DelegateDeclaration</code></pre>
+
+            <h3>Members</h3>
+            <pre><code>MethodDeclaration, ConstructorDeclaration, PropertyDeclaration,
+FieldDeclaration, EventDeclaration, IndexerDeclaration,
+Parameter, ParameterList, TypeParameter</code></pre>
+
+            <h3>Statements</h3>
+            <pre><code>Block, IfStatement, ElseClause, SwitchStatement, SwitchCase,
+ForStatement, ForEachStatement, WhileStatement, DoWhileStatement,
+TryStatement, CatchClause, FinallyClause,
+ReturnStatement, ThrowStatement, BreakStatement, ContinueStatement</code></pre>
+
+            <h3>Expressions</h3>
+            <pre><code>InvocationExpression, MemberAccessExpression, ObjectCreationExpression,
+BinaryExpression, UnaryExpression, ConditionalExpression,
+LambdaExpression, AwaitExpression, AssignmentExpression</code></pre>
+        </section>
+
+        <section id="sourcelocation">
+            <h2>SourceLocation</h2>
+            <p>Represents a location in source code, independent of the underlying parser.</p>
+
+            <div class="interface-box">
+                <h4>struct SourceLocation</h4>
+                <ul class="member-list">
+                    <li><span class="member-type">string</span> <span class="member-name">FilePath</span> { get; }</li>
+                    <li><span class="member-type">int</span> <span class="member-name">StartLine</span> { get; }</li>
+                    <li><span class="member-type">int</span> <span class="member-name">StartColumn</span> { get; }</li>
+                    <li><span class="member-type">int</span> <span class="member-name">EndLine</span> { get; }</li>
+                    <li><span class="member-type">int</span> <span class="member-name">EndColumn</span> { get; }</li>
+                    <li><span class="member-type">bool</span> <span class="member-name">IsValid</span> { get; }</li>
+                </ul>
+            </div>
+
+            <h3>Constructor</h3>
+            <pre><code>var location = new SourceLocation(
+    filePath: "/path/to/file.cs",
+    startLine: 10,
+    startColumn: 5,
+    endLine: 10,
+    endColumn: 20
+);</code></pre>
+        </section>
+
+        <section id="ilanguageadapter">
+            <h2>ILanguageAdapter</h2>
+            <p>Interface for language-specific parsers that produce unified AST nodes.</p>
+
+            <div class="interface-box">
+                <h4>interface ILanguageAdapter</h4>
+                <ul class="member-list">
+                    <li><span class="member-type">Language</span> <span class="member-name">Language</span> { get; }</li>
+                    <li><span class="member-type">IEnumerable&lt;string&gt;</span> <span class="member-name">SupportedExtensions</span> { get; }</li>
+                    <li><span class="member-type">IEnumerable&lt;string&gt;</span> <span class="member-name">DefaultIncludePatterns</span> { get; }</li>
+                    <li><span class="member-type">IEnumerable&lt;string&gt;</span> <span class="member-name">DefaultExcludePatterns</span> { get; }</li>
+                    <li><span class="member-type">Task&lt;IUnifiedSyntaxNode&gt;</span> <span class="member-name">ParseAsync</span>(source, filePath, ct)</li>
+                    <li><span class="member-type">Task&lt;ITypeResolver?&gt;</span> <span class="member-name">CreateTypeResolverAsync</span>(files, ct)</li>
+                    <li><span class="member-type">bool</span> <span class="member-name">CanHandle</span>(filePath)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="icrosslanguagerule">
+            <h2>ICrossLanguageRule</h2>
+            <p>Interface for rules that work across multiple languages using the unified AST.</p>
+
+            <div class="interface-box">
+                <h4>interface ICrossLanguageRule</h4>
+                <ul class="member-list">
+                    <li><span class="member-type">string</span> <span class="member-name">RuleId</span> { get; }</li>
+                    <li><span class="member-type">string</span> <span class="member-name">RuleName</span> { get; }</li>
+                    <li><span class="member-type">string</span> <span class="member-name">Category</span> { get; }</li>
+                    <li><span class="member-type">string</span> <span class="member-name">Description</span> { get; }</li>
+                    <li><span class="member-type">SeverityLevel</span> <span class="member-name">DefaultSeverity</span> { get; }</li>
+                    <li><span class="member-type">IEnumerable&lt;Language&gt;</span> <span class="member-name">SupportedLanguages</span> { get; }</li>
+                    <li><span class="member-type">void</span> <span class="member-name">Initialize</span>(parameters)</li>
+                    <li><span class="member-type">IEnumerable&lt;Violation&gt;</span> <span class="member-name">Analyze</span>(UnifiedAnalysisContext)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="basecrosslanguagerule">
+            <h2>BaseCrossLanguageRule</h2>
+            <p>Abstract base class for cross-language rules. Handles attribute parsing, parameter initialization, and violation creation.</p>
+
+            <pre><code>using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.Abstractions;
+using RuleKeeper.Sdk.Attributes;
+using RuleKeeper.Sdk.Rules;
+
+[Rule("XL-CUSTOM-001",
+    Name = "Custom Cross-Language Rule",
+    Description = "Description of what this rule checks",
+    Severity = SeverityLevel.Medium,
+    Category = "custom")]
+[SupportedLanguages(Language.CSharp, Language.Python, Language.JavaScript)]
+public class MyCrossLanguageRule : BaseCrossLanguageRule
+{
+    [RuleParameter("threshold", Description = "Max threshold", DefaultValue = 10)]
+    public int Threshold { get; set; } = 10;
+
+    public override IEnumerable&lt;Violation&gt; Analyze(UnifiedAnalysisContext context)
+    {
+        foreach (var method in context.GetMethods())
+        {
+            // Analysis logic here
+            if (/* violation detected */)
+            {
+                yield return CreateViolation(
+                    method,
+                    "Violation message",
+                    context,
+                    "Fix suggestion"
+                );
+            }
+        }
+    }
+}</code></pre>
+
+            <h3>Helper Methods</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>CreateViolation(node, message, context, fixHint)</code></td>
+                        <td>Creates a violation at a syntax node</td>
+                    </tr>
+                    <tr>
+                        <td><code>CreateViolation(location, message, context, fixHint)</code></td>
+                        <td>Creates a violation at a source location</td>
+                    </tr>
+                    <tr>
+                        <td><code>GetParameter&lt;T&gt;(name, defaultValue)</code></td>
+                        <td>Gets a parameter value with fallback</td>
+                    </tr>
+                    <tr>
+                        <td><code>HasParameter(name)</code></td>
+                        <td>Checks if a parameter exists</td>
+                    </tr>
+                    <tr>
+                        <td><code>SupportsLanguage(language)</code></td>
+                        <td>Checks if a language is supported</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="baseruleanalyzer">
+            <h2>BaseRuleAnalyzer (C# Specific)</h2>
+            <p>Abstract base class for C#-specific rules with full Roslyn integration.</p>
+
+            <pre><code>using Microsoft.CodeAnalysis.CSharp.Syntax;
+using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.Attributes;
+
+[Rule("CS-CUSTOM-001",
+    Name = "My C# Rule",
+    Description = "C#-specific analysis",
+    Severity = SeverityLevel.Medium,
+    Category = "custom")]
+public class MyCSharpRule : BaseRuleAnalyzer
+{
+    public override IEnumerable&lt;Violation&gt; Analyze(AnalysisContext context)
+    {
+        // Access Roslyn SyntaxTree and SemanticModel
+        var tree = context.SyntaxTree;
+        var model = context.SemanticModel;
+
+        var methods = tree.GetRoot()
+            .DescendantNodes()
+            .OfType&lt;MethodDeclarationSyntax&gt;();
+
+        foreach (var method in methods)
+        {
+            // Full semantic analysis available
+            var symbol = model.GetDeclaredSymbol(method);
+
+            if (/* violation detected */)
+            {
+                yield return CreateViolation(
+                    method.GetLocation(),
+                    "Violation message",
+                    context,
+                    "Fix hint"
+                );
+            }
+        }
+    }
+}</code></pre>
+        </section>
+
+        <section id="ruleattribute">
+            <h2>RuleAttribute</h2>
+            <p>Attribute to define rule metadata.</p>
+
+            <pre><code>[Rule("RULE-ID",
+    Name = "Human-readable name",
+    Description = "Detailed description",
+    Severity = SeverityLevel.Medium,
+    Category = "category-name")]
+public class MyRule : BaseCrossLanguageRule { }</code></pre>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>RuleId</code></td>
+                        <td>string</td>
+                        <td>Unique identifier (constructor parameter)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Name</code></td>
+                        <td>string</td>
+                        <td>Display name for the rule</td>
+                    </tr>
+                    <tr>
+                        <td><code>Description</code></td>
+                        <td>string</td>
+                        <td>Detailed description</td>
+                    </tr>
+                    <tr>
+                        <td><code>Severity</code></td>
+                        <td>SeverityLevel</td>
+                        <td>Default severity (Critical, High, Medium, Low, Info)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Category</code></td>
+                        <td>string</td>
+                        <td>Rule category for grouping</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="ruleparameter">
+            <h2>RuleParameterAttribute</h2>
+            <p>Attribute to define configurable parameters for rules.</p>
+
+            <pre><code>[RuleParameter("max_lines",
+    Description = "Maximum lines allowed",
+    DefaultValue = 50)]
+public int MaxLines { get; set; } = 50;</code></pre>
+
+            <p>Parameters can be configured in YAML:</p>
+            <pre><code>rules:
+  XL-DESIGN-001:
+    enabled: true
+    parameters:
+      max_lines: 100</code></pre>
+        </section>
+
+        <section id="supportedlanguages">
+            <h2>SupportedLanguagesAttribute</h2>
+            <p>Attribute to specify which languages a rule supports.</p>
+
+            <pre><code>[SupportedLanguages(Language.CSharp, Language.Python, Language.JavaScript)]
+public class MyRule : BaseCrossLanguageRule { }</code></pre>
+
+            <h3>Available Languages</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>Enum Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="language-tag lang-csharp">C#</span></td>
+                        <td><code>Language.CSharp</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-python">Python</span></td>
+                        <td><code>Language.Python</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-javascript">JavaScript</span></td>
+                        <td><code>Language.JavaScript</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-typescript">TypeScript</span></td>
+                        <td><code>Language.TypeScript</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-java">Java</span></td>
+                        <td><code>Language.Java</code></td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-go">Go</span></td>
+                        <td><code>Language.Go</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="unifiedanalysiscontext">
+            <h2>UnifiedAnalysisContext</h2>
+            <p>Context provided to cross-language rules during analysis.</p>
+
+            <div class="interface-box">
+                <h4>class UnifiedAnalysisContext</h4>
+                <ul class="member-list">
+                    <li><span class="member-type">IUnifiedSyntaxNode</span> <span class="member-name">Root</span> { get; }</li>
+                    <li><span class="member-type">string</span> <span class="member-name">FilePath</span> { get; }</li>
+                    <li><span class="member-type">string?</span> <span class="member-name">SourceText</span> { get; }</li>
+                    <li><span class="member-type">Language</span> <span class="member-name">Language</span> { get; }</li>
+                    <li><span class="member-type">ITypeResolver?</span> <span class="member-name">TypeResolver</span> { get; }</li>
+                    <li><span class="member-type">SeverityLevel</span> <span class="member-name">Severity</span> { get; }</li>
+                    <li><span class="member-type">CancellationToken</span> <span class="member-name">CancellationToken</span> { get; }</li>
+                </ul>
+            </div>
+
+            <h3>Helper Methods</h3>
+            <pre><code>// Get all methods in the file
+var methods = context.GetMethods();
+
+// Get all classes
+var classes = context.GetClasses();
+
+// Get a specific line of code
+var line = context.GetLine(lineNumber);
+
+// Get nodes of specific kind
+var loops = context.GetNodesOfKind(UnifiedSyntaxKind.ForStatement);</code></pre>
+        </section>
+
+        <section id="violation">
+            <h2>Violation</h2>
+            <p>Represents a rule violation found during analysis.</p>
+
+            <h3>Factory Methods</h3>
+            <pre><code>// From a unified syntax node
+var violation = Violation.FromUnifiedNode(
+    node,
+    ruleId: "XL-001",
+    ruleName: "Rule Name",
+    message: "Violation message",
+    severity: SeverityLevel.Medium,
+    fixHint: "How to fix",
+    sourceText: context.SourceText
+);
+
+// From a source location
+var violation = Violation.FromSourceLocation(
+    location,
+    ruleId: "XL-001",
+    ruleName: "Rule Name",
+    message: "Violation message",
+    severity: SeverityLevel.Medium,
+    language: Language.Python,
+    fixHint: "How to fix"
+);
+
+// From a Roslyn location (C# only)
+var violation = Violation.FromLocation(
+    roslynLocation,
+    ruleId: "CS-001",
+    ruleName: "Rule Name",
+    message: "Violation message",
+    severity: SeverityLevel.Medium,
+    fixHint: "How to fix"
+);</code></pre>
+        </section>
+
+        <section id="cross-language-example">
+            <h2>Complete Cross-Language Rule Example</h2>
+
+            <pre><code>using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.Abstractions;
+using RuleKeeper.Sdk.Attributes;
+using RuleKeeper.Sdk.Rules;
+
+namespace MyCompany.RuleKeeper.Rules;
+
+/// &lt;summary&gt;
+/// Detects TODO comments in code that should be addressed.
+/// &lt;/summary&gt;
+[Rule("XL-TODO-001",
+    Name = "TODO Comments",
+    Description = "TODO comments indicate incomplete work that should be tracked",
+    Severity = SeverityLevel.Low,
+    Category = "documentation")]
+[SupportedLanguages(
+    Language.CSharp,
+    Language.Python,
+    Language.JavaScript,
+    Language.TypeScript,
+    Language.Java,
+    Language.Go)]
+public class TodoCommentAnalyzer : BaseCrossLanguageRule
+{
+    [RuleParameter("patterns",
+        Description = "Comment patterns to detect",
+        DefaultValue = "TODO,FIXME,HACK,XXX")]
+    public string Patterns { get; set; } = "TODO,FIXME,HACK,XXX";
+
+    [RuleParameter("case_sensitive",
+        Description = "Use case-sensitive matching",
+        DefaultValue = false)]
+    public bool CaseSensitive { get; set; } = false;
+
+    public override IEnumerable&lt;Violation&gt; Analyze(UnifiedAnalysisContext context)
+    {
+        var patternList = Patterns.Split(',')
+            .Select(p => p.Trim())
+            .Where(p => !string.IsNullOrEmpty(p))
+            .ToList();
+
+        var comparison = CaseSensitive
+            ? StringComparison.Ordinal
+            : StringComparison.OrdinalIgnoreCase;
+
+        var lines = context.SourceText?.Split('\n') ?? Array.Empty&lt;string&gt;();
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            context.CancellationToken.ThrowIfCancellationRequested();
+
+            var line = lines[i];
+
+            foreach (var pattern in patternList)
+            {
+                if (line.Contains(pattern, comparison))
+                {
+                    var location = new SourceLocation(
+                        context.FilePath,
+                        i + 1, 1,
+                        i + 1, line.Length);
+
+                    yield return Violation.FromSourceLocation(
+                        location,
+                        RuleId,
+                        RuleName,
+                        $"Found {pattern} comment that should be addressed",
+                        DefaultSeverity,
+                        context.Language,
+                        "Create a work item to track this TODO"
+                    );
+
+                    break; // Only report once per line
+                }
+            }
+        }
+    }
+}</code></pre>
+
+            <h3>Configuration</h3>
+            <pre><code># rulekeeper.yaml
+rules:
+  XL-TODO-001:
+    enabled: true
+    severity: Medium
+    parameters:
+      patterns: "TODO,FIXME,HACK"
+      case_sensitive: false</code></pre>
+
+            <h3>Loading Custom Rules</h3>
+            <pre><code># rulekeeper.yaml
+custom_rules:
+  - path: "./rules/MyCompany.RuleKeeper.Rules.dll"</code></pre>
+        </section>
+
+        <footer style="text-align: center; padding: 40px; color: var(--text-muted);">
+            <p>RuleKeeper SDK Documentation &copy; 2024</p>
+        </footer>
+    </main>
+</body>
+</html>

@@ -15,3 +15,5 @@
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/refint/RuleKeeper.Rules.dll
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.pdb
 /Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/ref/RuleKeeper.Rules.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Sdk.xml
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.sourcelink.json

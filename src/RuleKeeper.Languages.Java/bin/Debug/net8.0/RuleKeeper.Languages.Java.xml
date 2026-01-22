@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Languages.Java</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Languages.Java.JavaLanguageAdapter">
+            <summary>
+            Language adapter for Java using ANTLR.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaLanguageAdapter.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaLanguageAdapter.SupportedExtensions">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaLanguageAdapter.DefaultIncludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaLanguageAdapter.DefaultExcludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Java.JavaLanguageAdapter.ParseAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Java.JavaLanguageAdapter.CreateTypeResolverAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Java.JavaLanguageAdapter.CanHandle(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.Java.JavaLanguageAdapter.GetNativeContext(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,RuleKeeper.Sdk.Abstractions.ITypeResolver)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.Java.JavaSimpleNode">
+            <summary>
+            A simple Java syntax node implementation using basic parsing.
+            This is a placeholder until ANTLR grammar integration is complete.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.Java.JavaSimpleNode.#ctor(System.String,System.String)">
+            <summary>
+            Creates a root Java node from source code.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.Java.JavaSimpleNode.#ctor(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind,System.String,System.String,System.Int32,System.Int32,System.Int32,System.Int32,RuleKeeper.Languages.Java.JavaSimpleNode)">
+            <summary>
+            Creates a child Java node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.Location">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.Text">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.Parent">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.Children">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.NativeNode">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.Java.JavaSimpleNode.ContainsErrors">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>
