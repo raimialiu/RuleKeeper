@@ -1,0 +1,463 @@
+using System.CommandLine;
+using System.CommandLine.Invocation;
+using System.Text;
+using RuleKeeper.Core.Configuration;
+using RuleKeeper.Core.Configuration.Models;
+using RuleKeeper.Core.Rules;
+using RuleKeeper.Sdk;
+using Spectre.Console;
+
+namespace RuleKeeper.Cli.Commands;
+
+public static class GenerateEditorConfigCommand
+{
+    public static Command Create()
+    {
+        var outputOption = new Option<string>(
+            aliases: new[] { "--output", "-o" },
+            description: "Output file path",
+            getDefaultValue: () => ".editorconfig");
+
+        var configOption = new Option<string?>(
+            aliases: new[] { "--config", "-c" },
+            description: "Path to RuleKeeper configuration file to base the editorconfig on");
+
+        var appendOption = new Option<bool>(
+            aliases: new[] { "--append", "-a" },
+            description: "Append to existing .editorconfig instead of overwriting");
+
+        var forceOption = new Option<bool>(
+            aliases: new[] { "--force", "-f" },
+            description: "Overwrite existing file without prompting");
+
+        var includeCommentsOption = new Option<bool>(
+            aliases: new[] { "--comments" },
+            description: "Include descriptive comments for each rule",
+            getDefaultValue: () => true);
+
+        var command = new Command("generate-editorconfig", "Generate .editorconfig file from RuleKeeper rules")
+        {
+            outputOption,
+            configOption,
+            appendOption,
+            forceOption,
+            includeCommentsOption
+        };
+
+        command.SetHandler((InvocationContext context) =>
+        {
+            var output = context.ParseResult.GetValueForOption(outputOption)!;
+            var configPath = context.ParseResult.GetValueForOption(configOption);
+            var append = context.ParseResult.GetValueForOption(appendOption);
+            var force = context.ParseResult.GetValueForOption(forceOption);
+            var includeComments = context.ParseResult.GetValueForOption(includeCommentsOption);
+
+            var exitCode = Execute(output, configPath, append, force, includeComments);
+            context.ExitCode = exitCode;
+        });
+
+        return command;
+    }
+
+    private static int Execute(string output, string? configPath, bool append, bool force, bool includeComments)
+    {
+        try
+        {
+            var fullPath = Path.GetFullPath(output);
+
+            // Check if file exists
+            if (File.Exists(fullPath) && !append && !force)
+            {
+                AnsiConsole.MarkupLine($"[yellow]Warning:[/] File already exists: {output}");
+                AnsiConsole.MarkupLine("Use [bold]--force[/] to overwrite or [bold]--append[/] to add to existing file.");
+                return 1;
+            }
+
+            // Load configuration if provided
+            RuleKeeperConfig? config = null;
+            if (!string.IsNullOrEmpty(configPath))
+            {
+                var loader = new ConfigurationLoader();
+                config = loader.LoadFromFile(configPath);
+                AnsiConsole.MarkupLine($"[blue]Using config:[/] {configPath}");
+            }
+            else
+            {
+                // Try to find config in current directory
+                var loader = new ConfigurationLoader();
+                var (foundConfig, foundPath) = loader.LoadFromDirectory(Directory.GetCurrentDirectory());
+                if (foundPath != null)
+                {
+                    config = foundConfig;
+                    AnsiConsole.MarkupLine($"[blue]Found config:[/] {foundPath}");
+                }
+            }
+
+            // Generate editorconfig content
+            var content = GenerateEditorConfig(config, includeComments);
+
+            if (append && File.Exists(fullPath))
+            {
+                var existingContent = File.ReadAllText(fullPath);
+                content = existingContent.TrimEnd() + Environment.NewLine + Environment.NewLine + content;
+            }
+
+            File.WriteAllText(fullPath, content);
+
+            AnsiConsole.MarkupLine($"[green]Generated:[/] {output}");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("The .editorconfig file has been created with:");
+            AnsiConsole.MarkupLine("  - C# naming conventions");
+            AnsiConsole.MarkupLine("  - Code style preferences");
+            AnsiConsole.MarkupLine("  - Analyzer severity settings");
+            AnsiConsole.WriteLine();
+            AnsiConsole.MarkupLine("Add this file to your project root for IDE integration.");
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"[red]Error:[/] {ex.Message}");
+            return 1;
+        }
+    }
+
+    private static string GenerateEditorConfig(RuleKeeperConfig? config, bool includeComments)
+    {
+        var sb = new StringBuilder();
+
+        // Header
+        sb.AppendLine("# EditorConfig generated by RuleKeeper");
+        sb.AppendLine("# https://editorconfig.org");
+        sb.AppendLine($"# Generated: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        sb.AppendLine();
+
+        // Root indicator
+        sb.AppendLine("root = true");
+        sb.AppendLine();
+
+        // All files section
+        sb.AppendLine("[*]");
+        sb.AppendLine("indent_style = space");
+        sb.AppendLine("indent_size = 4");
+        sb.AppendLine("end_of_line = lf");
+        sb.AppendLine("charset = utf-8");
+        sb.AppendLine("trim_trailing_whitespace = true");
+        sb.AppendLine("insert_final_newline = true");
+        sb.AppendLine();
+
+        // C# specific section
+        sb.AppendLine("[*.cs]");
+        sb.AppendLine();
+
+        // Naming conventions section
+        if (includeComments)
+        {
+            sb.AppendLine("# =============================================");
+            sb.AppendLine("# Naming Conventions (RuleKeeper: CS-NAME-*)");
+            sb.AppendLine("# =============================================");
+            sb.AppendLine();
+        }
+
+        // Get severity from config or use defaults
+        var namingSeverity = GetCategorySeverity(config, "naming", SeverityLevel.Medium);
+
+        // Symbol definitions for naming rules
+        sb.AppendLine("# Symbol definitions");
+        sb.AppendLine("dotnet_naming_symbols.public_symbols.applicable_kinds = class, struct, interface, enum, property, method, field, event, delegate");
+        sb.AppendLine("dotnet_naming_symbols.public_symbols.applicable_accessibilities = public, internal, protected, protected_internal");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.private_fields.applicable_kinds = field");
+        sb.AppendLine("dotnet_naming_symbols.private_fields.applicable_accessibilities = private, private_protected");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.interfaces.applicable_kinds = interface");
+        sb.AppendLine("dotnet_naming_symbols.interfaces.applicable_accessibilities = *");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.type_parameters.applicable_kinds = type_parameter");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.constants.applicable_kinds = field");
+        sb.AppendLine("dotnet_naming_symbols.constants.required_modifiers = const");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.async_methods.applicable_kinds = method");
+        sb.AppendLine("dotnet_naming_symbols.async_methods.required_modifiers = async");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.classes.applicable_kinds = class");
+        sb.AppendLine("dotnet_naming_symbols.classes.applicable_accessibilities = *");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.methods.applicable_kinds = method");
+        sb.AppendLine("dotnet_naming_symbols.methods.applicable_accessibilities = *");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_symbols.properties.applicable_kinds = property");
+        sb.AppendLine("dotnet_naming_symbols.properties.applicable_accessibilities = *");
+        sb.AppendLine();
+
+        // Naming styles
+        sb.AppendLine("# Naming styles");
+        sb.AppendLine("dotnet_naming_style.pascal_case.capitalization = pascal_case");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_style.camel_case.capitalization = camel_case");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_style.underscore_camel_case.capitalization = camel_case");
+        sb.AppendLine("dotnet_naming_style.underscore_camel_case.required_prefix = _");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_style.interface_style.capitalization = pascal_case");
+        sb.AppendLine("dotnet_naming_style.interface_style.required_prefix = I");
+        sb.AppendLine();
+        sb.AppendLine("dotnet_naming_style.async_suffix.capitalization = pascal_case");
+        sb.AppendLine("dotnet_naming_style.async_suffix.required_suffix = Async");
+        sb.AppendLine();
+
+        var editorConfigSeverity = MapSeverityToEditorConfig(namingSeverity);
+
+        // CS-NAME-001: Class naming
+        if (includeComments) sb.AppendLine("# CS-NAME-001: Classes must use PascalCase");
+        sb.AppendLine($"dotnet_naming_rule.classes_must_be_pascal_case.symbols = classes");
+        sb.AppendLine($"dotnet_naming_rule.classes_must_be_pascal_case.style = pascal_case");
+        sb.AppendLine($"dotnet_naming_rule.classes_must_be_pascal_case.severity = {editorConfigSeverity}");
+        sb.AppendLine();
+
+        // CS-NAME-002: Method naming
+        if (includeComments) sb.AppendLine("# CS-NAME-002: Methods must use PascalCase");
+        sb.AppendLine($"dotnet_naming_rule.methods_must_be_pascal_case.symbols = methods");
+        sb.AppendLine($"dotnet_naming_rule.methods_must_be_pascal_case.style = pascal_case");
+        sb.AppendLine($"dotnet_naming_rule.methods_must_be_pascal_case.severity = {editorConfigSeverity}");
+        sb.AppendLine();
+
+        // CS-NAME-003: Async naming
+        var asyncSeverity = GetRuleSeverity(config, "naming", "async_naming", SeverityLevel.Low);
+        if (includeComments) sb.AppendLine("# CS-NAME-003: Async methods must end with 'Async'");
+        sb.AppendLine($"dotnet_naming_rule.async_methods_must_end_with_async.symbols = async_methods");
+        sb.AppendLine($"dotnet_naming_rule.async_methods_must_end_with_async.style = async_suffix");
+        sb.AppendLine($"dotnet_naming_rule.async_methods_must_end_with_async.severity = {MapSeverityToEditorConfig(asyncSeverity)}");
+        sb.AppendLine();
+
+        // CS-NAME-004: Private field naming
+        if (includeComments) sb.AppendLine("# CS-NAME-004: Private fields must use _camelCase");
+        sb.AppendLine($"dotnet_naming_rule.private_fields_must_be_underscore_camel_case.symbols = private_fields");
+        sb.AppendLine($"dotnet_naming_rule.private_fields_must_be_underscore_camel_case.style = underscore_camel_case");
+        sb.AppendLine($"dotnet_naming_rule.private_fields_must_be_underscore_camel_case.severity = {editorConfigSeverity}");
+        sb.AppendLine();
+
+        // CS-NAME-005: Constant naming
+        if (includeComments) sb.AppendLine("# CS-NAME-005: Constants must use PascalCase");
+        sb.AppendLine($"dotnet_naming_rule.constants_must_be_pascal_case.symbols = constants");
+        sb.AppendLine($"dotnet_naming_rule.constants_must_be_pascal_case.style = pascal_case");
+        sb.AppendLine($"dotnet_naming_rule.constants_must_be_pascal_case.severity = {editorConfigSeverity}");
+        sb.AppendLine();
+
+        // CS-NAME-006: Property naming
+        if (includeComments) sb.AppendLine("# CS-NAME-006: Properties must use PascalCase");
+        sb.AppendLine($"dotnet_naming_rule.properties_must_be_pascal_case.symbols = properties");
+        sb.AppendLine($"dotnet_naming_rule.properties_must_be_pascal_case.style = pascal_case");
+        sb.AppendLine($"dotnet_naming_rule.properties_must_be_pascal_case.severity = {editorConfigSeverity}");
+        sb.AppendLine();
+
+        // CS-NAME-007: Interface naming
+        if (includeComments) sb.AppendLine("# CS-NAME-007: Interfaces must start with 'I'");
+        sb.AppendLine($"dotnet_naming_rule.interfaces_must_start_with_i.symbols = interfaces");
+        sb.AppendLine($"dotnet_naming_rule.interfaces_must_start_with_i.style = interface_style");
+        sb.AppendLine($"dotnet_naming_rule.interfaces_must_start_with_i.severity = {editorConfigSeverity}");
+        sb.AppendLine();
+
+        // Code style section
+        if (includeComments)
+        {
+            sb.AppendLine("# =============================================");
+            sb.AppendLine("# Code Style Preferences");
+            sb.AppendLine("# =============================================");
+            sb.AppendLine();
+        }
+
+        // var preferences
+        sb.AppendLine("csharp_style_var_for_built_in_types = true:suggestion");
+        sb.AppendLine("csharp_style_var_when_type_is_apparent = true:suggestion");
+        sb.AppendLine("csharp_style_var_elsewhere = true:suggestion");
+        sb.AppendLine();
+
+        // Expression-bodied members
+        sb.AppendLine("csharp_style_expression_bodied_methods = when_on_single_line:suggestion");
+        sb.AppendLine("csharp_style_expression_bodied_constructors = false:suggestion");
+        sb.AppendLine("csharp_style_expression_bodied_operators = when_on_single_line:suggestion");
+        sb.AppendLine("csharp_style_expression_bodied_properties = when_on_single_line:suggestion");
+        sb.AppendLine("csharp_style_expression_bodied_indexers = when_on_single_line:suggestion");
+        sb.AppendLine("csharp_style_expression_bodied_accessors = when_on_single_line:suggestion");
+        sb.AppendLine("csharp_style_expression_bodied_lambdas = when_on_single_line:suggestion");
+        sb.AppendLine();
+
+        // Pattern matching
+        sb.AppendLine("csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion");
+        sb.AppendLine("csharp_style_pattern_matching_over_as_with_null_check = true:suggestion");
+        sb.AppendLine("csharp_style_prefer_switch_expression = true:suggestion");
+        sb.AppendLine("csharp_style_prefer_pattern_matching = true:suggestion");
+        sb.AppendLine();
+
+        // Null checking preferences
+        sb.AppendLine("csharp_style_throw_expression = true:suggestion");
+        sb.AppendLine("csharp_style_conditional_delegate_call = true:suggestion");
+        sb.AppendLine("csharp_style_prefer_null_check_over_type_check = true:suggestion");
+        sb.AppendLine();
+
+        // Code block preferences
+        sb.AppendLine("csharp_prefer_braces = true:warning");
+        sb.AppendLine("csharp_prefer_simple_using_statement = true:suggestion");
+        sb.AppendLine();
+
+        // using directive preferences
+        sb.AppendLine("csharp_using_directive_placement = outside_namespace:warning");
+        sb.AppendLine();
+
+        // Modifier preferences
+        sb.AppendLine("dotnet_style_require_accessibility_modifiers = always:warning");
+        sb.AppendLine("csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion");
+        sb.AppendLine();
+
+        // Analyzer rules section (mapping to Roslyn analyzers)
+        if (includeComments)
+        {
+            sb.AppendLine("# =============================================");
+            sb.AppendLine("# Analyzer Rules (RuleKeeper equivalents)");
+            sb.AppendLine("# =============================================");
+            sb.AppendLine();
+        }
+
+        // Map RuleKeeper rules to built-in Roslyn analyzer rules
+        var asyncSev = GetCategorySeverity(config, "async", SeverityLevel.High);
+        var securitySev = GetCategorySeverity(config, "security", SeverityLevel.Critical);
+
+        // CS-ASYNC-001: No async void (CA2007, VSTHRD101)
+        if (includeComments) sb.AppendLine("# CS-ASYNC-001: Avoid async void methods");
+        sb.AppendLine($"dotnet_diagnostic.VSTHRD101.severity = {MapSeverityToEditorConfig(asyncSev)}");
+        sb.AppendLine();
+
+        // CS-ASYNC-002: No blocking on async (VSTHRD002, VSTHRD103)
+        if (includeComments) sb.AppendLine("# CS-ASYNC-002: Avoid blocking calls like .Result and .Wait()");
+        sb.AppendLine($"dotnet_diagnostic.VSTHRD002.severity = {MapSeverityToEditorConfig(asyncSev)}");
+        sb.AppendLine($"dotnet_diagnostic.VSTHRD103.severity = {MapSeverityToEditorConfig(asyncSev)}");
+        sb.AppendLine();
+
+        // CS-ASYNC-003: ConfigureAwait (CA2007)
+        if (includeComments) sb.AppendLine("# CS-ASYNC-003: Consider ConfigureAwait");
+        sb.AppendLine($"dotnet_diagnostic.CA2007.severity = suggestion");
+        sb.AppendLine();
+
+        // CS-SEC-001: SQL Injection (CA2100)
+        if (includeComments) sb.AppendLine("# CS-SEC-001: SQL Injection prevention");
+        sb.AppendLine($"dotnet_diagnostic.CA2100.severity = {MapSeverityToEditorConfig(securitySev)}");
+        sb.AppendLine();
+
+        // CS-SEC-002: Hardcoded secrets (CA2104)
+        if (includeComments) sb.AppendLine("# CS-SEC-002: Avoid hardcoded credentials");
+        sb.AppendLine($"dotnet_diagnostic.CA2104.severity = {MapSeverityToEditorConfig(securitySev)}");
+        sb.AppendLine();
+
+        // CA1031: Don't catch general exception (CS-EXC-002)
+        var excSev = GetCategorySeverity(config, "exceptions", SeverityLevel.High);
+        if (includeComments) sb.AppendLine("# CS-EXC-002: Don't catch general exception types");
+        sb.AppendLine($"dotnet_diagnostic.CA1031.severity = {MapSeverityToEditorConfig(excSev)}");
+        sb.AppendLine();
+
+        // IDE0059: Unnecessary assignment (general code quality)
+        sb.AppendLine("# Code quality");
+        sb.AppendLine("dotnet_diagnostic.IDE0059.severity = warning");
+        sb.AppendLine("dotnet_diagnostic.IDE0060.severity = warning");
+        sb.AppendLine();
+
+        // Formatting section
+        if (includeComments)
+        {
+            sb.AppendLine("# =============================================");
+            sb.AppendLine("# Formatting");
+            sb.AppendLine("# =============================================");
+            sb.AppendLine();
+        }
+
+        sb.AppendLine("# New line preferences");
+        sb.AppendLine("csharp_new_line_before_open_brace = all");
+        sb.AppendLine("csharp_new_line_before_else = true");
+        sb.AppendLine("csharp_new_line_before_catch = true");
+        sb.AppendLine("csharp_new_line_before_finally = true");
+        sb.AppendLine("csharp_new_line_before_members_in_object_initializers = true");
+        sb.AppendLine("csharp_new_line_before_members_in_anonymous_types = true");
+        sb.AppendLine("csharp_new_line_between_query_expression_clauses = true");
+        sb.AppendLine();
+
+        // Indentation preferences
+        sb.AppendLine("# Indentation preferences");
+        sb.AppendLine("csharp_indent_case_contents = true");
+        sb.AppendLine("csharp_indent_switch_labels = true");
+        sb.AppendLine("csharp_indent_labels = one_less_than_current");
+        sb.AppendLine("csharp_indent_block_contents = true");
+        sb.AppendLine("csharp_indent_braces = false");
+        sb.AppendLine();
+
+        // Space preferences
+        sb.AppendLine("# Space preferences");
+        sb.AppendLine("csharp_space_after_cast = false");
+        sb.AppendLine("csharp_space_after_keywords_in_control_flow_statements = true");
+        sb.AppendLine("csharp_space_between_parentheses = false");
+        sb.AppendLine("csharp_space_before_colon_in_inheritance_clause = true");
+        sb.AppendLine("csharp_space_after_colon_in_inheritance_clause = true");
+        sb.AppendLine("csharp_space_around_binary_operators = before_and_after");
+        sb.AppendLine("csharp_space_between_method_declaration_parameter_list_parentheses = false");
+        sb.AppendLine("csharp_space_between_method_declaration_empty_parameter_list_parentheses = false");
+        sb.AppendLine("csharp_space_between_method_declaration_name_and_open_parenthesis = false");
+        sb.AppendLine("csharp_space_between_method_call_parameter_list_parentheses = false");
+        sb.AppendLine("csharp_space_between_method_call_empty_parameter_list_parentheses = false");
+        sb.AppendLine("csharp_space_between_method_call_name_and_opening_parenthesis = false");
+        sb.AppendLine();
+
+        return sb.ToString();
+    }
+
+    private static SeverityLevel GetCategorySeverity(RuleKeeperConfig? config, string category, SeverityLevel defaultSeverity)
+    {
+        if (config == null)
+            return defaultSeverity;
+
+        if (config.CodingStandards.TryGetValue(category, out var categoryConfig))
+        {
+            return categoryConfig.Severity ?? defaultSeverity;
+        }
+
+        if (config.PrebuiltPolicies.TryGetValue(category, out var policy) && policy.Enabled)
+        {
+            return policy.Severity ?? defaultSeverity;
+        }
+
+        return defaultSeverity;
+    }
+
+    private static SeverityLevel GetRuleSeverity(RuleKeeperConfig? config, string category, string ruleName, SeverityLevel defaultSeverity)
+    {
+        if (config == null)
+            return defaultSeverity;
+
+        if (config.CodingStandards.TryGetValue(category, out var categoryConfig))
+        {
+            // Find rule by ID or name in the list
+            var rule = categoryConfig.Rules.FirstOrDefault(r =>
+                r.Id == ruleName ||
+                r.Name?.Equals(ruleName, StringComparison.OrdinalIgnoreCase) == true);
+
+            if (rule != null && rule.IsEnabled)
+            {
+                return rule.Severity;
+            }
+        }
+
+        return defaultSeverity;
+    }
+
+    private static string MapSeverityToEditorConfig(SeverityLevel severity)
+    {
+        return severity switch
+        {
+            SeverityLevel.Critical => "error",
+            SeverityLevel.High => "error",
+            SeverityLevel.Medium => "warning",
+            SeverityLevel.Low => "suggestion",
+            SeverityLevel.Info => "suggestion",
+            _ => "suggestion"
+        };
+    }
+}

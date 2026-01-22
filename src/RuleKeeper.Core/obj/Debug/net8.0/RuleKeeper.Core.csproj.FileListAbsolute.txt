@@ -1,0 +1,15 @@
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeeper.Core.csproj.AssemblyReference.cache
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeeper.Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeeper.Core.AssemblyInfoInputs.cache
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeeper.Core.AssemblyInfo.cs
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeeper.Core.csproj.CoreCompileInputs.cache
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/bin/Debug/net8.0/RuleKeeper.Core.deps.json
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/bin/Debug/net8.0/RuleKeeper.Core.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/bin/Debug/net8.0/RuleKeeper.Core.pdb
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/bin/Debug/net8.0/RuleKeeper.Sdk.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/bin/Debug/net8.0/RuleKeeper.Sdk.pdb
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeep.17D726C3.Up2Date
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeeper.Core.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/refint/RuleKeeper.Core.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/RuleKeeper.Core.pdb
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Core/obj/Debug/net8.0/ref/RuleKeeper.Core.dll

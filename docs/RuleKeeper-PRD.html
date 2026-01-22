@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper - Product Requirements Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #fff;
+        }
+        .cover-page {
+            text-align: center;
+            padding: 100px 0;
+            border-bottom: 3px solid #1a5f7a;
+            margin-bottom: 50px;
+        }
+        .cover-page h1 {
+            font-size: 3em;
+            color: #1a5f7a;
+            margin-bottom: 20px;
+        }
+        .cover-page .subtitle {
+            font-size: 1.5em;
+            color: #666;
+            margin-bottom: 40px;
+        }
+        .cover-page .meta {
+            color: #888;
+            font-size: 1em;
+        }
+        h1 {
+            color: #1a5f7a;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.5em;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        h4 {
+            color: #546e7a;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #1a5f7a;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .requirement-box {
+            background: #f8f9fa;
+            border-left: 4px solid #1a5f7a;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .requirement-box strong {
+            color: #1a5f7a;
+        }
+        .priority-high {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        .priority-medium {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+        }
+        .priority-low {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        .feature-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            background: #fff;
+        }
+        .feature-card h4 {
+            margin-top: 0;
+            color: #1a5f7a;
+        }
+        .toc {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #1a5f7a;
+        }
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc li {
+            padding: 5px 0;
+        }
+        .toc a {
+            color: #1a5f7a;
+            text-decoration: none;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .status-implemented {
+            background: #28a745;
+            color: white;
+        }
+        .status-planned {
+            background: #ffc107;
+            color: #333;
+        }
+        .status-future {
+            background: #6c757d;
+            color: white;
+        }
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        @media print {
+            body {
+                max-width: none;
+                padding: 20px;
+            }
+            .cover-page {
+                page-break-after: always;
+            }
+            h2 {
+                page-break-before: always;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cover-page">
+        <h1>RuleKeeper</h1>
+        <p class="subtitle">Product Requirements Document</p>
+        <p class="meta">
+            Version 1.0.0<br>
+            January 2026<br><br>
+            Policy-as-Code CLI Tool for C# Static Analysis
+        </p>
+    </div>
+
+    <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#overview">1. Product Overview</a></li>
+            <li><a href="#objectives">2. Objectives & Goals</a></li>
+            <li><a href="#target-users">3. Target Users</a></li>
+            <li><a href="#functional-requirements">4. Functional Requirements</a></li>
+            <li><a href="#non-functional-requirements">5. Non-Functional Requirements</a></li>
+            <li><a href="#architecture">6. System Architecture</a></li>
+            <li><a href="#features">7. Feature Specifications</a></li>
+            <li><a href="#rules">8. Built-in Rules</a></li>
+            <li><a href="#integrations">9. Integrations</a></li>
+            <li><a href="#roadmap">10. Roadmap</a></li>
+        </ul>
+    </div>
+
+    <h2 id="overview">1. Product Overview</h2>
+
+    <h3>1.1 Product Description</h3>
+    <p><strong>RuleKeeper</strong> is a powerful, policy-as-code CLI tool for C# that uses Microsoft Roslyn for deep semantic analysis of source code against configurable YAML policies. It helps development teams enforce coding standards, security practices, and architectural guidelines automatically.</p>
+
+    <h3>1.2 Problem Statement</h3>
+    <p>Development teams face challenges maintaining consistent code quality:</p>
+    <ul>
+        <li>Inconsistent coding standards across team members</li>
+        <li>Security vulnerabilities introduced through code review gaps</li>
+        <li>Architectural drift over time</li>
+        <li>Manual code review bottlenecks</li>
+        <li>Difficulty enforcing company-wide policies</li>
+    </ul>
+
+    <h3>1.3 Solution</h3>
+    <p>RuleKeeper provides automated, configurable static analysis that:</p>
+    <ul>
+        <li>Enforces coding standards automatically</li>
+        <li>Detects security vulnerabilities early</li>
+        <li>Integrates with CI/CD pipelines</li>
+        <li>Allows custom rule creation</li>
+        <li>Provides actionable fix suggestions</li>
+    </ul>
+
+    <h2 id="objectives">2. Objectives & Goals</h2>
+
+    <h3>2.1 Primary Objectives</h3>
+    <div class="requirement-box">
+        <strong>OBJ-001:</strong> Provide deep semantic analysis of C# code using Roslyn
+    </div>
+    <div class="requirement-box">
+        <strong>OBJ-002:</strong> Support highly configurable YAML-based policy definitions
+    </div>
+    <div class="requirement-box">
+        <strong>OBJ-003:</strong> Enable seamless CI/CD integration
+    </div>
+    <div class="requirement-box">
+        <strong>OBJ-004:</strong> Allow extensibility through custom rules
+    </div>
+
+    <h3>2.2 Success Metrics</h3>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Target</th>
+        </tr>
+        <tr>
+            <td>Analysis speed</td>
+            <td>&lt; 1 second per 1000 lines of code</td>
+        </tr>
+        <tr>
+            <td>False positive rate</td>
+            <td>&lt; 5%</td>
+        </tr>
+        <tr>
+            <td>Rule coverage</td>
+            <td>27+ built-in rules across 6 categories</td>
+        </tr>
+        <tr>
+            <td>Auto-fixable rules</td>
+            <td>15 rules with automatic fixes</td>
+        </tr>
+        <tr>
+            <td>Output formats</td>
+            <td>4 formats (console, JSON, SARIF, HTML)</td>
+        </tr>
+    </table>
+
+    <h2 id="target-users">3. Target Users</h2>
+
+    <h3>3.1 User Personas</h3>
+
+    <div class="feature-card">
+        <h4>Software Developer</h4>
+        <p><strong>Needs:</strong> Quick feedback on code quality, understanding of violations</p>
+        <p><strong>Usage:</strong> Local development, pre-commit checks</p>
+    </div>
+
+    <div class="feature-card">
+        <h4>Tech Lead / Architect</h4>
+        <p><strong>Needs:</strong> Enforce architectural decisions, custom rules</p>
+        <p><strong>Usage:</strong> Configuration, custom rule development</p>
+    </div>
+
+    <div class="feature-card">
+        <h4>DevOps Engineer</h4>
+        <p><strong>Needs:</strong> CI/CD integration, threshold management</p>
+        <p><strong>Usage:</strong> Pipeline configuration, SARIF integration</p>
+    </div>
+
+    <div class="feature-card">
+        <h4>Security Engineer</h4>
+        <p><strong>Needs:</strong> Security vulnerability detection, compliance</p>
+        <p><strong>Usage:</strong> Security rule configuration, audit reports</p>
+    </div>
+
+    <h2 id="functional-requirements">4. Functional Requirements</h2>
+
+    <h3>4.1 Core Analysis</h3>
+    <div class="requirement-box priority-high">
+        <strong>FR-001:</strong> Analyze C# source files using Roslyn AST parsing<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-high">
+        <strong>FR-002:</strong> Support semantic model analysis for type information<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-high">
+        <strong>FR-003:</strong> Analyze individual files, directories, projects, and solutions<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-004:</strong> Support parallel analysis for improved performance<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+
+    <h3>4.2 Configuration</h3>
+    <div class="requirement-box priority-high">
+        <strong>FR-010:</strong> Load configuration from YAML files<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-high">
+        <strong>FR-011:</strong> Auto-discover configuration in parent directories<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-012:</strong> Validate configuration files<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-013:</strong> Support rule enable/disable per category<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+
+    <h3>4.3 Reporting</h3>
+    <div class="requirement-box priority-high">
+        <strong>FR-020:</strong> Console output with colored, tabular format<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-high">
+        <strong>FR-021:</strong> JSON output for programmatic processing<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-high">
+        <strong>FR-022:</strong> SARIF output for CI/CD integration<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-023:</strong> HTML report generation<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-024:</strong> Summary-only mode for concise output<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-low">
+        <strong>FR-025:</strong> Visualization charts in reports<br>
+        <em>Priority: Low | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+
+    <h3>4.4 Thresholds & Exit Codes</h3>
+    <div class="requirement-box priority-high">
+        <strong>FR-030:</strong> Configurable severity thresholds<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-high">
+        <strong>FR-031:</strong> Exit codes based on violation severity<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-032:</strong> Percentage-based thresholds<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+
+    <h3>4.5 Auto-Fix</h3>
+    <div class="requirement-box priority-high">
+        <strong>FR-040:</strong> Automatic code fix for detected violations<br>
+        <em>Priority: High | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-041:</strong> Filter fixes by rule ID or category<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-042:</strong> Dry-run mode to preview fixes<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-043:</strong> Interactive fix selection<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-low">
+        <strong>FR-044:</strong> Automatic backup before fixing<br>
+        <em>Priority: Low | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-045:</strong> Custom fix provider support via SDK<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+
+    <h3>4.6 Extensibility</h3>
+    <div class="requirement-box priority-medium">
+        <strong>FR-050:</strong> SDK for custom rule development<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-051:</strong> Load custom rules from external assemblies<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-052:</strong> SDK for custom fix provider development<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-medium">
+        <strong>FR-053:</strong> Load custom fix providers from external assemblies<br>
+        <em>Priority: Medium | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-low">
+        <strong>FR-054:</strong> EditorConfig generation for IDE integration<br>
+        <em>Priority: Low | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+    <div class="requirement-box priority-low">
+        <strong>FR-055:</strong> GlobalConfig and Ruleset generation for IDE enforcement<br>
+        <em>Priority: Low | Status: <span class="status-badge status-implemented">Implemented</span></em>
+    </div>
+
+    <h2 id="non-functional-requirements">5. Non-Functional Requirements</h2>
+
+    <h3>5.1 Performance</h3>
+    <table>
+        <tr>
+            <th>Requirement</th>
+            <th>Target</th>
+        </tr>
+        <tr>
+            <td>Analysis speed (per file)</td>
+            <td>&lt; 100ms average</td>
+        </tr>
+        <tr>
+            <td>Memory usage</td>
+            <td>&lt; 500MB for typical projects</td>
+        </tr>
+        <tr>
+            <td>Startup time</td>
+            <td>&lt; 2 seconds</td>
+        </tr>
+    </table>
+
+    <h3>5.2 Compatibility</h3>
+    <ul>
+        <li>.NET 8.0 runtime required</li>
+        <li>Cross-platform: Windows, macOS, Linux</li>
+        <li>C# language versions: 8.0 - 12.0</li>
+    </ul>
+
+    <h3>5.3 Reliability</h3>
+    <ul>
+        <li>Graceful handling of malformed source files</li>
+        <li>Continue analysis after individual file failures</li>
+        <li>Clear error messages for configuration issues</li>
+    </ul>
+
+    <h2 id="architecture">6. System Architecture</h2>
+
+    <h3>6.1 High-Level Architecture</h3>
+
+    <div class="architecture-diagram">
+┌─────────────────────────────────────────────────────────────────┐
+│                         RuleKeeper CLI                          │
+│                    (System.CommandLine)                         │
+│  scan │ fix │ init │ validate │ list-rules │ generate-*        │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      Configuration Engine                        │
+│              (YAML Parser + Rule Registry)                       │
+│                       YamlDotNet                                 │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                       Analysis Engine                            │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
+│  │  Roslyn Loader  │  │  Rule Executor  │  │ Report Generator│  │
+│  │  (Workspace)    │  │  (Analyzers)    │  │ (JSON/Console)  │  │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                ┌───────────────┴───────────────┐
+                ▼                               ▼
+┌───────────────────────────────┐ ┌─────────────────────────────┐
+│         Rule Library          │ │        Fix Engine           │
+│  ┌──────────┐  ┌──────────┐  │ │  ┌──────────┐  ┌──────────┐ │
+│  │ Built-in │  │ Custom   │  │ │  │  Fix     │  │ Code     │ │
+│  │ Analyzers│  │ Plugins  │  │ │  │ Providers│  │ Fixer    │ │
+│  └──────────┘  └──────────┘  │ │  └──────────┘  └──────────┘ │
+└───────────────────────────────┘ └─────────────────────────────┘
+    </div>
+
+    <h3>6.2 Project Structure</h3>
+    <pre>
+RuleKeeper/
+├── src/
+│   ├── RuleKeeper.Cli/          # CLI application
+│   │   └── Commands/            # scan, fix, init, validate, list-rules, generate-*
+│   ├── RuleKeeper.Core/         # Core analysis engine
+│   │   ├── Analysis/            # AnalysisEngine, RoslynLoader
+│   │   ├── Configuration/       # YAML config models & loader
+│   │   ├── Fixing/              # CodeFixer, FixProviders
+│   │   ├── Reporting/           # Console, JSON, SARIF, HTML reporters
+│   │   └── Rules/               # RuleRegistry, RuleExecutor
+│   ├── RuleKeeper.Rules/        # Built-in rule analyzers
+│   │   ├── Naming/              # CS-NAME-* rules
+│   │   ├── Security/            # CS-SEC-* rules
+│   │   ├── Async/               # CS-ASYNC-* rules
+│   │   ├── Design/              # CS-DESIGN-* rules
+│   │   ├── Exceptions/          # CS-EXC-* rules
+│   │   └── DependencyInjection/ # CS-DI-* rules
+│   └── RuleKeeper.Sdk/          # SDK for custom rules
+├── tests/
+│   ├── RuleKeeper.Core.Tests/
+│   ├── RuleKeeper.Rules.Tests/
+│   └── RuleKeeper.Integration.Tests/
+└── docs/
+    </pre>
+
+    <h3>6.3 Key Dependencies</h3>
+    <table>
+        <tr>
+            <th>Package</th>
+            <th>Purpose</th>
+            <th>Version</th>
+        </tr>
+        <tr>
+            <td>Microsoft.CodeAnalysis.CSharp</td>
+            <td>Roslyn C# compiler APIs</td>
+            <td>4.8.0</td>
+        </tr>
+        <tr>
+            <td>Microsoft.CodeAnalysis.Workspaces.MSBuild</td>
+            <td>Solution/project loading</td>
+            <td>4.8.0</td>
+        </tr>
+        <tr>
+            <td>YamlDotNet</td>
+            <td>YAML parsing</td>
+            <td>15.1.0</td>
+        </tr>
+        <tr>
+            <td>System.CommandLine</td>
+            <td>CLI framework</td>
+            <td>2.0.0-beta4</td>
+        </tr>
+        <tr>
+            <td>Spectre.Console</td>
+            <td>Rich console output</td>
+            <td>0.48.0</td>
+        </tr>
+    </table>
+
+    <h2 id="features">7. Feature Specifications</h2>
+
+    <h3>7.1 Console Output</h3>
+    <p>The console reporter provides rich output including:</p>
+    <ul>
+        <li><strong>Summary Table:</strong> Path, config, files analyzed, duration, total violations</li>
+        <li><strong>Severity Breakdown:</strong> Count per severity with PASS/FAIL indicators</li>
+        <li><strong>Bar Chart:</strong> Visual distribution of violations</li>
+        <li><strong>Top Violations:</strong> Most frequent rules violated</li>
+        <li><strong>Detailed List:</strong> Each violation with file, line, message, code snippet, fix hint</li>
+    </ul>
+
+    <h3>7.2 Summary-Only Mode</h3>
+    <p>When <code>--summary-only</code> is enabled:</p>
+    <ul>
+        <li>Shows all summary tables and charts</li>
+        <li>Hides individual violation details</li>
+        <li>Ideal for CI/CD pipelines and quick overviews</li>
+    </ul>
+
+    <h3>7.3 Threshold System</h3>
+    <table>
+        <tr>
+            <th>Threshold</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Critical Threshold</td>
+            <td>Max critical violations before failure</td>
+        </tr>
+        <tr>
+            <td>High Threshold</td>
+            <td>Max high-severity violations before failure</td>
+        </tr>
+        <tr>
+            <td>Total Threshold</td>
+            <td>Max total violations before failure</td>
+        </tr>
+        <tr>
+            <td>Percentage Threshold</td>
+            <td>Max violation rate (violations/files)</td>
+        </tr>
+    </table>
+
+    <h3>7.4 Auto-Fix System</h3>
+    <p>RuleKeeper can automatically fix many detected violations:</p>
+
+    <h4>Supported Fix Categories</h4>
+    <table>
+        <tr>
+            <th>Category</th>
+            <th>Rules</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Naming</td>
+            <td>CS-NAME-001 to CS-NAME-010</td>
+            <td>Renames identifiers to follow conventions</td>
+        </tr>
+        <tr>
+            <td>Async</td>
+            <td>CS-ASYNC-002, CS-ASYNC-003</td>
+            <td>Replaces .Result/.Wait() with await, adds ConfigureAwait</td>
+        </tr>
+        <tr>
+            <td>Exceptions</td>
+            <td>CS-EXC-001, CS-EXC-004</td>
+            <td>Adds TODO comments to empty catch, fixes throw ex</td>
+        </tr>
+    </table>
+
+    <h4>Fix Modes</h4>
+    <ul>
+        <li><strong>Automatic:</strong> Apply all available fixes automatically</li>
+        <li><strong>Dry-run:</strong> Preview fixes without applying them</li>
+        <li><strong>Interactive:</strong> Confirm each fix before applying</li>
+        <li><strong>Filtered:</strong> Fix only specific rules or categories</li>
+    </ul>
+
+    <h4>Safety Features</h4>
+    <ul>
+        <li>Automatic backup creation before modifications</li>
+        <li>Safe fixes marked with <code>IsSafe=true</code></li>
+        <li>Fixes applied in reverse order to preserve line numbers</li>
+        <li>Detailed fix summary with success/failure counts</li>
+    </ul>
+
+    <h4>Custom Fix Providers</h4>
+    <p>Extend the fix system with custom fix providers:</p>
+    <ul>
+        <li><strong>SDK Support:</strong> <code>IFixProvider</code> interface and <code>BaseFixProvider</code> base class</li>
+        <li><strong>Auto-Discovery:</strong> Fix providers with <code>[FixProvider]</code> attribute are automatically discovered</li>
+        <li><strong>Configuration:</strong> Load via <code>custom_fix_providers</code> or <code>custom_rules</code> in YAML</li>
+        <li><strong>Utilities:</strong> Helper methods for common operations (PascalCase, camelCase, line parsing)</li>
+    </ul>
+
+    <h3>7.5 IDE Integration</h3>
+    <p>Generate configuration files for IDE enforcement:</p>
+    <ul>
+        <li><strong>.globalconfig:</strong> Modern analyzer configuration for .NET 5+</li>
+        <li><strong>.ruleset:</strong> Classic ruleset file for older projects</li>
+        <li><strong>Directory.Build.props:</strong> MSBuild properties for project-wide settings</li>
+        <li><strong>.editorconfig:</strong> Editor configuration for code style</li>
+    </ul>
+
+    <h2 id="rules">8. Built-in Rules</h2>
+
+    <h3>8.1 Naming Conventions (10 rules)</h3>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Name</th>
+            <th>Severity</th>
+            <th>Auto-Fix</th>
+        </tr>
+        <tr>
+            <td>CS-NAME-001</td>
+            <td>Class Naming (PascalCase)</td>
+            <td>Medium</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-002</td>
+            <td>Method Naming (PascalCase)</td>
+            <td>Medium</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-003</td>
+            <td>Async Method Naming (Async suffix)</td>
+            <td>Low</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-004</td>
+            <td>Private Field Naming (_camelCase)</td>
+            <td>Low</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-005</td>
+            <td>Constant Naming (PascalCase)</td>
+            <td>Medium</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-006</td>
+            <td>Property Naming (PascalCase)</td>
+            <td>Medium</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-007</td>
+            <td>Interface Naming (I prefix)</td>
+            <td>Medium</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-008</td>
+            <td>Parameter Naming (camelCase)</td>
+            <td>Low</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-009</td>
+            <td>Local Variable Naming (camelCase)</td>
+            <td>Low</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-NAME-010</td>
+            <td>Type Parameter Naming (T prefix)</td>
+            <td>Low</td>
+            <td>Yes</td>
+        </tr>
+    </table>
+
+    <h3>8.2 Security (5 rules)</h3>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Name</th>
+            <th>Severity</th>
+        </tr>
+        <tr>
+            <td>CS-SEC-001</td>
+            <td>SQL Injection Detection</td>
+            <td>Critical</td>
+        </tr>
+        <tr>
+            <td>CS-SEC-002</td>
+            <td>Hardcoded Secrets</td>
+            <td>Critical</td>
+        </tr>
+        <tr>
+            <td>CS-SEC-003</td>
+            <td>Sensitive Data Logging</td>
+            <td>High</td>
+        </tr>
+        <tr>
+            <td>CS-SEC-004</td>
+            <td>XSS Prevention</td>
+            <td>Critical</td>
+        </tr>
+        <tr>
+            <td>CS-SEC-005</td>
+            <td>Path Traversal</td>
+            <td>High</td>
+        </tr>
+    </table>
+
+    <h3>8.3 Async Programming (3 rules)</h3>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Name</th>
+            <th>Severity</th>
+            <th>Auto-Fix</th>
+        </tr>
+        <tr>
+            <td>CS-ASYNC-001</td>
+            <td>Async Void Avoidance</td>
+            <td>High</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>CS-ASYNC-002</td>
+            <td>Blocking Async (.Result/.Wait())</td>
+            <td>Critical</td>
+            <td>Yes*</td>
+        </tr>
+        <tr>
+            <td>CS-ASYNC-003</td>
+            <td>ConfigureAwait Usage</td>
+            <td>Low</td>
+            <td>Yes</td>
+        </tr>
+    </table>
+    <p><em>* Requires method to be async; fix adds await but may require additional changes.</em></p>
+
+    <h3>8.4 Design (4 rules)</h3>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Name</th>
+            <th>Severity</th>
+        </tr>
+        <tr>
+            <td>CS-DESIGN-001</td>
+            <td>Method Length</td>
+            <td>Medium</td>
+        </tr>
+        <tr>
+            <td>CS-DESIGN-002</td>
+            <td>Parameter Count</td>
+            <td>Medium</td>
+        </tr>
+        <tr>
+            <td>CS-DESIGN-003</td>
+            <td>Cyclomatic Complexity</td>
+            <td>Medium</td>
+        </tr>
+        <tr>
+            <td>CS-DESIGN-004</td>
+            <td>Class Length</td>
+            <td>Medium</td>
+        </tr>
+    </table>
+
+    <h3>8.5 Exception Handling (4 rules)</h3>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Name</th>
+            <th>Severity</th>
+            <th>Auto-Fix</th>
+        </tr>
+        <tr>
+            <td>CS-EXC-001</td>
+            <td>Empty Catch Blocks</td>
+            <td>High</td>
+            <td>Yes</td>
+        </tr>
+        <tr>
+            <td>CS-EXC-002</td>
+            <td>Catching Base Exception</td>
+            <td>Medium</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>CS-EXC-003</td>
+            <td>Throwing in Finally</td>
+            <td>High</td>
+            <td>No</td>
+        </tr>
+        <tr>
+            <td>CS-EXC-004</td>
+            <td>Throw vs Throw Ex</td>
+            <td>High</td>
+            <td>Yes</td>
+        </tr>
+    </table>
+
+    <h3>8.6 Dependency Injection (2 rules)</h3>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Name</th>
+            <th>Severity</th>
+        </tr>
+        <tr>
+            <td>CS-DI-001</td>
+            <td>Concrete Type Injection</td>
+            <td>Medium</td>
+        </tr>
+        <tr>
+            <td>CS-DI-002</td>
+            <td>Service Locator Pattern</td>
+            <td>High</td>
+        </tr>
+    </table>
+
+    <h2 id="integrations">9. Integrations</h2>
+
+    <h3>9.1 GitHub Actions</h3>
+    <pre>
+name: Code Analysis
+on: [push, pull_request]
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet tool install -g RuleKeeper.Cli
+      - run: |
+          rulekeeper scan ./src \
+            -o sarif \
+            --output-file results.sarif.json \
+            --fail-on High \
+            --summary-only
+      - uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: results.sarif.json
+    </pre>
+
+    <h3>9.2 Azure DevOps</h3>
+    <pre>
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '8.0.x'
+  - script: dotnet tool install -g RuleKeeper.Cli
+  - script: |
+      rulekeeper scan ./src \
+        -o sarif \
+        --output-file $(Build.ArtifactStagingDirectory)/results.sarif.json \
+        --fail-on High \
+        --summary-only
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    </pre>
+
+    <h3>9.3 IDE Integration</h3>
+    <p>Generate configuration files for IDE enforcement:</p>
+    <pre># Generate EditorConfig for Visual Studio / VS Code
+rulekeeper generate-editorconfig -o .editorconfig
+
+# Generate all IDE configuration files
+rulekeeper generate-analyzer-config --format all
+
+# Generate specific formats
+rulekeeper generate-analyzer-config --format globalconfig  # .globalconfig
+rulekeeper generate-analyzer-config --format ruleset       # .ruleset
+rulekeeper generate-analyzer-config --format props         # Directory.Build.props
+
+# Strict mode (treat warnings as errors)
+rulekeeper generate-analyzer-config --format all --strict</pre>
+
+    <h3>9.4 Auto-Fix Integration</h3>
+    <p>Automatically fix detected violations:</p>
+    <pre># Fix all violations
+rulekeeper fix ./src
+
+# Preview fixes without applying
+rulekeeper fix ./src --dry-run
+
+# Fix only specific rule
+rulekeeper fix ./src --rule CS-NAME-003
+
+# Fix only specific category
+rulekeeper fix ./src --category naming
+
+# Interactive mode - confirm each fix
+rulekeeper fix ./src --interactive
+
+# Fix without creating backups
+rulekeeper fix ./src --no-backup</pre>
+
+    <h2 id="roadmap">10. Roadmap</h2>
+
+    <h3>Version 1.0 (Current)</h3>
+    <ul>
+        <li><span class="status-badge status-implemented">Implemented</span> Core analysis engine</li>
+        <li><span class="status-badge status-implemented">Implemented</span> 27 built-in rules</li>
+        <li><span class="status-badge status-implemented">Implemented</span> YAML configuration</li>
+        <li><span class="status-badge status-implemented">Implemented</span> Multiple output formats</li>
+        <li><span class="status-badge status-implemented">Implemented</span> Threshold system</li>
+        <li><span class="status-badge status-implemented">Implemented</span> Summary-only mode</li>
+        <li><span class="status-badge status-implemented">Implemented</span> Custom rule SDK</li>
+        <li><span class="status-badge status-implemented">Implemented</span> Auto-fix command (14 fixable rules)</li>
+        <li><span class="status-badge status-implemented">Implemented</span> Custom fix provider SDK</li>
+        <li><span class="status-badge status-implemented">Implemented</span> IDE integration (GlobalConfig, Ruleset, Props)</li>
+    </ul>
+
+    <h3>Version 1.1 (Planned)</h3>
+    <ul>
+        <li><span class="status-badge status-planned">Planned</span> Incremental analysis</li>
+        <li><span class="status-badge status-planned">Planned</span> Baseline support (suppress existing violations)</li>
+        <li><span class="status-badge status-planned">Planned</span> More security rules</li>
+        <li><span class="status-badge status-planned">Planned</span> Performance optimizations</li>
+    </ul>
+
+    <h3>Version 2.0 (Future)</h3>
+    <ul>
+        <li><span class="status-badge status-future">Future</span> API/service mode</li>
+        <li><span class="status-badge status-future">Future</span> Web dashboard</li>
+        <li><span class="status-badge status-future">Future</span> Additional language support</li>
+        <li><span class="status-badge status-future">Future</span> Machine learning-based rules</li>
+    </ul>
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+    <p style="text-align: center; color: #666; font-size: 0.9em;">
+        RuleKeeper Product Requirements Document v1.0.0<br>
+        Generated: January 2026
+    </p>
+</body>
+</html>

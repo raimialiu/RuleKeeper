@@ -1,0 +1,170 @@
+# RuleKeeper Sample Configuration
+version: "1.0"
+
+metadata:
+  name: "Sample Project Rules"
+  description: "Example configuration for RuleKeeper"
+  author: "RuleKeeper Team"
+
+# Scan configuration
+scan:
+  include:
+    - "**/*.cs"
+  exclude:
+    - "**/obj/**"
+    - "**/bin/**"
+    - "**/*.Designer.cs"
+    - "**/*.g.cs"
+    - "**/*.generated.cs"
+    - "**/Migrations/**"
+  parallel: true
+  cache: true
+
+# Output configuration
+output:
+  format: console
+  min_severity: info
+  fail_on: high
+  show_code: true
+  show_hints: true
+  colors: true
+
+# Pre-built policies (enable/disable entire rule sets)
+prebuilt_policies:
+  security:
+    enabled: true
+    severity: high
+    exclude:
+      - "**/Tests/**"
+
+  async_best_practices:
+    enabled: true
+    skip_rules:
+      - CS-ASYNC-003  # Skip ConfigureAwait check
+
+  naming_conventions:
+    enabled: true
+
+  design:
+    enabled: true
+
+  exceptions:
+    enabled: true
+
+  dependency_injection:
+    enabled: true
+    severity: medium
+
+# Custom coding standards
+coding_standards:
+  naming:
+    enabled: true
+    rules:
+      class_naming:
+        id: CS-NAME-001
+        name: "Class Naming Convention"
+        description: "Classes must use PascalCase"
+        severity: medium
+        parameters:
+          allow_underscores: false
+
+      interface_naming:
+        id: CS-NAME-007
+        name: "Interface Naming Convention"
+        severity: medium
+
+      async_naming:
+        id: CS-NAME-003
+        name: "Async Method Naming"
+        severity: low
+        parameters:
+          require_suffix: true
+          exclude_event_handlers: true
+
+  security:
+    enabled: true
+    severity: critical
+    rules:
+      no_hardcoded_secrets:
+        id: CS-SEC-002
+        name: "No Hardcoded Secrets"
+        severity: critical
+        message: "Potential hardcoded secret detected"
+        fix_hint: "Use environment variables or a secrets manager"
+        exclude:
+          - "**/appsettings.Development.json"
+
+      sql_injection:
+        id: CS-SEC-001
+        name: "SQL Injection Prevention"
+        severity: critical
+
+  design:
+    enabled: true
+    rules:
+      method_length:
+        id: CS-DESIGN-001
+        name: "Method Length"
+        severity: medium
+        parameters:
+          max_lines: 50
+          count_blank_lines: false
+
+      parameter_count:
+        id: CS-DESIGN-002
+        name: "Parameter Count"
+        severity: medium
+        parameters:
+          max_parameters: 5
+
+      cyclomatic_complexity:
+        id: CS-DESIGN-003
+        name: "Cyclomatic Complexity"
+        severity: medium
+        parameters:
+          max_complexity: 10
+
+  async:
+    enabled: true
+    rules:
+      no_blocking_async:
+        id: CS-ASYNC-002
+        name: "No Blocking on Async"
+        severity: high
+        parameters:
+          allow_in_main: true
+
+      async_void:
+        id: CS-ASYNC-001
+        name: "No Async Void"
+        severity: high
+
+  exceptions:
+    enabled: true
+    rules:
+      empty_catch:
+        id: CS-EXC-001
+        name: "No Empty Catch Blocks"
+        severity: high
+        parameters:
+          allow_comment: true
+
+      catching_base_exception:
+        id: CS-EXC-002
+        name: "Avoid Catching Base Exception"
+        severity: medium
+        parameters:
+          allow_rethrow: true
+          allow_logging: true
+
+# Custom validators (advanced use cases)
+custom_validators:
+  no_console_output:
+    description: "Prevent Console.WriteLine in production code"
+    type: regex
+    pattern: "Console\\.(WriteLine|Write)\\s*\\("
+
+# Custom rule assemblies (plugins)
+custom_rules: []
+  # - path: "./plugins/MyCompany.Rules.dll"
+  # - nuget: "MyCompany.RuleKeeper.Rules:1.0.0"

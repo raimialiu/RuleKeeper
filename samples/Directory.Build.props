@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  RuleKeeper - Directory.Build.props
+  Generated: 2026-01-20 22:25:03
+  
+  This file applies to all projects in this directory and subdirectories.
+  Place at solution root for solution-wide enforcement.
+-->
+<Project>
+
+  <PropertyGroup>
+    <!-- Enable code analysis -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+
+    <!-- Treat warnings as errors in Release builds -->
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+
+    <!-- Enable nullable reference types -->
+    <Nullable>enable</Nullable>
+
+  </PropertyGroup>
+
+  <!-- Recommended Analyzer Packages -->
+  <ItemGroup>
+    <!-- Microsoft's code analysis ruleset -->
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+
+    <!-- Async/threading analyzers (for CS-ASYNC rules) -->
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+
+    <!-- Security analyzers (for CS-SEC rules) - Optional -->
+    <!--
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    -->
+  </ItemGroup>
+
+</Project>

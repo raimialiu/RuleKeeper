@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper CLI Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #fff;
+        }
+        h1 {
+            color: #1a5f7a;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.6em;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        h4 {
+            color: #546e7a;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.95em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #1a5f7a;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        tr:hover {
+            background: #f1f1f1;
+        }
+        .command-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .command-box code {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .tip {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .new-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .toc {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #1a5f7a;
+        }
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc li {
+            padding: 5px 0;
+        }
+        .toc a {
+            color: #1a5f7a;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .version-badge {
+            display: inline-block;
+            background: #1a5f7a;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .header-info {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        @media print {
+            body {
+                max-width: none;
+                padding: 20px;
+            }
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>RuleKeeper CLI Reference <span class="version-badge">v1.0.0</span></h1>
+    <p class="header-info">Complete command-line interface documentation for RuleKeeper - Policy-as-Code for C#</p>
+
+    <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#installation">1. Installation</a></li>
+            <li><a href="#commands">2. Commands Overview</a></li>
+            <li><a href="#scan">3. scan - Analyze Code</a></li>
+            <li><a href="#fix">4. fix - Auto-Fix Violations</a> <span class="new-badge">NEW</span></li>
+            <li><a href="#init">5. init - Initialize Configuration</a></li>
+            <li><a href="#validate">6. validate - Validate Configuration</a></li>
+            <li><a href="#list-rules">7. list-rules - List Available Rules</a></li>
+            <li><a href="#explain">8. explain - Explain a Rule</a></li>
+            <li><a href="#generate-editorconfig">9. generate-editorconfig - Generate EditorConfig</a></li>
+            <li><a href="#generate-analyzer-config">10. generate-analyzer-config - Generate IDE Configs</a> <span class="new-badge">NEW</span></li>
+            <li><a href="#exit-codes">11. Exit Codes</a></li>
+            <li><a href="#examples">12. Usage Examples</a></li>
+        </ul>
+    </div>
+
+    <h2 id="installation">1. Installation</h2>
+
+    <h3>As a .NET Global Tool</h3>
+    <pre><code>dotnet tool install -g RuleKeeper.Cli</code></pre>
+
+    <h3>From Source</h3>
+    <pre><code>git clone https://github.com/your-org/rulekeeper.git
+cd rulekeeper
+dotnet build
+dotnet run --project src/RuleKeeper.Cli -- --help</code></pre>
+
+    <h3>Verify Installation</h3>
+    <pre><code>rulekeeper --version
+rulekeeper --help</code></pre>
+
+    <h2 id="commands">2. Commands Overview</h2>
+
+    <table>
+        <tr>
+            <th>Command</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><code>scan</code></td>
+            <td>Scan code for policy violations</td>
+        </tr>
+        <tr>
+            <td><code>fix</code></td>
+            <td>Automatically fix detected violations <span class="new-badge">NEW</span></td>
+        </tr>
+        <tr>
+            <td><code>init</code></td>
+            <td>Create a default configuration file</td>
+        </tr>
+        <tr>
+            <td><code>validate</code></td>
+            <td>Validate a configuration file</td>
+        </tr>
+        <tr>
+            <td><code>list-rules</code></td>
+            <td>List all available rules</td>
+        </tr>
+        <tr>
+            <td><code>explain</code></td>
+            <td>Show detailed information about a rule</td>
+        </tr>
+        <tr>
+            <td><code>generate-editorconfig</code></td>
+            <td>Generate .editorconfig for IDE integration</td>
+        </tr>
+        <tr>
+            <td><code>generate-analyzer-config</code></td>
+            <td>Generate analyzer configuration files <span class="new-badge">NEW</span></td>
+        </tr>
+    </table>
+
+    <h2 id="scan">3. scan - Analyze Code</h2>
+
+    <div class="command-box">
+        <code>rulekeeper scan &lt;path&gt; [options]</code>
+    </div>
+
+    <p>The primary command for analyzing C# code against configured policies.</p>
+
+    <h3>Arguments</h3>
+    <table>
+        <tr>
+            <th>Argument</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>&lt;path&gt;</code></td>
+            <td>Path to scan (file, directory, project, or solution)</td>
+            <td><code>.</code> (current directory)</td>
+        </tr>
+    </table>
+
+    <h3>Configuration Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--config</code></td>
+            <td><code>-c</code></td>
+            <td>Path to configuration file</td>
+            <td>Auto-discover <code>rulekeeper.yaml</code></td>
+        </tr>
+        <tr>
+            <td><code>--language</code></td>
+            <td><code>-l</code></td>
+            <td>Programming language (currently only CSharp)</td>
+            <td><code>CSharp</code></td>
+        </tr>
+    </table>
+
+    <h3>Output Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--output</code></td>
+            <td><code>-o</code></td>
+            <td>Primary output format: <code>console</code>, <code>json</code>, <code>sarif</code>, <code>html</code></td>
+            <td><code>console</code></td>
+        </tr>
+        <tr>
+            <td><code>--format</code></td>
+            <td><code>-F</code></td>
+            <td>Additional output formats to generate (can specify multiple)</td>
+            <td>None</td>
+        </tr>
+        <tr>
+            <td><code>--output-file</code></td>
+            <td></td>
+            <td>Output file path for reports</td>
+            <td>None</td>
+        </tr>
+        <tr>
+            <td><code>--summary-only</code></td>
+            <td><code>--summary</code></td>
+            <td>Show only summary tables without violation details</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--no-viz</code></td>
+            <td><code>--no-visualization</code></td>
+            <td>Disable visualization charts in reports</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--no-table</code></td>
+            <td></td>
+            <td>Disable tabular summary in console output</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--no-color</code></td>
+            <td></td>
+            <td>Disable colored output</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--verbose</code></td>
+            <td><code>-v</code></td>
+            <td>Enable verbose output</td>
+            <td><code>false</code></td>
+        </tr>
+    </table>
+
+    <h3>Severity & Filtering Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--severity</code></td>
+            <td><code>-s</code></td>
+            <td>Minimum severity to report: <code>Info</code>, <code>Low</code>, <code>Medium</code>, <code>High</code>, <code>Critical</code></td>
+            <td><code>Info</code></td>
+        </tr>
+        <tr>
+            <td><code>--fail-on</code></td>
+            <td><code>-f</code></td>
+            <td>Severity level that causes non-zero exit code</td>
+            <td>None</td>
+        </tr>
+        <tr>
+            <td><code>--include</code></td>
+            <td><code>-i</code></td>
+            <td>File patterns to include (glob)</td>
+            <td><code>**/*.cs</code></td>
+        </tr>
+        <tr>
+            <td><code>--exclude</code></td>
+            <td><code>-e</code></td>
+            <td>File patterns to exclude (glob)</td>
+            <td>None</td>
+        </tr>
+    </table>
+
+    <h3>Threshold Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--threshold-percent</code></td>
+            <td><code>--tp</code></td>
+            <td>Maximum allowed violation percentage (0-100)</td>
+            <td><code>0</code></td>
+        </tr>
+        <tr>
+            <td><code>--critical-threshold</code></td>
+            <td><code>--ct</code></td>
+            <td>Maximum allowed critical violations</td>
+            <td><code>0</code></td>
+        </tr>
+        <tr>
+            <td><code>--high-threshold</code></td>
+            <td><code>--ht</code></td>
+            <td>Maximum allowed high severity violations</td>
+            <td><code>0</code></td>
+        </tr>
+        <tr>
+            <td><code>--total-threshold</code></td>
+            <td><code>--tt</code></td>
+            <td>Maximum allowed total violations</td>
+            <td><code>0</code></td>
+        </tr>
+    </table>
+
+    <div class="note">
+        <strong>Note:</strong> Threshold value of <code>0</code> means any violation of that type causes failure (when <code>--fail-on</code> is set). Set to a positive number to allow some violations.
+    </div>
+
+    <h3>Performance Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--parallel</code></td>
+            <td><code>-p</code></td>
+            <td>Enable parallel analysis</td>
+            <td><code>true</code></td>
+        </tr>
+        <tr>
+            <td><code>--no-cache</code></td>
+            <td></td>
+            <td>Disable caching</td>
+            <td><code>false</code></td>
+        </tr>
+    </table>
+
+    <h2 id="fix">4. fix - Auto-Fix Violations <span class="new-badge">NEW</span></h2>
+
+    <div class="command-box">
+        <code>rulekeeper fix &lt;path&gt; [options]</code>
+    </div>
+
+    <p>Automatically fixes code violations that have available auto-fix providers. Supports dry-run mode to preview changes before applying them.</p>
+
+    <h3>Arguments</h3>
+    <table>
+        <tr>
+            <th>Argument</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>&lt;path&gt;</code></td>
+            <td>Path to the file, directory, or project to fix</td>
+            <td><code>.</code> (current directory)</td>
+        </tr>
+    </table>
+
+    <h3>Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--config</code></td>
+            <td><code>-c</code></td>
+            <td>Path to RuleKeeper configuration file</td>
+            <td>Auto-discover</td>
+        </tr>
+        <tr>
+            <td><code>--rule</code></td>
+            <td><code>-r</code></td>
+            <td>Fix only violations of a specific rule ID (e.g., CS-NAME-001)</td>
+            <td>All fixable rules</td>
+        </tr>
+        <tr>
+            <td><code>--category</code></td>
+            <td><code>-t</code></td>
+            <td>Fix only violations in a specific category (e.g., naming, async, sec, exc)</td>
+            <td>All categories</td>
+        </tr>
+        <tr>
+            <td><code>--dry-run</code></td>
+            <td><code>-d</code></td>
+            <td>Preview fixes without applying them</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--no-backup</code></td>
+            <td></td>
+            <td>Don't create backup files (.bak) before fixing</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--interactive</code></td>
+            <td><code>-i</code></td>
+            <td>Confirm each fix before applying</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--list-fixable</code></td>
+            <td><code>-l</code></td>
+            <td>List all fixable rule IDs and exit</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--verbose</code></td>
+            <td><code>-v</code></td>
+            <td>Show detailed output</td>
+            <td><code>false</code></td>
+        </tr>
+    </table>
+
+    <h3>Supported Auto-Fix Rules</h3>
+    <table>
+        <tr>
+            <th>Rule ID</th>
+            <th>Category</th>
+            <th>Fix Description</th>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-001</code></td>
+            <td>Naming</td>
+            <td>Class naming to PascalCase</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-002</code></td>
+            <td>Naming</td>
+            <td>Method naming to PascalCase</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-003</code></td>
+            <td>Naming</td>
+            <td>Add 'Async' suffix to async methods</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-004</code></td>
+            <td>Naming</td>
+            <td>Private field naming to _camelCase</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-005</code></td>
+            <td>Naming</td>
+            <td>Constant naming to PascalCase</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-006</code></td>
+            <td>Naming</td>
+            <td>Property naming to PascalCase</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-007</code></td>
+            <td>Naming</td>
+            <td>Add 'I' prefix to interfaces</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-008</code></td>
+            <td>Naming</td>
+            <td>Parameter naming to camelCase</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-009</code></td>
+            <td>Naming</td>
+            <td>Local variable naming to camelCase</td>
+        </tr>
+        <tr>
+            <td><code>CS-NAME-010</code></td>
+            <td>Naming</td>
+            <td>Add 'T' prefix to type parameters</td>
+        </tr>
+        <tr>
+            <td><code>CS-ASYNC-002</code></td>
+            <td>Async</td>
+            <td>Replace .Result/.Wait() with await</td>
+        </tr>
+        <tr>
+            <td><code>CS-ASYNC-003</code></td>
+            <td>Async</td>
+            <td>Add ConfigureAwait(false)</td>
+        </tr>
+        <tr>
+            <td><code>CS-EXC-001</code></td>
+            <td>Exceptions</td>
+            <td>Add TODO comment for empty catch blocks</td>
+        </tr>
+        <tr>
+            <td><code>CS-EXC-004</code></td>
+            <td>Exceptions</td>
+            <td>Replace 'throw ex;' with 'throw;' to preserve stack trace</td>
+        </tr>
+    </table>
+
+    <h3>Custom Fix Providers</h3>
+    <p>You can create and use custom fix providers to handle fixes for custom rules or override built-in fix behavior.</p>
+
+    <h4>Using Custom Fix Providers</h4>
+    <p>Add custom fix provider assemblies in your <code>rulekeeper.yaml</code>:</p>
+    <pre><code># Load from custom_fix_providers (dedicated fix providers)
+custom_fix_providers:
+  - path: "./my-fixes/MyCompany.Fixes.dll"
+
+# Or, fix providers in custom rule assemblies are also loaded
+custom_rules:
+  - path: "./my-rules/MyCompany.Rules.dll"  # Can also contain fix providers</code></pre>
+
+    <h4>Creating a Custom Fix Provider</h4>
+    <p>Implement the <code>IFixProvider</code> interface from the SDK:</p>
+    <pre><code>using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.Attributes;
+
+[FixProvider("My Custom Fix Provider", Category = "Custom")]
+public class MyCustomFixProvider : BaseFixProvider
+{
+    public override IEnumerable&lt;string&gt; SupportedRuleIds =&gt; new[]
+    {
+        "CUSTOM-001",
+        "CUSTOM-002"
+    };
+
+    public override IEnumerable&lt;CodeFix&gt; GetFixes(Violation violation, string sourceCode)
+    {
+        // Implement your fix logic
+        var line = GetLine(sourceCode, violation.StartLine);
+        if (line == null) yield break;
+
+        yield return CodeFix.CreateReplacement(
+            violation,
+            description: "Fix custom violation",
+            startColumn: violation.StartColumn,
+            endColumn: violation.EndColumn,
+            originalText: "bad",
+            replacementText: "good"
+        );
+    }
+}</code></pre>
+
+    <h4>Viewing All Fix Providers</h4>
+    <pre><code># List all fixable rules including custom providers
+rulekeeper fix --list-fixable --verbose</code></pre>
+
+    <div class="tip">
+        <strong>Tip:</strong> Always use <code>--dry-run</code> first to preview changes before applying them to your codebase.
+    </div>
+
+    <h2 id="init">5. init - Initialize Configuration</h2>
+
+    <div class="command-box">
+        <code>rulekeeper init [options]</code>
+    </div>
+
+    <p>Creates a default <code>rulekeeper.yaml</code> configuration file with sensible defaults.</p>
+
+    <h3>Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--output</code></td>
+            <td>Output file path</td>
+            <td><code>rulekeeper.yaml</code></td>
+        </tr>
+        <tr>
+            <td><code>--force</code></td>
+            <td>Overwrite existing file</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--minimal</code></td>
+            <td>Create minimal configuration</td>
+            <td><code>false</code></td>
+        </tr>
+    </table>
+
+    <h2 id="validate">6. validate - Validate Configuration</h2>
+
+    <div class="command-box">
+        <code>rulekeeper validate &lt;config&gt;</code>
+    </div>
+
+    <p>Validates a configuration file for syntax and semantic errors.</p>
+
+    <h3>Arguments</h3>
+    <table>
+        <tr>
+            <th>Argument</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><code>&lt;config&gt;</code></td>
+            <td>Path to configuration file to validate</td>
+        </tr>
+    </table>
+
+    <h2 id="list-rules">7. list-rules - List Available Rules</h2>
+
+    <div class="command-box">
+        <code>rulekeeper list-rules [options]</code>
+    </div>
+
+    <p>Lists all available built-in and custom rules.</p>
+
+    <h3>Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--category</code></td>
+            <td>Filter by category (naming, security, async, design, exceptions, di)</td>
+            <td>All categories</td>
+        </tr>
+        <tr>
+            <td><code>--format</code></td>
+            <td>Output format: <code>table</code>, <code>json</code></td>
+            <td><code>table</code></td>
+        </tr>
+    </table>
+
+    <h2 id="explain">8. explain - Explain a Rule</h2>
+
+    <div class="command-box">
+        <code>rulekeeper explain &lt;rule-id&gt;</code>
+    </div>
+
+    <p>Shows detailed information about a specific rule.</p>
+
+    <h3>Arguments</h3>
+    <table>
+        <tr>
+            <th>Argument</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><code>&lt;rule-id&gt;</code></td>
+            <td>The rule ID (e.g., <code>CS-NAME-001</code>)</td>
+        </tr>
+    </table>
+
+    <h3>Output Includes</h3>
+    <ul>
+        <li>Rule name and description</li>
+        <li>Default severity</li>
+        <li>Category</li>
+        <li>Configurable parameters</li>
+        <li>Code examples</li>
+    </ul>
+
+    <h2 id="generate-editorconfig">9. generate-editorconfig - Generate EditorConfig</h2>
+
+    <div class="command-box">
+        <code>rulekeeper generate-editorconfig [options]</code>
+    </div>
+
+    <p>Generates an <code>.editorconfig</code> file based on RuleKeeper rules for IDE integration.</p>
+
+    <h3>Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--output</code></td>
+            <td><code>-o</code></td>
+            <td>Output file path</td>
+            <td><code>.editorconfig</code></td>
+        </tr>
+        <tr>
+            <td><code>--config</code></td>
+            <td><code>-c</code></td>
+            <td>RuleKeeper config to base settings on</td>
+            <td>Auto-discover</td>
+        </tr>
+        <tr>
+            <td><code>--append</code></td>
+            <td><code>-a</code></td>
+            <td>Append to existing file</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--force</code></td>
+            <td><code>-f</code></td>
+            <td>Overwrite without prompting</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--comments</code></td>
+            <td></td>
+            <td>Include descriptive comments</td>
+            <td><code>true</code></td>
+        </tr>
+    </table>
+
+    <h2 id="generate-analyzer-config">10. generate-analyzer-config - Generate IDE Analyzer Configs <span class="new-badge">NEW</span></h2>
+
+    <div class="command-box">
+        <code>rulekeeper generate-analyzer-config [options]</code>
+        <br><br>
+        <small>Alias: <code>rulekeeper gen-config</code></small>
+    </div>
+
+    <p>Generates IDE analyzer configuration files that developers can add to their projects for real-time enforcement in Visual Studio, VS Code, and Rider.</p>
+
+    <h3>Options</h3>
+    <table>
+        <tr>
+            <th>Option</th>
+            <th>Alias</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+        <tr>
+            <td><code>--format</code></td>
+            <td><code>-f</code></td>
+            <td>Output format: <code>globalconfig</code>, <code>ruleset</code>, <code>props</code>, or <code>all</code></td>
+            <td><code>globalconfig</code></td>
+        </tr>
+        <tr>
+            <td><code>--output</code></td>
+            <td><code>-o</code></td>
+            <td>Output directory</td>
+            <td>Current directory</td>
+        </tr>
+        <tr>
+            <td><code>--config</code></td>
+            <td><code>-c</code></td>
+            <td>Path to RuleKeeper configuration file</td>
+            <td>Auto-discover</td>
+        </tr>
+        <tr>
+            <td><code>--strict</code></td>
+            <td></td>
+            <td>Use error severity for all enabled rules</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <td><code>--force</code></td>
+            <td></td>
+            <td>Overwrite existing files without prompting</td>
+            <td><code>false</code></td>
+        </tr>
+    </table>
+
+    <h3>Generated Files</h3>
+    <table>
+        <tr>
+            <th>File</th>
+            <th>Purpose</th>
+            <th>IDE Support</th>
+        </tr>
+        <tr>
+            <td><code>.globalconfig</code></td>
+            <td>Modern Roslyn analyzer configuration (.NET 5+)</td>
+            <td>Visual Studio 2022+, Rider 2023+</td>
+        </tr>
+        <tr>
+            <td><code>RuleKeeper.ruleset</code></td>
+            <td>Legacy Roslyn analyzer ruleset</td>
+            <td>Visual Studio 2019+</td>
+        </tr>
+        <tr>
+            <td><code>Directory.Build.props</code></td>
+            <td>MSBuild integration with analyzer packages</td>
+            <td>All MSBuild-based IDEs</td>
+        </tr>
+    </table>
+
+    <div class="tip">
+        <strong>Tip:</strong> Use <code>--format all</code> to generate all configuration files at once, then choose the one that works best for your environment.
+    </div>
+
+    <h2 id="exit-codes">11. Exit Codes</h2>
+
+    <table>
+        <tr>
+            <th>Code</th>
+            <th>Meaning</th>
+        </tr>
+        <tr>
+            <td><code>0</code></td>
+            <td>Success - no violations exceeding thresholds</td>
+        </tr>
+        <tr>
+            <td><code>1</code></td>
+            <td>Violations found exceeding configured thresholds</td>
+        </tr>
+        <tr>
+            <td><code>2</code></td>
+            <td>Configuration error</td>
+        </tr>
+        <tr>
+            <td><code>130</code></td>
+            <td>Operation cancelled (Ctrl+C)</td>
+        </tr>
+    </table>
+
+    <h2 id="examples">12. Usage Examples</h2>
+
+    <h3>Basic Scan</h3>
+    <pre><code># Scan current directory
+rulekeeper scan
+
+# Scan specific path
+rulekeeper scan ./src
+
+# Scan a solution file
+rulekeeper scan ./MyProject.sln</code></pre>
+
+    <h3>Auto-Fix Violations</h3>
+    <pre><code># List all auto-fixable rules
+rulekeeper fix --list-fixable
+
+# Preview fixes without applying (dry run)
+rulekeeper fix ./src --dry-run
+
+# Fix all violations
+rulekeeper fix ./src
+
+# Fix specific rule only
+rulekeeper fix ./src --rule CS-NAME-003
+
+# Fix naming issues only
+rulekeeper fix ./src --category name
+
+# Interactive mode - confirm each fix
+rulekeeper fix ./src --interactive
+
+# Fix without creating backups
+rulekeeper fix ./src --no-backup</code></pre>
+
+    <h3>Output Formats</h3>
+    <pre><code># JSON output to file
+rulekeeper scan ./src -o json --output-file report.json
+
+# SARIF for GitHub Code Scanning
+rulekeeper scan ./src -o sarif --output-file results.sarif.json
+
+# HTML report
+rulekeeper scan ./src -o html --output-file report.html
+
+# Multiple formats at once
+rulekeeper scan ./src -o console -F json -F sarif</code></pre>
+
+    <h3>Summary Mode</h3>
+    <pre><code># Show only summary tables (great for CI/CD)
+rulekeeper scan ./src --summary-only
+
+# Clean CI output
+rulekeeper scan ./src --summary-only --no-color</code></pre>
+
+    <h3>Threshold Configuration</h3>
+    <pre><code># Fail if more than 5 critical violations
+rulekeeper scan ./src --fail-on Critical --ct 5
+
+# Allow up to 10% violation rate
+rulekeeper scan ./src --tp 10
+
+# Allow 50 total violations
+rulekeeper scan ./src --fail-on High --tt 50
+
+# Strict mode - fail on any high or above
+rulekeeper scan ./src --fail-on High --ht 0 --ct 0</code></pre>
+
+    <h3>Generate IDE Configurations</h3>
+    <pre><code># Generate .globalconfig (recommended)
+rulekeeper generate-analyzer-config
+
+# Generate all configuration files
+rulekeeper generate-analyzer-config --format all --output ./my-solution
+
+# Strict mode (all rules as errors)
+rulekeeper generate-analyzer-config --format all --strict
+
+# Generate EditorConfig
+rulekeeper generate-editorconfig</code></pre>
+
+    <h3>File Filtering</h3>
+    <pre><code># Scan only service files
+rulekeeper scan ./src -i "**/*Service.cs"
+
+# Exclude test files
+rulekeeper scan ./src -e "**/Tests/**" -e "**/*Tests.cs"
+
+# Combined filtering
+rulekeeper scan ./src -i "**/*.cs" -e "**/obj/**" -e "**/bin/**"</code></pre>
+
+    <h3>CI/CD Integration</h3>
+    <pre><code># GitHub Actions / Azure DevOps
+rulekeeper scan ./src \
+    -o sarif \
+    --output-file results.sarif.json \
+    --fail-on High \
+    --ct 0 \
+    --no-color \
+    --summary-only
+
+# Auto-fix in CI (with verification)
+rulekeeper fix ./src --no-backup
+rulekeeper scan ./src --fail-on High
+
+# Verbose debug mode
+rulekeeper scan ./src -v --no-cache</code></pre>
+
+    <div class="tip">
+        <strong>Tip:</strong> Use <code>--summary-only --no-color</code> for cleaner CI/CD logs while still getting tabular summaries.
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+    <p style="text-align: center; color: #666; font-size: 0.9em;">
+        RuleKeeper CLI Reference v1.0.0<br>
+        Generated: January 2026
+    </p>
+</body>
+</html>

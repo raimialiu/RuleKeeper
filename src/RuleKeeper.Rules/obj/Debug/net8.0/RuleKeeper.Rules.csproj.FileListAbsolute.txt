@@ -1,0 +1,17 @@
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.csproj.AssemblyReference.cache
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.GeneratedMSBuildEditorConfig.editorconfig
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.AssemblyInfoInputs.cache
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.AssemblyInfo.cs
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.csproj.CoreCompileInputs.cache
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Rules.deps.json
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Rules.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Rules.pdb
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Core.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Sdk.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Core.pdb
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/bin/Debug/net8.0/RuleKeeper.Sdk.pdb
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeep.C94B84AA.Up2Date
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/refint/RuleKeeper.Rules.dll
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/RuleKeeper.Rules.pdb
+/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Rules/obj/Debug/net8.0/ref/RuleKeeper.Rules.dll

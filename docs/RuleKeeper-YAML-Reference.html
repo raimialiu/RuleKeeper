@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper YAML Configuration Reference</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #fff;
+        }
+        h1 {
+            color: #1a5f7a;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.6em;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        h4 {
+            color: #546e7a;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        .yaml-key {
+            color: #9cdcfe;
+        }
+        .yaml-string {
+            color: #ce9178;
+        }
+        .yaml-number {
+            color: #b5cea8;
+        }
+        .yaml-bool {
+            color: #569cd6;
+        }
+        .yaml-comment {
+            color: #6a9955;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #1a5f7a;
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .property-table td:first-child {
+            font-family: 'Consolas', monospace;
+            color: #9cdcfe;
+            background: #f8f8f8;
+        }
+        .toc {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        .toc h3 {
+            margin-top: 0;
+            color: #1a5f7a;
+        }
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc li {
+            padding: 5px 0;
+        }
+        .toc a {
+            color: #1a5f7a;
+            text-decoration: none;
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .tip {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+        }
+        .section-header h3 {
+            color: white;
+            margin: 0;
+        }
+        .required {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .optional {
+            color: #28a745;
+        }
+        .default-value {
+            color: #6c757d;
+            font-style: italic;
+        }
+        @media print {
+            body {
+                max-width: none;
+                padding: 20px;
+            }
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>RuleKeeper YAML Configuration Reference</h1>
+    <p style="color: #666; margin-bottom: 30px;">Complete reference for configuring RuleKeeper policies via YAML</p>
+
+    <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#overview">1. Configuration Overview</a></li>
+            <li><a href="#file-locations">2. File Locations</a></li>
+            <li><a href="#root">3. Root Configuration</a></li>
+            <li><a href="#metadata">4. metadata Section</a></li>
+            <li><a href="#scan">5. scan Section</a></li>
+            <li><a href="#output">6. output Section</a></li>
+            <li><a href="#prebuilt-policies">7. prebuilt_policies Section</a></li>
+            <li><a href="#coding-standards">8. coding_standards Section</a></li>
+            <li><a href="#custom-validators">9. custom_validators Section</a></li>
+            <li><a href="#custom-rules">10. custom_rules Section</a></li>
+            <li><a href="#custom-fix-providers">10.1 custom_fix_providers Section</a></li>
+            <li><a href="#complete-example">11. Complete Example</a></li>
+            <li><a href="#severity-levels">12. Severity Levels</a></li>
+        </ul>
+    </div>
+
+    <h2 id="overview">1. Configuration Overview</h2>
+    <p>RuleKeeper uses YAML configuration files to define analysis policies. The configuration controls:</p>
+    <ul>
+        <li>Which files to scan</li>
+        <li>Which rules to enable/disable</li>
+        <li>Severity levels and thresholds</li>
+        <li>Output format and visualization options</li>
+        <li>Custom rules and validators</li>
+    </ul>
+
+    <h2 id="file-locations">2. File Locations</h2>
+    <p>RuleKeeper searches for configuration files in the following order:</p>
+    <ol>
+        <li><code>rulekeeper.yaml</code></li>
+        <li><code>.rulekeeper.yaml</code></li>
+        <li><code>.rulekeeper.yml</code></li>
+        <li><code>rulekeeper.yml</code></li>
+    </ol>
+    <p>The search starts from the scan path and moves up through parent directories.</p>
+
+    <div class="tip">
+        <strong>Tip:</strong> Use <code>--config</code> or <code>-c</code> to specify a custom configuration file path.
+    </div>
+
+    <h2 id="root">3. Root Configuration</h2>
+
+    <pre><span class="yaml-comment"># RuleKeeper Configuration File</span>
+<span class="yaml-key">version</span>: <span class="yaml-string">"1.0"</span>
+
+<span class="yaml-key">metadata</span>:
+  <span class="yaml-comment"># ... metadata configuration</span>
+
+<span class="yaml-key">scan</span>:
+  <span class="yaml-comment"># ... scan configuration</span>
+
+<span class="yaml-key">output</span>:
+  <span class="yaml-comment"># ... output configuration</span>
+
+<span class="yaml-key">prebuilt_policies</span>:
+  <span class="yaml-comment"># ... pre-built policy configuration</span>
+
+<span class="yaml-key">coding_standards</span>:
+  <span class="yaml-comment"># ... custom coding standards</span>
+
+<span class="yaml-key">custom_validators</span>:
+  <span class="yaml-comment"># ... custom validator configuration</span>
+
+<span class="yaml-key">custom_rules</span>:
+  <span class="yaml-comment"># ... custom rule assemblies</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>version</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Configuration version. Default: <span class="default-value">"1.0"</span></td>
+        </tr>
+        <tr>
+            <td>metadata</td>
+            <td>object</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Metadata about the configuration</td>
+        </tr>
+        <tr>
+            <td>scan</td>
+            <td>object</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Scan settings (include/exclude patterns)</td>
+        </tr>
+        <tr>
+            <td>output</td>
+            <td>object</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Output and reporting configuration</td>
+        </tr>
+        <tr>
+            <td>prebuilt_policies</td>
+            <td>object</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Enable/configure pre-built policies</td>
+        </tr>
+        <tr>
+            <td>coding_standards</td>
+            <td>object</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Custom coding standards and rules</td>
+        </tr>
+        <tr>
+            <td>custom_validators</td>
+            <td>object</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Custom pattern-based validators</td>
+        </tr>
+        <tr>
+            <td>custom_rules</td>
+            <td>array</td>
+            <td><span class="optional">Optional</span></td>
+            <td>External rule assemblies</td>
+        </tr>
+    </table>
+
+    <h2 id="metadata">4. metadata Section</h2>
+
+    <pre><span class="yaml-key">metadata</span>:
+  <span class="yaml-key">name</span>: <span class="yaml-string">"My Project Rules"</span>
+  <span class="yaml-key">description</span>: <span class="yaml-string">"Code quality rules for MyProject"</span>
+  <span class="yaml-key">author</span>: <span class="yaml-string">"Development Team"</span>
+  <span class="yaml-key">created</span>: <span class="yaml-string">"2026-01-01"</span>
+  <span class="yaml-key">updated</span>: <span class="yaml-string">"2026-01-20"</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>string</td>
+            <td>Name of this configuration</td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td>string</td>
+            <td>Description of the configuration purpose</td>
+        </tr>
+        <tr>
+            <td>author</td>
+            <td>string</td>
+            <td>Author or team name</td>
+        </tr>
+        <tr>
+            <td>created</td>
+            <td>datetime</td>
+            <td>Creation date</td>
+        </tr>
+        <tr>
+            <td>updated</td>
+            <td>datetime</td>
+            <td>Last update date</td>
+        </tr>
+    </table>
+
+    <h2 id="scan">5. scan Section</h2>
+
+    <pre><span class="yaml-key">scan</span>:
+  <span class="yaml-key">language</span>: <span class="yaml-string">CSharp</span>
+  <span class="yaml-key">include</span>:
+    - <span class="yaml-string">"**/*.cs"</span>
+  <span class="yaml-key">exclude</span>:
+    - <span class="yaml-string">"**/obj/**"</span>
+    - <span class="yaml-string">"**/bin/**"</span>
+    - <span class="yaml-string">"**/*.Designer.cs"</span>
+    - <span class="yaml-string">"**/*.g.cs"</span>
+    - <span class="yaml-string">"**/*.generated.cs"</span>
+    - <span class="yaml-string">"**/Migrations/**"</span>
+  <span class="yaml-key">parallel</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">cache</span>: <span class="yaml-bool">true</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>language</td>
+            <td>string</td>
+            <td><span class="default-value">CSharp</span></td>
+            <td>Programming language (currently only CSharp supported)</td>
+        </tr>
+        <tr>
+            <td>include</td>
+            <td>array</td>
+            <td><span class="default-value">["**/*.cs"]</span></td>
+            <td>Glob patterns for files to include</td>
+        </tr>
+        <tr>
+            <td>exclude</td>
+            <td>array</td>
+            <td><span class="default-value">[]</span></td>
+            <td>Glob patterns for files to exclude</td>
+        </tr>
+        <tr>
+            <td>parallel</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Enable parallel file analysis</td>
+        </tr>
+        <tr>
+            <td>cache</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Enable analysis caching</td>
+        </tr>
+    </table>
+
+    <h3>Glob Pattern Examples</h3>
+    <table>
+        <tr>
+            <th>Pattern</th>
+            <th>Matches</th>
+        </tr>
+        <tr>
+            <td><code>**/*.cs</code></td>
+            <td>All C# files in any directory</td>
+        </tr>
+        <tr>
+            <td><code>src/**/*.cs</code></td>
+            <td>All C# files under src directory</td>
+        </tr>
+        <tr>
+            <td><code>**/*Service.cs</code></td>
+            <td>All files ending with Service.cs</td>
+        </tr>
+        <tr>
+            <td><code>**/Tests/**</code></td>
+            <td>All files in any Tests directory</td>
+        </tr>
+    </table>
+
+    <h2 id="output">6. output Section</h2>
+
+    <pre><span class="yaml-key">output</span>:
+  <span class="yaml-key">format</span>: <span class="yaml-string">console</span>
+  <span class="yaml-key">additional_formats</span>:
+    - <span class="yaml-string">json</span>
+    - <span class="yaml-string">sarif</span>
+  <span class="yaml-key">file</span>: <span class="yaml-string">report</span>
+  <span class="yaml-key">min_severity</span>: <span class="yaml-string">info</span>
+  <span class="yaml-key">fail_on</span>: <span class="yaml-string">high</span>
+
+  <span class="yaml-comment"># Threshold Configuration</span>
+  <span class="yaml-key">critical_threshold</span>: <span class="yaml-number">0</span>
+  <span class="yaml-key">high_threshold</span>: <span class="yaml-number">5</span>
+  <span class="yaml-key">total_threshold</span>: <span class="yaml-number">50</span>
+  <span class="yaml-key">threshold_percentage</span>: <span class="yaml-number">10.0</span>
+
+  <span class="yaml-comment"># Display Options</span>
+  <span class="yaml-key">show_code</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">show_hints</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">colors</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">visualization</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">show_table</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">summary_only</span>: <span class="yaml-bool">false</span>
+  <span class="yaml-key">verbose</span>: <span class="yaml-bool">false</span>
+
+  <span class="yaml-comment"># Limits</span>
+  <span class="yaml-key">max_per_rule</span>: <span class="yaml-number">10</span>
+  <span class="yaml-key">max_total</span>: <span class="yaml-number">100</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>format</td>
+            <td>string</td>
+            <td><span class="default-value">console</span></td>
+            <td>Primary output format: console, json, sarif, html</td>
+        </tr>
+        <tr>
+            <td>additional_formats</td>
+            <td>array</td>
+            <td><span class="default-value">[]</span></td>
+            <td>Additional output formats to generate</td>
+        </tr>
+        <tr>
+            <td>file</td>
+            <td>string</td>
+            <td><span class="default-value">null</span></td>
+            <td>Output file path (without extension)</td>
+        </tr>
+        <tr>
+            <td>min_severity</td>
+            <td>string</td>
+            <td><span class="default-value">info</span></td>
+            <td>Minimum severity level to report</td>
+        </tr>
+        <tr>
+            <td>fail_on</td>
+            <td>string</td>
+            <td><span class="default-value">null</span></td>
+            <td>Severity that causes non-zero exit code</td>
+        </tr>
+    </table>
+
+    <h3>Threshold Properties</h3>
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>critical_threshold</td>
+            <td>integer</td>
+            <td><span class="default-value">0</span></td>
+            <td>Max critical violations before failure (0 = any fails)</td>
+        </tr>
+        <tr>
+            <td>high_threshold</td>
+            <td>integer</td>
+            <td><span class="default-value">0</span></td>
+            <td>Max high-severity violations before failure</td>
+        </tr>
+        <tr>
+            <td>total_threshold</td>
+            <td>integer</td>
+            <td><span class="default-value">0</span></td>
+            <td>Max total violations before failure</td>
+        </tr>
+        <tr>
+            <td>threshold_percentage</td>
+            <td>float</td>
+            <td><span class="default-value">0</span></td>
+            <td>Max violation percentage (0-100)</td>
+        </tr>
+    </table>
+
+    <h3>Display Properties</h3>
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>show_code</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Show code snippets in violation output</td>
+        </tr>
+        <tr>
+            <td>show_hints</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Show fix hints for violations</td>
+        </tr>
+        <tr>
+            <td>colors</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Enable colored console output</td>
+        </tr>
+        <tr>
+            <td>visualization</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Show bar charts in reports</td>
+        </tr>
+        <tr>
+            <td>show_table</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Show summary tables</td>
+        </tr>
+        <tr>
+            <td>summary_only</td>
+            <td>boolean</td>
+            <td><span class="default-value">false</span></td>
+            <td>Show only summary (hide violation details)</td>
+        </tr>
+        <tr>
+            <td>verbose</td>
+            <td>boolean</td>
+            <td><span class="default-value">false</span></td>
+            <td>Enable verbose output</td>
+        </tr>
+    </table>
+
+    <h2 id="prebuilt-policies">7. prebuilt_policies Section</h2>
+
+    <pre><span class="yaml-key">prebuilt_policies</span>:
+  <span class="yaml-key">security</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity</span>: <span class="yaml-string">critical</span>
+    <span class="yaml-key">skip_rules</span>:
+      - <span class="yaml-string">CS-SEC-003</span>
+
+  <span class="yaml-key">naming_conventions</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+
+  <span class="yaml-key">async_best_practices</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+
+  <span class="yaml-key">design_rules</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+
+  <span class="yaml-key">exception_handling</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+
+  <span class="yaml-key">dependency_injection</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">false</span></pre>
+
+    <h3>Available Pre-built Policies</h3>
+    <table>
+        <tr>
+            <th>Policy</th>
+            <th>Description</th>
+            <th>Rules</th>
+        </tr>
+        <tr>
+            <td><code>security</code></td>
+            <td>Security vulnerability detection</td>
+            <td>CS-SEC-001 to CS-SEC-005</td>
+        </tr>
+        <tr>
+            <td><code>naming_conventions</code></td>
+            <td>Naming convention enforcement</td>
+            <td>CS-NAME-001 to CS-NAME-007</td>
+        </tr>
+        <tr>
+            <td><code>async_best_practices</code></td>
+            <td>Async/await best practices</td>
+            <td>CS-ASYNC-001 to CS-ASYNC-003</td>
+        </tr>
+        <tr>
+            <td><code>design_rules</code></td>
+            <td>Code design and complexity</td>
+            <td>CS-DESIGN-001 to CS-DESIGN-004</td>
+        </tr>
+        <tr>
+            <td><code>exception_handling</code></td>
+            <td>Exception handling patterns</td>
+            <td>CS-EXC-001 to CS-EXC-003</td>
+        </tr>
+        <tr>
+            <td><code>dependency_injection</code></td>
+            <td>DI/IoC patterns</td>
+            <td>CS-DI-001, CS-DI-002</td>
+        </tr>
+    </table>
+
+    <h3>Policy Configuration Properties</h3>
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>enabled</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Enable or disable the policy</td>
+        </tr>
+        <tr>
+            <td>severity</td>
+            <td>string</td>
+            <td><span class="default-value">varies</span></td>
+            <td>Override default severity for all rules</td>
+        </tr>
+        <tr>
+            <td>skip_rules</td>
+            <td>array</td>
+            <td><span class="default-value">[]</span></td>
+            <td>List of rule IDs to skip</td>
+        </tr>
+    </table>
+
+    <h2 id="coding-standards">8. coding_standards Section</h2>
+
+    <p>Supports two formats for defining rules:</p>
+
+    <h3>Format 1: Simple List (Recommended)</h3>
+    <pre><span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">naming</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CS-NAME-001</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"Class Naming Convention"</span>
+      <span class="yaml-key">description</span>: <span class="yaml-string">"Classes must use PascalCase"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+      <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+      <span class="yaml-key">pattern</span>: <span class="yaml-string">"^[A-Z][a-zA-Z0-9]*$"</span>
+      <span class="yaml-key">message</span>: <span class="yaml-string">"Class name must use PascalCase"</span>
+      <span class="yaml-key">fix_hint</span>: <span class="yaml-string">"Rename to use PascalCase"</span>
+      <span class="yaml-key">applies_to</span>:
+        - <span class="yaml-string">classes</span>
+
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CS-NAME-007</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"Interface Naming"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+      <span class="yaml-key">pattern</span>: <span class="yaml-string">"^I[A-Z][a-zA-Z0-9]*$"</span>
+      <span class="yaml-key">applies_to</span>:
+        - <span class="yaml-string">interfaces</span></pre>
+
+    <h3>Format 2: Full Format with Category Settings</h3>
+    <pre><span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">naming</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+    <span class="yaml-key">rules</span>:
+      - <span class="yaml-key">id</span>: <span class="yaml-string">CS-NAME-001</span>
+        <span class="yaml-key">name</span>: <span class="yaml-string">"Class Naming Convention"</span>
+        <span class="yaml-comment"># ... rule properties</span></pre>
+
+    <h3>Rule Definition Properties</h3>
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>id</td>
+            <td>string</td>
+            <td><span class="required">Required</span></td>
+            <td>Unique rule identifier</td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Display name for the rule</td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Detailed description</td>
+        </tr>
+        <tr>
+            <td>severity</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Severity level (default: medium)</td>
+        </tr>
+        <tr>
+            <td>enabled</td>
+            <td>boolean</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Enable/disable rule (default: true)</td>
+        </tr>
+        <tr>
+            <td>skip</td>
+            <td>boolean</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Skip rule (alias for enabled=false)</td>
+        </tr>
+        <tr>
+            <td>pattern</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Regex pattern for valid code</td>
+        </tr>
+        <tr>
+            <td>anti_pattern</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Regex pattern for invalid code</td>
+        </tr>
+        <tr>
+            <td>message</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Violation message</td>
+        </tr>
+        <tr>
+            <td>fix_hint</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Hint for fixing the violation</td>
+        </tr>
+        <tr>
+            <td>applies_to</td>
+            <td>array</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Syntax elements this rule applies to</td>
+        </tr>
+        <tr>
+            <td>file_pattern</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Limit rule to files matching pattern</td>
+        </tr>
+        <tr>
+            <td>exclude</td>
+            <td>array</td>
+            <td><span class="optional">Optional</span></td>
+            <td>File patterns to exclude for this rule</td>
+        </tr>
+        <tr>
+            <td>parameters</td>
+            <td>object</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Additional parameters for the rule</td>
+        </tr>
+    </table>
+
+    <h3>applies_to Values</h3>
+    <table>
+        <tr>
+            <th>Value</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td><code>classes</code></td>
+            <td>Class declarations</td>
+        </tr>
+        <tr>
+            <td><code>interfaces</code></td>
+            <td>Interface declarations</td>
+        </tr>
+        <tr>
+            <td><code>methods</code></td>
+            <td>Method declarations</td>
+        </tr>
+        <tr>
+            <td><code>properties</code></td>
+            <td>Property declarations</td>
+        </tr>
+        <tr>
+            <td><code>fields</code></td>
+            <td>Field declarations</td>
+        </tr>
+        <tr>
+            <td><code>enums</code></td>
+            <td>Enum declarations</td>
+        </tr>
+        <tr>
+            <td><code>structs</code></td>
+            <td>Struct declarations</td>
+        </tr>
+        <tr>
+            <td><code>delegates</code></td>
+            <td>Delegate declarations</td>
+        </tr>
+    </table>
+
+    <h2 id="custom-validators">9. custom_validators Section</h2>
+
+    <pre><span class="yaml-key">custom_validators</span>:
+  <span class="yaml-key">validate_password_complexity</span>:
+    <span class="yaml-key">type</span>: <span class="yaml-string">regex</span>
+    <span class="yaml-key">pattern</span>: <span class="yaml-string">"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$"</span>
+    <span class="yaml-key">message</span>: <span class="yaml-string">"Password must be 8+ chars with upper, lower, and digit"</span>
+
+  <span class="yaml-key">validate_no_console_writeline</span>:
+    <span class="yaml-key">type</span>: <span class="yaml-string">anti_pattern</span>
+    <span class="yaml-key">pattern</span>: <span class="yaml-string">"Console\\.Write(Line)?"</span>
+    <span class="yaml-key">message</span>: <span class="yaml-string">"Use structured logging instead of Console.Write"</span>
+    <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+    <span class="yaml-key">exclude</span>:
+      - <span class="yaml-string">"**/Program.cs"</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Required</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>string</td>
+            <td><span class="required">Required</span></td>
+            <td>Validator type: regex, anti_pattern, custom</td>
+        </tr>
+        <tr>
+            <td>pattern</td>
+            <td>string</td>
+            <td><span class="required">Required*</span></td>
+            <td>Regex pattern (*required for regex type)</td>
+        </tr>
+        <tr>
+            <td>message</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Violation message</td>
+        </tr>
+        <tr>
+            <td>severity</td>
+            <td>string</td>
+            <td><span class="optional">Optional</span></td>
+            <td>Severity level</td>
+        </tr>
+        <tr>
+            <td>exclude</td>
+            <td>array</td>
+            <td><span class="optional">Optional</span></td>
+            <td>File patterns to exclude</td>
+        </tr>
+    </table>
+
+    <h2 id="custom-rules">10. custom_rules Section</h2>
+
+    <pre><span class="yaml-key">custom_rules</span>:
+  - <span class="yaml-key">path</span>: <span class="yaml-string">"./custom-rules/MyCompany.Rules.dll"</span>
+
+  - <span class="yaml-key">nuget</span>: <span class="yaml-string">"MyCompany.RuleKeeper.Rules:1.0.0"</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>path</td>
+            <td>string</td>
+            <td>Path to custom rule assembly DLL</td>
+        </tr>
+        <tr>
+            <td>nuget</td>
+            <td>string</td>
+            <td>NuGet package reference (package:version)</td>
+        </tr>
+    </table>
+
+    <div class="note">
+        <strong>Note:</strong> Custom rule assemblies can also contain fix providers. Any class implementing <code>IFixProvider</code> with the <code>[FixProvider]</code> attribute will be automatically discovered.
+    </div>
+
+    <h2 id="custom-fix-providers">10.1 custom_fix_providers Section</h2>
+
+    <p>Specifies assemblies containing custom fix providers for the <code>fix</code> command. This is optional - fix providers in <code>custom_rules</code> assemblies are also loaded automatically.</p>
+
+    <pre><span class="yaml-key">custom_fix_providers</span>:
+  - <span class="yaml-key">path</span>: <span class="yaml-string">"./custom-fixes/MyCompany.Fixes.dll"</span>
+
+  - <span class="yaml-key">path</span>: <span class="yaml-string">"./plugins/AnotherFixer.dll"</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>path</td>
+            <td>string</td>
+            <td>Path to custom fix provider assembly DLL</td>
+        </tr>
+    </table>
+
+    <h3>Creating Custom Fix Providers</h3>
+    <p>To create a custom fix provider, reference the <code>RuleKeeper.Sdk</code> package and implement <code>IFixProvider</code>:</p>
+
+    <pre><span class="yaml-comment">// MyCustomFixProvider.cs</span>
+using RuleKeeper.Sdk;
+using RuleKeeper.Sdk.Attributes;
+
+[FixProvider("My Custom Fixes", Category = "Custom")]
+public class MyCustomFixProvider : BaseFixProvider
+{
+    public override IEnumerable&lt;string&gt; SupportedRuleIds =&gt;
+        new[] { "CUSTOM-001", "CUSTOM-002" };
+
+    public override IEnumerable&lt;CodeFix&gt; GetFixes(
+        Violation violation, string sourceCode)
+    {
+        <span class="yaml-comment">// Your fix logic here</span>
+        yield return CodeFix.CreateReplacement(
+            violation,
+            "Fix description",
+            startColumn: 1,
+            endColumn: 10,
+            "original",
+            "replacement"
+        );
+    }
+}</pre>
+
+    <div class="tip">
+        <strong>Tip:</strong> Use <code>rulekeeper fix --list-fixable --verbose</code> to see all registered fix providers including custom ones.
+    </div>
+
+    <h2 id="complete-example">11. Complete Configuration Example</h2>
+
+    <pre><span class="yaml-comment"># RuleKeeper Configuration</span>
+<span class="yaml-comment"># Complete example with all options</span>
+
+<span class="yaml-key">version</span>: <span class="yaml-string">"1.0"</span>
+
+<span class="yaml-key">metadata</span>:
+  <span class="yaml-key">name</span>: <span class="yaml-string">"Enterprise Code Quality Rules"</span>
+  <span class="yaml-key">description</span>: <span class="yaml-string">"Comprehensive rules for enterprise applications"</span>
+  <span class="yaml-key">author</span>: <span class="yaml-string">"Platform Team"</span>
+
+<span class="yaml-key">scan</span>:
+  <span class="yaml-key">language</span>: <span class="yaml-string">CSharp</span>
+  <span class="yaml-key">include</span>:
+    - <span class="yaml-string">"**/*.cs"</span>
+  <span class="yaml-key">exclude</span>:
+    - <span class="yaml-string">"**/obj/**"</span>
+    - <span class="yaml-string">"**/bin/**"</span>
+    - <span class="yaml-string">"**/*.Designer.cs"</span>
+    - <span class="yaml-string">"**/*.g.cs"</span>
+    - <span class="yaml-string">"**/Migrations/**"</span>
+    - <span class="yaml-string">"**/*Tests.cs"</span>
+  <span class="yaml-key">parallel</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">cache</span>: <span class="yaml-bool">true</span>
+
+<span class="yaml-key">output</span>:
+  <span class="yaml-key">format</span>: <span class="yaml-string">console</span>
+  <span class="yaml-key">additional_formats</span>:
+    - <span class="yaml-string">json</span>
+    - <span class="yaml-string">sarif</span>
+  <span class="yaml-key">min_severity</span>: <span class="yaml-string">info</span>
+  <span class="yaml-key">fail_on</span>: <span class="yaml-string">high</span>
+  <span class="yaml-key">critical_threshold</span>: <span class="yaml-number">0</span>
+  <span class="yaml-key">high_threshold</span>: <span class="yaml-number">5</span>
+  <span class="yaml-key">total_threshold</span>: <span class="yaml-number">100</span>
+  <span class="yaml-key">show_code</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">show_hints</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">colors</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">visualization</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">show_table</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">summary_only</span>: <span class="yaml-bool">false</span>
+
+<span class="yaml-key">prebuilt_policies</span>:
+  <span class="yaml-key">security</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity</span>: <span class="yaml-string">critical</span>
+  <span class="yaml-key">naming_conventions</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">async_best_practices</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">design_rules</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">exception_handling</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">dependency_injection</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+
+<span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">custom_naming</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CUSTOM-001</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"Service Class Suffix"</span>
+      <span class="yaml-key">description</span>: <span class="yaml-string">"Service classes must end with 'Service'"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+      <span class="yaml-key">pattern</span>: <span class="yaml-string">".*Service$"</span>
+      <span class="yaml-key">message</span>: <span class="yaml-string">"Service class name must end with 'Service'"</span>
+      <span class="yaml-key">file_pattern</span>: <span class="yaml-string">"**/*Service.cs"</span>
+
+<span class="yaml-key">custom_validators</span>: {}
+
+<span class="yaml-key">custom_rules</span>: []</pre>
+
+    <h2 id="severity-levels">12. Severity Levels</h2>
+
+    <table>
+        <tr>
+            <th>Level</th>
+            <th>Value</th>
+            <th>Description</th>
+            <th>Typical Use</th>
+        </tr>
+        <tr>
+            <td><strong>Critical</strong></td>
+            <td><code>critical</code></td>
+            <td>Most severe - immediate action required</td>
+            <td>Security vulnerabilities, blocking async</td>
+        </tr>
+        <tr>
+            <td><strong>High</strong></td>
+            <td><code>high</code></td>
+            <td>High impact - should be fixed soon</td>
+            <td>Empty catch blocks, async void</td>
+        </tr>
+        <tr>
+            <td><strong>Medium</strong></td>
+            <td><code>medium</code></td>
+            <td>Medium impact - fix when possible</td>
+            <td>Naming conventions, method length</td>
+        </tr>
+        <tr>
+            <td><strong>Low</strong></td>
+            <td><code>low</code></td>
+            <td>Low impact - minor improvements</td>
+            <td>Private field naming, async suffix</td>
+        </tr>
+        <tr>
+            <td><strong>Info</strong></td>
+            <td><code>info</code></td>
+            <td>Informational - suggestions only</td>
+            <td>Style suggestions, recommendations</td>
+        </tr>
+    </table>
+
+    <div class="tip">
+        <strong>Best Practice:</strong> Start with pre-built policies enabled, then customize severity levels and add custom rules as needed for your organization.
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+    <p style="text-align: center; color: #666; font-size: 0.9em;">
+        RuleKeeper YAML Configuration Reference v1.0.0<br>
+        Generated: January 2026
+    </p>
+</body>
+</html>

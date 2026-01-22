@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  RuleKeeper Analyzer Ruleset
+  Generated: 2026-01-20 22:25:03
+  
+  To use: Add to your .csproj file:
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>RuleKeeper.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+-->
+<RuleSet Name="RuleKeeper Rules" Description="Code analysis rules enforced by RuleKeeper" ToolsVersion="17.0">
+
+  <IncludeAll Action="Warning" />
+
+  <!-- Security Rules (CS-SEC-*) -->
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
+    <Rule Id="CA2100" Action="Error" /> <!-- SQL Injection -->
+    <Rule Id="CA2104" Action="Error" /> <!-- Hardcoded credentials -->
+    <Rule Id="CA3001" Action="Error" /> <!-- XSS -->
+    <Rule Id="CA3003" Action="Error" /> <!-- Path traversal -->
+    <Rule Id="CA2300" Action="Error" /> <!-- Insecure deserialization -->
+    <Rule Id="CA5350" Action="Error" /> <!-- Weak crypto -->
+    <Rule Id="CA5351" Action="Error" /> <!-- Weak crypto -->
+  </Rules>
+
+  <!-- Async Rules (CS-ASYNC-*) -->
+  <Rules AnalyzerId="Microsoft.VisualStudio.Threading.Analyzers" RuleNamespace="Microsoft.VisualStudio.Threading.Analyzers">
+    <Rule Id="VSTHRD101" Action="Error" /> <!-- Async void -->
+    <Rule Id="VSTHRD002" Action="Error" /> <!-- Blocking on async -->
+    <Rule Id="VSTHRD103" Action="Error" /> <!-- Blocking calls -->
+  </Rules>
+
+  <!-- Exception Rules (CS-EXC-*) -->
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
+    <Rule Id="CA1031" Action="Warning" /> <!-- Don't catch general exceptions -->
+    <Rule Id="CA2200" Action="Warning" /> <!-- Rethrow to preserve stack -->
+  </Rules>
+
+  <!-- Naming Rules (CS-NAME-*) -->
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
+    <Rule Id="IDE1006" Action="Warning" /> <!-- Naming violations -->
+  </Rules>
+
+</RuleSet>

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>RuleKeeper.Cli</RootNamespace>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>rulekeeper</ToolCommandName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="Spectre.Console" Version="0.48.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RuleKeeper.Core\RuleKeeper.Core.csproj" />
+    <ProjectReference Include="..\RuleKeeper.Rules\RuleKeeper.Rules.csproj" />
+  </ItemGroup>
+
+</Project>
