@@ -139,22 +139,25 @@ public class ConfigurationValidator
         {
             var path = $"custom_validators.{name}";
 
-            var validTypes = new[] { "regex", "roslyn", "script" };
+            var validTypes = new[] { "regex", "roslyn", "script", "pattern" };
             if (!validTypes.Contains(validator.Type.ToLowerInvariant()))
             {
                 errors.Add(new ValidationError($"{path}.type", $"Invalid validator type '{validator.Type}'. Valid types: {string.Join(", ", validTypes)}"));
             }
 
-            if (validator.Type.ToLowerInvariant() == "regex" && string.IsNullOrEmpty(validator.Pattern))
+            var isRegexType = validator.Type.ToLowerInvariant() is "regex" or "pattern";
+            var regexPattern = validator.Pattern ?? validator.Regex;
+
+            if (isRegexType && string.IsNullOrEmpty(regexPattern))
             {
-                errors.Add(new ValidationError($"{path}.pattern", "Pattern is required for regex validators"));
+                errors.Add(new ValidationError($"{path}.pattern", "Pattern or regex is required for regex validators"));
             }
 
-            if (validator.Type.ToLowerInvariant() == "regex" && !string.IsNullOrEmpty(validator.Pattern))
+            if (isRegexType && !string.IsNullOrEmpty(regexPattern))
             {
-                if (!IsValidRegex(validator.Pattern))
+                if (!IsValidRegex(regexPattern))
                 {
-                    errors.Add(new ValidationError($"{path}.pattern", $"Invalid regex pattern: {validator.Pattern}"));
+                    errors.Add(new ValidationError($"{path}.pattern", $"Invalid regex pattern: {regexPattern}"));
                 }
             }
         }

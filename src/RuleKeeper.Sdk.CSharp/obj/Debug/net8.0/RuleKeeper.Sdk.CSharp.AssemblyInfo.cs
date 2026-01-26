@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyDescriptionAttribute(("C#-specific SDK for creating RuleKeeper rules using Roslyn. Build powerful analyz" +
     "ers with full semantic analysis support."))]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("2.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+8cb89395aa60765a1b051da1840f152687380390")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+8a6becc904ad3262daac293739156ff607be9381")]
 [assembly: System.Reflection.AssemblyProductAttribute("RuleKeeper.Sdk.CSharp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RuleKeeper.Sdk.CSharp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("2.0.0.0")]

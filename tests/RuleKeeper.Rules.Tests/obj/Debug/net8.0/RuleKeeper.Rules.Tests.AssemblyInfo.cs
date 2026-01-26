@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RuleKeeper.Rules.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8cb89395aa60765a1b051da1840f152687380390")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8a6becc904ad3262daac293739156ff607be9381")]
 [assembly: System.Reflection.AssemblyProductAttribute("RuleKeeper.Rules.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RuleKeeper.Rules.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

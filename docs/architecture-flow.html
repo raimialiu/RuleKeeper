@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper Architecture & Flow</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #1e1e1e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        main {
+            padding: 40px 0;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h3 {
+            color: var(--text);
+            font-size: 1.3rem;
+            margin: 30px 0 15px;
+        }
+
+        /* Rule Types Table */
+        .rule-types-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .rule-types-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .rule-types-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .rule-types-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .rule-types-table tr:hover {
+            background: #f1f5f9;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .type-builtin { background: #dbeafe; color: #1e40af; }
+        .type-pattern { background: #dcfce7; color: #166534; }
+        .type-ast { background: #fef3c7; color: #92400e; }
+        .type-logic { background: #f3e8ff; color: #7c3aed; }
+        .type-code { background: #ffe4e6; color: #be123c; }
+
+        /* Flow Diagram */
+        .flow-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+            overflow-x: auto;
+        }
+
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            min-width: 800px;
+        }
+
+        .flow-step {
+            position: relative;
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 25px;
+            margin: 0;
+        }
+
+        .flow-step::after {
+            content: '▼';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary);
+            font-size: 1.2rem;
+            z-index: 1;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .flow-arrow {
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flow-step-number {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .flow-step-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+            padding-left: 25px;
+        }
+
+        .flow-step-content {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .flow-step-content code {
+            background: var(--code-bg);
+            color: #9cdcfe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .flow-substeps {
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .flow-substep {
+            padding: 8px 0 8px 15px;
+            position: relative;
+        }
+
+        .flow-substep::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        /* Nested Flow */
+        .nested-flow {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .nested-flow-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .nested-flow-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .nested-flow-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .nested-flow-item strong {
+            color: var(--primary);
+        }
+
+        /* YAML Examples */
+        .yaml-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .yaml-example {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .yaml-example-header {
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            font-weight: 600;
+        }
+
+        .yaml-example-header .type-num {
+            opacity: 0.7;
+            margin-right: 8px;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: #dcdcdc;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .yaml-key { color: #9cdcfe; }
+        .yaml-string { color: #ce9178; }
+        .yaml-number { color: #b5cea8; }
+        .yaml-bool { color: #569cd6; }
+        .yaml-comment { color: #6a9955; }
+
+        /* Architecture Diagram */
+        .arch-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .arch-layer {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .arch-layer-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .arch-component {
+            background: #f1f5f9;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .arch-component:last-child {
+            margin-bottom: 0;
+        }
+
+        .arch-component code {
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--card-bg);
+            padding: 30px 0;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .arch-diagram {
+                grid-template-columns: 1fr;
+            }
+            .yaml-examples {
+                grid-template-columns: 1fr;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>RuleKeeper Architecture & Flow</h1>
+            <p>Understanding how RuleKeeper processes and validates your code</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Custom Rule Types (10 Total)</h2>
+
+            <table class="rule-types-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>YAML Key</th>
+                        <th>Description</th>
+                        <th>Complexity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><span class="type-badge type-builtin">BuiltIn</span></td>
+                        <td><code>id:</code> only</td>
+                        <td>Pre-coded C# Roslyn analyzers</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><span class="type-badge type-pattern">SimplePattern</span></td>
+                        <td><code>pattern:</code> / <code>anti_pattern:</code></td>
+                        <td>Basic regex string matching</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><span class="type-badge type-pattern">EnhancedPattern</span></td>
+                        <td><code>pattern_match:</code> / <code>anti_pattern_match:</code></td>
+                        <td>Regex with captures, options, scope</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><span class="type-badge type-ast">AstQuery</span></td>
+                        <td><code>ast_query:</code></td>
+                        <td>Declarative AST node matching</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><span class="type-badge type-logic">MultiMatch</span></td>
+                        <td><code>match:</code></td>
+                        <td>Combine patterns with AND/OR/NONE logic</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><span class="type-badge type-code">Expression</span></td>
+                        <td><code>expression:</code></td>
+                        <td>C# expression (single condition)</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><span class="type-badge type-code">Script</span></td>
+                        <td><code>script:</code></td>
+                        <td>Full C# script with custom logic</td>
+                        <td>High</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><span class="type-badge type-logic">Validator</span></td>
+                        <td><code>validator:</code></td>
+                        <td>Reference or inline validator definition</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td><span class="type-badge type-builtin">CustomValidator</span></td>
+                        <td><code>custom_validator:</code></td>
+                        <td>Reference to custom_validators section</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td><span class="type-badge" style="background:#f1f5f9;color:#64748b;">None</span></td>
+                        <td>-</td>
+                        <td>No validation configured</td>
+                        <td>-</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>RuleKeeper Execution Flow</h2>
+
+            <div class="flow-container">
+                <div class="flow-diagram">
+                    <!-- Step 1 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">1</span>
+                        <div class="flow-step-title">USER INPUT</div>
+                        <div class="flow-step-content">
+                            <code>rulekeeper scan -c coding_standard.yaml ./src</code>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 2 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">2</span>
+                        <div class="flow-step-title">CONFIGURATION LOADING</div>
+                        <div class="flow-step-content">
+                            <code>ConfigurationLoader.LoadFromFile()</code>
+                            <div class="flow-substeps">
+                                <div class="flow-substep">Parse YAML with YamlDotNet</div>
+                                <div class="flow-substep">Deserialize to <code>RuleKeeperConfig</code></div>
+                                <div class="flow-substep">Return config object</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 3 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">3</span>
+                        <div class="flow-step-title">CONFIGURATION VALIDATION</div>
+                        <div class="flow-step-content">
+                            <code>ConfigurationValidator.ValidateAndThrow()</code>
+                            <div class="flow-substeps">
+                                <div class="flow-substep">Validate version compatibility</div>
+                                <div class="flow-substep">Validate scan patterns (include/exclude)</div>
+                                <div class="flow-substep">Validate output format</div>
+                                <div class="flow-substep">Validate coding_standards rules</div>
+                                <div class="flow-substep">Validate custom_validators (regex patterns)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 4 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">4</span>
+                        <div class="flow-step-title">ENGINE INITIALIZATION</div>
+                        <div class="flow-step-content">
+                            <code>AnalysisEngine.InitializeFromConfiguration()</code>
+                            <div class="nested-flow">
+                                <div class="nested-flow-title">Registries Initialized:</div>
+                                <div class="nested-flow-items">
+                                    <div class="nested-flow-item"><strong>RuleRegistry</strong> ← Load built-in analyzers</div>
+                                    <div class="nested-flow-item"><strong>ValidatorRegistry</strong> ← Load custom validators</div>
+                                    <div class="nested-flow-item"><strong>PluginLoader</strong> ← Load external DLLs</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 5 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">5</span>
+                        <div class="flow-step-title">FILE DISCOVERY</div>
+                        <div class="flow-step-content">
+                            <code>RoslynWorkspaceLoader.LoadFilesAsync()</code>
+                            <div class="flow-substeps">
+                                <div class="flow-substep">Glob include patterns: <code>"**/*.cs"</code>, <code>"**/*.py"</code></div>
+                                <div class="flow-substep">Filter exclude patterns: <code>"**/bin/**"</code></div>
+                                <div class="flow-substep">Parse each file into SyntaxTree (Roslyn)</div>
+                                <div class="flow-substep">Create SemanticModel (for type resolution)</div>
+                                <div class="flow-substep">Optional: BaselineFilter (git diff)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 6 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">6</span>
+                        <div class="flow-step-title">ANALYSIS EXECUTION</div>
+                        <div class="flow-step-content">
+                            <code>RuleExecutor.ExecuteAsync(context, config)</code>
+                            <div class="nested-flow">
+                                <div class="nested-flow-title">For each file (parallel or sequential):</div>
+                                <div class="nested-flow-items">
+                                    <div class="nested-flow-item"><strong>Prebuilt Policies</strong> → Built-in analyzers</div>
+                                    <div class="nested-flow-item"><strong>Coding Standards</strong> → YAML rules</div>
+                                    <div class="nested-flow-item"><strong>Custom Validators</strong> → User-defined</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 7 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">7</span>
+                        <div class="flow-step-title">VALIDATOR FACTORY</div>
+                        <div class="flow-step-content">
+                            <code>ValidatorFactory.CreateFromRuleDefinition(rule)</code>
+                            <div class="nested-flow">
+                                <div class="nested-flow-title">Based on RuleValidationType:</div>
+                                <div class="nested-flow-items">
+                                    <div class="nested-flow-item"><strong>EnhancedPattern</strong> → RegexValidator</div>
+                                    <div class="nested-flow-item"><strong>AstQuery</strong> → AstQueryValidator</div>
+                                    <div class="nested-flow-item"><strong>MultiMatch</strong> → MultiMatchValidator</div>
+                                    <div class="nested-flow-item"><strong>Expression</strong> → ExpressionValidator</div>
+                                    <div class="nested-flow-item"><strong>Script</strong> → ScriptValidator</div>
+                                    <div class="nested-flow-item"><strong>Validator</strong> → Reference/Inline</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 8 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">8</span>
+                        <div class="flow-step-title">VIOLATION COLLECTION</div>
+                        <div class="flow-step-content">
+                            Each validator returns <code>List&lt;Violation&gt;</code>:
+                            <div class="flow-substeps">
+                                <div class="flow-substep">RuleId, RuleName, Message</div>
+                                <div class="flow-substep">Severity (Critical/High/Medium/Low/Info)</div>
+                                <div class="flow-substep">FilePath, StartLine, EndLine, Columns</div>
+                                <div class="flow-substep">CodeSnippet, FixHint</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 9 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">9</span>
+                        <div class="flow-step-title">POST-PROCESSING</div>
+                        <div class="flow-step-content">
+                            <div class="flow-substeps">
+                                <div class="flow-substep"><code>BaselineFilter.FilterViolations()</code> → Keep only NEW violations</div>
+                                <div class="flow-substep"><code>ApplyOutputLimits()</code> → Filter by min_severity, max_per_rule, max_total</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 10 -->
+                    <div class="flow-step">
+                        <span class="flow-step-number">10</span>
+                        <div class="flow-step-title">REPORT GENERATION</div>
+                        <div class="flow-step-content">
+                            <code>AnalysisReport</code> → Output Formatters
+                            <div class="nested-flow">
+                                <div class="nested-flow-items">
+                                    <div class="nested-flow-item"><strong>console</strong> → Colored terminal</div>
+                                    <div class="nested-flow-item"><strong>json</strong> → JSON file</div>
+                                    <div class="nested-flow-item"><strong>sarif</strong> → IDE/CI integration</div>
+                                    <div class="nested-flow-item"><strong>html</strong> → HTML report</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flow-arrow"></div>
+
+                    <!-- Step 11 -->
+                    <div class="flow-step" style="background: linear-gradient(135deg, #dcfce7, #d1fae5);">
+                        <span class="flow-step-number" style="background: var(--success);">11</span>
+                        <div class="flow-step-title" style="color: #166534;">EXIT CODE</div>
+                        <div class="flow-step-content">
+                            Based on <code>output.fail_on</code> setting:
+                            <div class="flow-substeps">
+                                <div class="flow-substep"><code>fail_on: critical</code> → exit 1 if any critical</div>
+                                <div class="flow-substep"><code>fail_on: high</code> → exit 1 if any high+</div>
+                                <div class="flow-substep"><code>fail_on: medium</code> → exit 1 if any medium+</div>
+                                <div class="flow-substep"><code>fail_on: never</code> → always exit 0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Rule Type Examples in YAML</h2>
+
+            <div class="yaml-examples">
+                <!-- BuiltIn -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#1</span> BuiltIn - Reference Pre-coded Analyzer
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CS-NAME-001</span>  <span class="yaml-comment"># Just ID triggers lookup</span>
+  <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>
+  <span class="yaml-key">parameters:</span>
+    <span class="yaml-key">style:</span> <span class="yaml-string">pascal_case</span></pre>
+                </div>
+
+                <!-- SimplePattern -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#2</span> SimplePattern - Basic Regex
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-001</span>
+  <span class="yaml-key">name:</span> <span class="yaml-string">"No Console Output"</span>
+  <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>
+  <span class="yaml-key">anti_pattern:</span> <span class="yaml-string">"Console\\.(WriteLine|Write)\\s*\\("</span>
+  <span class="yaml-key">message:</span> <span class="yaml-string">"Use ILogger instead"</span></pre>
+                </div>
+
+                <!-- EnhancedPattern -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#3</span> EnhancedPattern - Regex with Options
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-002</span>
+  <span class="yaml-key">anti_pattern_match:</span>
+    <span class="yaml-key">regex:</span> <span class="yaml-string">"(password|secret)\\s*=\\s*\"([^\"]+)\""</span>
+    <span class="yaml-key">options:</span> <span class="yaml-string">[ignorecase]</span>
+    <span class="yaml-key">message_template:</span> <span class="yaml-string">"Hardcoded {1}: {2}"</span></pre>
+                </div>
+
+                <!-- AstQuery -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#4</span> AstQuery - AST Node Matching
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-003</span>
+  <span class="yaml-key">ast_query:</span>
+    <span class="yaml-key">node_kinds:</span> <span class="yaml-string">[FieldDeclaration]</span>
+    <span class="yaml-key">properties:</span>
+      <span class="yaml-key">IsPublic:</span> <span class="yaml-bool">true</span>
+      <span class="yaml-key">IsConst:</span> <span class="yaml-bool">false</span>
+  <span class="yaml-key">message:</span> <span class="yaml-string">"Use properties instead"</span></pre>
+                </div>
+
+                <!-- MultiMatch -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#5</span> MultiMatch - AND/OR/NONE Logic
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-004</span>
+  <span class="yaml-key">match:</span>
+    <span class="yaml-key">all:</span>  <span class="yaml-comment"># AND</span>
+      <span class="yaml-key">- pattern:</span>
+          <span class="yaml-key">regex:</span> <span class="yaml-string">"ExecuteSqlRaw"</span>
+    <span class="yaml-key">none:</span>  <span class="yaml-comment"># NOT</span>
+      <span class="yaml-key">- pattern:</span>
+          <span class="yaml-key">regex:</span> <span class="yaml-string">"@\\w+"</span></pre>
+                </div>
+
+                <!-- Expression -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#6</span> Expression - C# Expression
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-005</span>
+  <span class="yaml-key">expression:</span>
+    <span class="yaml-key">condition:</span> <span class="yaml-string">"LineCount > 50"</span>
+  <span class="yaml-key">parameters:</span>
+    <span class="yaml-key">max_lines:</span> <span class="yaml-number">50</span></pre>
+                </div>
+
+                <!-- Script -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#7</span> Script - Full C# Script
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-006</span>
+  <span class="yaml-key">script:</span>
+    <span class="yaml-key">code:</span> <span class="yaml-string">|
+      foreach (var method in Context.GetMethods())
+          if (method.Lines > 30)
+              yield return CreateViolation(method);</span></pre>
+                </div>
+
+                <!-- Validator -->
+                <div class="yaml-example">
+                    <div class="yaml-example-header">
+                        <span class="type-num">#8</span> Validator - Reference/Inline
+                    </div>
+                    <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-007</span>
+  <span class="yaml-key">validator:</span>
+    <span class="yaml-key">reference:</span> <span class="yaml-string">"my_custom_validator"</span>
+<span class="yaml-comment"># OR inline:</span>
+  <span class="yaml-key">validator:</span>
+    <span class="yaml-key">inline:</span>
+      <span class="yaml-key">type:</span> <span class="yaml-string">pattern</span>
+      <span class="yaml-key">pattern:</span> <span class="yaml-string">{ regex: "TODO:" }</span></pre>
+                </div>
+            </div>
+
+            <h2>Architecture Components</h2>
+
+            <div class="arch-diagram">
+                <div class="arch-layer">
+                    <div class="arch-layer-title">CLI Layer</div>
+                    <div class="arch-component"><code>ScanCommand</code> - Main scan entry</div>
+                    <div class="arch-component"><code>InitCommand</code> - Config generation</div>
+                    <div class="arch-component"><code>ListRulesCommand</code> - Rule listing</div>
+                    <div class="arch-component"><code>GenerateEditorConfigCommand</code> - IDE config</div>
+                </div>
+
+                <div class="arch-layer">
+                    <div class="arch-layer-title">Core Layer</div>
+                    <div class="arch-component"><code>AnalysisEngine</code> - Orchestrator</div>
+                    <div class="arch-component"><code>RuleExecutor</code> - Rule dispatch</div>
+                    <div class="arch-component"><code>RuleRegistry</code> - Built-in rules</div>
+                    <div class="arch-component"><code>ValidatorRegistry</code> - Custom validators</div>
+                    <div class="arch-component"><code>ValidatorFactory</code> - Validator creation</div>
+                    <div class="arch-component"><code>ConfigurationLoader</code> - YAML parsing</div>
+                </div>
+
+                <div class="arch-layer">
+                    <div class="arch-layer-title">Validators</div>
+                    <div class="arch-component"><code>RegexValidator</code> - Pattern matching</div>
+                    <div class="arch-component"><code>AstQueryValidator</code> - AST queries</div>
+                    <div class="arch-component"><code>MultiMatchValidator</code> - Logic combos</div>
+                    <div class="arch-component"><code>ExpressionValidator</code> - C# expressions</div>
+                    <div class="arch-component"><code>ScriptValidator</code> - C# scripts</div>
+                    <div class="arch-component"><code>AssemblyValidator</code> - DLL plugins</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>RuleKeeper Documentation &copy; 2024</p>
+            <p style="margin-top: 10px;">
+                <a href="index.html">Home</a> &middot;
+                <a href="cli-reference.html">CLI Reference</a> &middot;
+                <a href="yaml-reference.html">YAML Reference</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

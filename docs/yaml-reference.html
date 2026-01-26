@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleKeeper YAML Reference</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #1e1e1e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header p { opacity: 0.9; font-size: 1.1rem; }
+
+        .badges { margin-top: 20px; }
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin: 5px;
+            background: rgba(255,255,255,0.2);
+        }
+
+        main { padding: 40px 0; }
+
+        .toc {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .toc h3 { color: var(--primary); margin-bottom: 15px; }
+        .toc ul { list-style: none; columns: 2; }
+        .toc li { padding: 5px 0; }
+        .toc a { color: var(--text); text-decoration: none; }
+        .toc a:hover { color: var(--primary); }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 50px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h3 {
+            color: var(--text);
+            font-size: 1.3rem;
+            margin: 30px 0 15px;
+        }
+
+        h4 {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 20px 0 10px;
+        }
+
+        p { margin-bottom: 15px; }
+
+        code {
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #c7254e;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .yaml-key { color: #9cdcfe; }
+        .yaml-string { color: #ce9178; }
+        .yaml-number { color: #b5cea8; }
+        .yaml-bool { color: #569cd6; }
+        .yaml-comment { color: #6a9955; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        th {
+            background: var(--primary);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #f8fafc; }
+
+        .type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .type-builtin { background: #dbeafe; color: #1e40af; }
+        .type-pattern { background: #dcfce7; color: #166534; }
+        .type-ast { background: #fef3c7; color: #92400e; }
+        .type-logic { background: #f3e8ff; color: #7c3aed; }
+        .type-code { background: #ffe4e6; color: #be123c; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .example-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .example-header {
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            font-weight: 600;
+        }
+
+        .example-header .num {
+            opacity: 0.7;
+            margin-right: 8px;
+        }
+
+        .note {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .note-title {
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 5px;
+        }
+
+        footer {
+            background: var(--card-bg);
+            padding: 30px 0;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+
+        footer a { color: var(--primary); text-decoration: none; }
+
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+            .grid-2 { grid-template-columns: 1fr; }
+            header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>YAML Configuration Reference</h1>
+            <p>Complete reference for RuleKeeper YAML configuration files</p>
+            <div class="badges">
+                <span class="badge">v2.0</span>
+                <span class="badge">10 Rule Types</span>
+                <span class="badge">Multi-Language</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <nav class="toc">
+                <h3>Table of Contents</h3>
+                <ul>
+                    <li><a href="#structure">Configuration Structure</a></li>
+                    <li><a href="#rule-types">Custom Rule Types</a></li>
+                    <li><a href="#examples">Rule Type Examples</a></li>
+                    <li><a href="#sections">Configuration Sections</a></li>
+                    <li><a href="#complete">Complete Example</a></li>
+                </ul>
+            </nav>
+
+            <section id="structure">
+                <h2>Configuration Structure</h2>
+                <pre><span class="yaml-key">version:</span> <span class="yaml-string">"1.0"</span>
+
+<span class="yaml-key">metadata:</span>
+  <span class="yaml-key">name:</span> <span class="yaml-string">"Project Name"</span>
+  <span class="yaml-key">description:</span> <span class="yaml-string">"Description"</span>
+
+<span class="yaml-key">scan:</span>
+  <span class="yaml-key">languages:</span> <span class="yaml-string">[csharp, python, javascript]</span>
+  <span class="yaml-key">include:</span> <span class="yaml-string">["**/*.cs", "**/*.py"]</span>
+  <span class="yaml-key">exclude:</span> <span class="yaml-string">["**/bin/**", "**/obj/**"]</span>
+  <span class="yaml-key">parallel:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">cache:</span> <span class="yaml-bool">true</span>
+
+<span class="yaml-key">output:</span>
+  <span class="yaml-key">format:</span> <span class="yaml-string">console</span>
+  <span class="yaml-key">min_severity:</span> <span class="yaml-string">info</span>
+  <span class="yaml-key">fail_on:</span> <span class="yaml-string">high</span>
+
+<span class="yaml-key">prebuilt_policies:</span>
+  <span class="yaml-key">security:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">critical</span>
+
+<span class="yaml-key">coding_standards:</span>
+  <span class="yaml-key">category_name:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">rules:</span>
+      <span class="yaml-key">- id:</span> <span class="yaml-string">RULE-001</span>
+        <span class="yaml-key">name:</span> <span class="yaml-string">"Rule Name"</span>
+        <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>
+
+<span class="yaml-key">custom_validators:</span>
+  <span class="yaml-key">validator_name:</span>
+    <span class="yaml-key">type:</span> <span class="yaml-string">regex</span>
+    <span class="yaml-key">regex:</span> <span class="yaml-string">"pattern"</span>
+
+<span class="yaml-key">custom_rules:</span> <span class="yaml-string">[]</span></pre>
+            </section>
+
+            <section id="rule-types">
+                <h2>Custom Rule Types (10 Total)</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Type</th>
+                            <th>YAML Key</th>
+                            <th>Description</th>
+                            <th>Complexity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><span class="type-badge type-builtin">BuiltIn</span></td>
+                            <td><code>id:</code> only</td>
+                            <td>Pre-coded C# Roslyn analyzers</td>
+                            <td>None</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><span class="type-badge type-pattern">SimplePattern</span></td>
+                            <td><code>pattern:</code> / <code>anti_pattern:</code></td>
+                            <td>Basic regex string matching</td>
+                            <td>Low</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><span class="type-badge type-pattern">EnhancedPattern</span></td>
+                            <td><code>pattern_match:</code> / <code>anti_pattern_match:</code></td>
+                            <td>Regex with captures, options, scope</td>
+                            <td>Low</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><span class="type-badge type-ast">AstQuery</span></td>
+                            <td><code>ast_query:</code></td>
+                            <td>Declarative AST node matching</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td><span class="type-badge type-logic">MultiMatch</span></td>
+                            <td><code>match:</code></td>
+                            <td>Combine patterns with AND/OR/NONE</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td><span class="type-badge type-code">Expression</span></td>
+                            <td><code>expression:</code></td>
+                            <td>C# expression (single condition)</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td><span class="type-badge type-code">Script</span></td>
+                            <td><code>script:</code></td>
+                            <td>Full C# script with custom logic</td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td><span class="type-badge type-logic">Validator</span></td>
+                            <td><code>validator:</code></td>
+                            <td>Reference or inline validator</td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td><span class="type-badge type-builtin">CustomValidator</span></td>
+                            <td><code>custom_validator:</code></td>
+                            <td>Reference to custom_validators</td>
+                            <td>Low</td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td><span class="type-badge" style="background:#f1f5f9;color:#64748b;">None</span></td>
+                            <td>-</td>
+                            <td>No validation configured</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="note">
+                    <div class="note-title">Type Priority</div>
+                    When multiple types are specified, RuleKeeper uses this order:
+                    <code>validator > script > expression > match > ast_query > pattern_match > pattern > custom_validator > id</code>
+                </div>
+            </section>
+
+            <section id="examples">
+                <h2>Rule Type Examples</h2>
+
+                <div class="grid-2">
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#1</span> BuiltIn</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CS-NAME-001</span>  <span class="yaml-comment"># Just ID</span>
+  <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>
+  <span class="yaml-key">parameters:</span>
+    <span class="yaml-key">style:</span> <span class="yaml-string">pascal_case</span></pre>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#2</span> SimplePattern</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-001</span>
+  <span class="yaml-key">anti_pattern:</span> <span class="yaml-string">"Console\\.WriteLine"</span>
+  <span class="yaml-key">message:</span> <span class="yaml-string">"Use ILogger"</span></pre>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#3</span> EnhancedPattern</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-002</span>
+  <span class="yaml-key">anti_pattern_match:</span>
+    <span class="yaml-key">regex:</span> <span class="yaml-string">"(password)\\s*=\\s*\"([^\"]+)\""</span>
+    <span class="yaml-key">options:</span> <span class="yaml-string">[ignorecase]</span>
+    <span class="yaml-key">message_template:</span> <span class="yaml-string">"Found {1}: {2}"</span></pre>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#4</span> AstQuery</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-003</span>
+  <span class="yaml-key">ast_query:</span>
+    <span class="yaml-key">node_kinds:</span> <span class="yaml-string">[FieldDeclaration]</span>
+    <span class="yaml-key">properties:</span>
+      <span class="yaml-key">IsPublic:</span> <span class="yaml-bool">true</span>
+      <span class="yaml-key">IsConst:</span> <span class="yaml-bool">false</span></pre>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#5</span> MultiMatch</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-004</span>
+  <span class="yaml-key">match:</span>
+    <span class="yaml-key">all:</span>
+      <span class="yaml-key">- pattern:</span> <span class="yaml-string">{ regex: "ExecuteSqlRaw" }</span>
+    <span class="yaml-key">none:</span>
+      <span class="yaml-key">- pattern:</span> <span class="yaml-string">{ regex: "@\\w+" }</span></pre>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#6</span> Expression</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-005</span>
+  <span class="yaml-key">expression:</span>
+    <span class="yaml-key">condition:</span> <span class="yaml-string">"LineCount > 50"</span>
+  <span class="yaml-key">parameters:</span>
+    <span class="yaml-key">max_lines:</span> <span class="yaml-number">50</span></pre>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#7</span> Script</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-006</span>
+  <span class="yaml-key">script:</span>
+    <span class="yaml-key">code:</span> <span class="yaml-string">|
+      foreach (var m in Context.GetMethods())
+          if (m.Lines > 30)
+              yield return CreateViolation(m);</span></pre>
+                    </div>
+
+                    <div class="example-card">
+                        <div class="example-header"><span class="num">#8</span> Validator</div>
+                        <pre><span class="yaml-key">- id:</span> <span class="yaml-string">CUSTOM-007</span>
+  <span class="yaml-key">validator:</span>
+    <span class="yaml-key">reference:</span> <span class="yaml-string">"my_validator"</span>
+<span class="yaml-comment"># OR inline:</span>
+  <span class="yaml-key">validator:</span>
+    <span class="yaml-key">inline:</span>
+      <span class="yaml-key">type:</span> <span class="yaml-string">pattern</span>
+      <span class="yaml-key">pattern:</span> <span class="yaml-string">{ regex: "TODO" }</span></pre>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sections">
+                <h2>Configuration Sections</h2>
+
+                <h3>scan</h3>
+                <pre><span class="yaml-key">scan:</span>
+  <span class="yaml-key">languages:</span> <span class="yaml-string">[csharp, python, javascript, typescript, java, go]</span>
+  <span class="yaml-key">include:</span>
+    <span class="yaml-string">- "**/*.cs"</span>
+    <span class="yaml-string">- "**/*.py"</span>
+  <span class="yaml-key">exclude:</span>
+    <span class="yaml-string">- "**/bin/**"</span>
+    <span class="yaml-string">- "**/obj/**"</span>
+    <span class="yaml-string">- "**/node_modules/**"</span>
+  <span class="yaml-key">parallel:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">max_parallelism:</span> <span class="yaml-number">0</span>  <span class="yaml-comment"># 0 = auto</span>
+  <span class="yaml-key">cache:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">max_file_size:</span> <span class="yaml-number">1048576</span>  <span class="yaml-comment"># 1MB</span>
+  <span class="yaml-key">baseline:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">false</span>
+    <span class="yaml-key">mode:</span> <span class="yaml-string">git</span>  <span class="yaml-comment"># git, file, or date</span>
+    <span class="yaml-key">git_ref:</span> <span class="yaml-string">main</span>
+    <span class="yaml-key">filter_to_diff:</span> <span class="yaml-bool">true</span></pre>
+
+                <h3>output</h3>
+                <pre><span class="yaml-key">output:</span>
+  <span class="yaml-key">format:</span> <span class="yaml-string">console</span>  <span class="yaml-comment"># console, json, sarif, html</span>
+  <span class="yaml-key">min_severity:</span> <span class="yaml-string">info</span>  <span class="yaml-comment"># info, low, medium, high, critical</span>
+  <span class="yaml-key">fail_on:</span> <span class="yaml-string">high</span>
+  <span class="yaml-key">show_code:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">show_hints:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">colors:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">max_per_rule:</span> <span class="yaml-number">10</span>
+  <span class="yaml-key">max_total:</span> <span class="yaml-number">100</span>
+  <span class="yaml-key">critical_threshold:</span> <span class="yaml-number">0</span>
+  <span class="yaml-key">high_threshold:</span> <span class="yaml-number">0</span></pre>
+
+                <h3>prebuilt_policies</h3>
+                <pre><span class="yaml-key">prebuilt_policies:</span>
+  <span class="yaml-key">security:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">critical</span>
+    <span class="yaml-key">skip:</span> <span class="yaml-bool">false</span>
+    <span class="yaml-key">exclude:</span> <span class="yaml-string">["**/Tests/**"]</span>
+    <span class="yaml-key">skip_rules:</span> <span class="yaml-string">[CS-SEC-005]</span>
+
+  <span class="yaml-key">async_best_practices:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">high</span>
+
+  <span class="yaml-key">naming_conventions:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+
+  <span class="yaml-key">design:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+
+  <span class="yaml-key">exceptions:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+
+  <span class="yaml-key">dependency_injection:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span></pre>
+
+                <h3>coding_standards</h3>
+                <pre><span class="yaml-key">coding_standards:</span>
+  <span class="yaml-key">category_name:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">skip:</span> <span class="yaml-bool">false</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>  <span class="yaml-comment"># Default for category</span>
+    <span class="yaml-key">skip_rules:</span> <span class="yaml-string">[RULE-TO-SKIP]</span>
+    <span class="yaml-key">exclude:</span> <span class="yaml-string">["**/Tests/**"]</span>
+    <span class="yaml-key">rules:</span>
+      <span class="yaml-key">- id:</span> <span class="yaml-string">RULE-001</span>
+        <span class="yaml-key">name:</span> <span class="yaml-string">"Rule Name"</span>
+        <span class="yaml-key">description:</span> <span class="yaml-string">"What this rule checks"</span>
+        <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>
+        <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+        <span class="yaml-key">skip:</span> <span class="yaml-bool">false</span>
+        <span class="yaml-comment"># Rule definition (pattern, ast_query, etc.)</span>
+        <span class="yaml-key">message:</span> <span class="yaml-string">"Violation message"</span>
+        <span class="yaml-key">fix_hint:</span> <span class="yaml-string">"How to fix"</span>
+        <span class="yaml-key">parameters:</span>
+          <span class="yaml-key">key:</span> <span class="yaml-string">value</span>
+        <span class="yaml-key">exclude:</span> <span class="yaml-string">["**/Exceptions/**"]</span>
+        <span class="yaml-key">languages:</span> <span class="yaml-string">[csharp, python]</span>
+        <span class="yaml-key">file_pattern:</span> <span class="yaml-string">"**/*Service.cs"</span></pre>
+
+                <h3>custom_validators</h3>
+                <pre><span class="yaml-key">custom_validators:</span>
+  <span class="yaml-key">no_console_output:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">skip:</span> <span class="yaml-bool">false</span>
+    <span class="yaml-key">description:</span> <span class="yaml-string">"Prevent Console.WriteLine"</span>
+    <span class="yaml-key">type:</span> <span class="yaml-string">regex</span>  <span class="yaml-comment"># regex, pattern, roslyn, script</span>
+    <span class="yaml-key">regex:</span> <span class="yaml-string">"Console\\.(WriteLine|Write)\\s*\\("</span>
+    <span class="yaml-key">options:</span> <span class="yaml-string">[ignorecase]</span>
+    <span class="yaml-key">message_template:</span> <span class="yaml-string">"Console I/O detected"</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>
+    <span class="yaml-key">exclude:</span>
+      <span class="yaml-string">- "**/Program.cs"</span>
+      <span class="yaml-string">- "**/*.Test*.cs"</span>
+
+  <span class="yaml-key">assembly_validator:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">type:</span> <span class="yaml-string">assembly</span>
+    <span class="yaml-key">assembly:</span> <span class="yaml-string">"./plugins/CustomRules.dll"</span>
+    <span class="yaml-key">type_name:</span> <span class="yaml-string">"MyCompany.Rules.CustomValidator"</span></pre>
+
+                <h3>custom_rules</h3>
+                <pre><span class="yaml-key">custom_rules:</span>
+  <span class="yaml-key">- path:</span> <span class="yaml-string">"./plugins/MyRules.dll"</span>
+  <span class="yaml-key">- path:</span> <span class="yaml-string">"./rules/"</span>
+  <span class="yaml-key">- nuget:</span> <span class="yaml-string">"MyCompany.RuleKeeper.Rules"</span>
+  <span class="yaml-key">- nuget:</span> <span class="yaml-string">"MyCompany.RuleKeeper.Rules:1.0.0"</span></pre>
+            </section>
+
+            <section id="complete">
+                <h2>Complete Example</h2>
+                <pre><span class="yaml-comment"># rulekeeper.yaml - Complete Example</span>
+<span class="yaml-key">version:</span> <span class="yaml-string">"1.0"</span>
+
+<span class="yaml-key">metadata:</span>
+  <span class="yaml-key">name:</span> <span class="yaml-string">"Enterprise Coding Standards"</span>
+  <span class="yaml-key">description:</span> <span class="yaml-string">"Code quality rules for enterprise apps"</span>
+  <span class="yaml-key">author:</span> <span class="yaml-string">"Platform Team"</span>
+
+<span class="yaml-key">scan:</span>
+  <span class="yaml-key">languages:</span> <span class="yaml-string">[csharp, typescript, python]</span>
+  <span class="yaml-key">include:</span>
+    <span class="yaml-string">- "src/**/*.cs"</span>
+    <span class="yaml-string">- "src/**/*.ts"</span>
+  <span class="yaml-key">exclude:</span>
+    <span class="yaml-string">- "**/bin/**"</span>
+    <span class="yaml-string">- "**/obj/**"</span>
+    <span class="yaml-string">- "**/node_modules/**"</span>
+  <span class="yaml-key">parallel:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">cache:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">baseline:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">mode:</span> <span class="yaml-string">git</span>
+    <span class="yaml-key">git_ref:</span> <span class="yaml-string">main</span>
+
+<span class="yaml-key">output:</span>
+  <span class="yaml-key">format:</span> <span class="yaml-string">console</span>
+  <span class="yaml-key">min_severity:</span> <span class="yaml-string">info</span>
+  <span class="yaml-key">fail_on:</span> <span class="yaml-string">high</span>
+  <span class="yaml-key">show_code:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">show_hints:</span> <span class="yaml-bool">true</span>
+
+<span class="yaml-key">prebuilt_policies:</span>
+  <span class="yaml-key">security:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">critical</span>
+    <span class="yaml-key">exclude:</span> <span class="yaml-string">["**/Tests/**"]</span>
+  <span class="yaml-key">async_best_practices:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+  <span class="yaml-key">naming_conventions:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+
+<span class="yaml-key">coding_standards:</span>
+  <span class="yaml-key">security:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">critical</span>
+    <span class="yaml-key">rules:</span>
+      <span class="yaml-key">- id:</span> <span class="yaml-string">ENT-SEC-001</span>
+        <span class="yaml-key">name:</span> <span class="yaml-string">"SQL Injection Prevention"</span>
+        <span class="yaml-key">anti_pattern_match:</span>
+          <span class="yaml-key">regex:</span> <span class="yaml-string">"FromSqlRaw\\s*\\(\\s*\\$"</span>
+        <span class="yaml-key">fix_hint:</span> <span class="yaml-string">"Use parameterized queries"</span>
+
+      <span class="yaml-key">- id:</span> <span class="yaml-string">ENT-SEC-002</span>
+        <span class="yaml-key">name:</span> <span class="yaml-string">"No Hardcoded Secrets"</span>
+        <span class="yaml-key">anti_pattern_match:</span>
+          <span class="yaml-key">regex:</span> <span class="yaml-string">"(password|secret)\\s*[=:]\\s*[\"'][^\"']{8,}"</span>
+          <span class="yaml-key">options:</span> <span class="yaml-string">[ignorecase]</span>
+
+  <span class="yaml-key">design:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">rules:</span>
+      <span class="yaml-key">- id:</span> <span class="yaml-string">ENT-DESIGN-001</span>
+        <span class="yaml-key">name:</span> <span class="yaml-string">"No Public Fields"</span>
+        <span class="yaml-key">ast_query:</span>
+          <span class="yaml-key">node_kinds:</span> <span class="yaml-string">[FieldDeclaration]</span>
+          <span class="yaml-key">properties:</span>
+            <span class="yaml-key">IsPublic:</span> <span class="yaml-bool">true</span>
+            <span class="yaml-key">IsConst:</span> <span class="yaml-bool">false</span>
+
+<span class="yaml-key">custom_validators:</span>
+  <span class="yaml-key">no_console:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">type:</span> <span class="yaml-string">regex</span>
+    <span class="yaml-key">regex:</span> <span class="yaml-string">"Console\\.(WriteLine|Write)\\s*\\("</span>
+    <span class="yaml-key">message_template:</span> <span class="yaml-string">"Use ILogger instead"</span>
+    <span class="yaml-key">severity:</span> <span class="yaml-string">medium</span>
+    <span class="yaml-key">exclude:</span> <span class="yaml-string">["**/Program.cs"]</span>
+
+<span class="yaml-key">custom_rules:</span>
+  <span class="yaml-key">- path:</span> <span class="yaml-string">"./plugins/EnterpriseRules.dll"</span></pre>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>RuleKeeper Documentation &copy; 2024</p>
+            <p style="margin-top: 10px;">
+                <a href="index.html">Home</a> &middot;
+                <a href="cli-reference.html">CLI Reference</a> &middot;
+                <a href="architecture-flow.html">Architecture</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

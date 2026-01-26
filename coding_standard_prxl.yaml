@@ -54,7 +54,7 @@ prebuilt_policies:
       - "**/Tests/**"
       - "**/*.Tests.cs"
     skip_rules:
-      - CS-SEC-005  # Skip path traversal for legacy code
+      - CS-SEC-005
 
   async_best_practices:
     enabled: true
@@ -83,8 +83,7 @@ coding_standards:
     skip: false
     skip_rules: []
     rules:
-      class_naming:
-        id: PRXL-NAME-001
+      - id: PRXL-NAME-001
         name: "Class Naming Convention"
         description: "Classes must use PascalCase naming"
         severity: medium
@@ -93,40 +92,35 @@ coding_standards:
           style: pascal_case
           allow_underscores: false
 
-      method_naming:
-        id: PRXL-NAME-002
+      - id: PRXL-NAME-002
         name: "Method Naming Convention"
         description: "Methods must use PascalCase naming"
         severity: medium
         parameters:
           style: pascal_case
 
-      variable_naming:
-        id: PRXL-NAME-003
+      - id: PRXL-NAME-003
         name: "Variable Naming Convention"
         description: "Variables, fields, and parameters must use camelCase"
         severity: medium
         parameters:
           style: camel_case
 
-      constant_naming:
-        id: PRXL-NAME-004
+      - id: PRXL-NAME-004
         name: "Constant Naming Convention"
         description: "Constants must use UPPER_SNAKE_CASE"
         severity: medium
         parameters:
           style: upper_snake_case
 
-      private_field_naming:
-        id: PRXL-NAME-005
+      - id: PRXL-NAME-005
         name: "Private Field Naming Convention"
         description: "Private fields must use _camelCase (underscore prefix)"
         severity: medium
         parameters:
           require_underscore_prefix: true
 
-      async_method_naming:
-        id: PRXL-NAME-006
+      - id: PRXL-NAME-006
         name: "Async Method Naming"
         description: "Async methods must end with 'Async' suffix"
         severity: medium
@@ -134,8 +128,7 @@ coding_standards:
           require_suffix: true
           exclude_event_handlers: true
 
-      interface_naming:
-        id: PRXL-NAME-007
+      - id: PRXL-NAME-007
         name: "Interface Naming Convention"
         description: "Interfaces must start with 'I' prefix"
         severity: medium
@@ -145,14 +138,12 @@ coding_standards:
   file_organization:
     enabled: true
     rules:
-      single_class_per_file:
-        id: PRXL-ORG-001
+      - id: PRXL-ORG-001
         name: "Single Class Per File"
         description: "Each file should contain only one class"
         severity: medium
 
-      file_class_name_match:
-        id: PRXL-ORG-002
+      - id: PRXL-ORG-002
         name: "File Name Matches Class"
         description: "File name must match the class name it contains"
         severity: medium
@@ -160,8 +151,7 @@ coding_standards:
   design:
     enabled: true
     rules:
-      method_length:
-        id: PRXL-DESIGN-001
+      - id: PRXL-DESIGN-001
         name: "Method Length"
         description: "Methods should be small - maximum 30 lines"
         severity: medium
@@ -169,35 +159,31 @@ coding_standards:
           max_lines: 30
           count_blank_lines: false
 
-      parameter_count:
-        id: PRXL-DESIGN-002
+      - id: PRXL-DESIGN-002
         name: "Parameter Count"
         description: "Avoid long parameter lists - use DTOs instead"
         severity: medium
         parameters:
           max_parameters: 5
 
-      cyclomatic_complexity:
-        id: PRXL-DESIGN-003
+      - id: PRXL-DESIGN-003
         name: "Cyclomatic Complexity"
         description: "Methods should have low cyclomatic complexity"
         severity: medium
         parameters:
           max_complexity: 10
 
-      single_responsibility:
-        id: PRXL-DESIGN-004
+      - id: PRXL-DESIGN-004
         name: "Single Responsibility"
         description: "Methods should do one thing"
         severity: low
-        skip: true  # Skipped - difficult to enforce automatically
+        skip: true
 
   security:
     enabled: true
     severity: critical
     rules:
-      sql_injection:
-        id: PRXL-SEC-001
+      - id: PRXL-SEC-001
         name: "SQL Injection Prevention"
         description: "Never concatenate SQL or user inputs - use parameterized queries"
         severity: critical
@@ -206,8 +192,7 @@ coding_standards:
           message_template: "Potential SQL injection vulnerability - use parameterized queries"
         fix_hint: "Use parameterized queries with @parameters instead of string concatenation"
 
-      no_hardcoded_secrets:
-        id: PRXL-SEC-002
+      - id: PRXL-SEC-002
         name: "No Hardcoded Secrets"
         description: "No secrets in source code or appsettings.json"
         severity: critical
@@ -220,14 +205,12 @@ coding_standards:
           - "**/appsettings.Development.json"
           - "**/*.Test*.cs"
 
-      input_validation:
-        id: PRXL-SEC-003
+      - id: PRXL-SEC-003
         name: "Input Validation Required"
         description: "Always validate user input"
         severity: high
 
-      sensitive_data_logging:
-        id: PRXL-SEC-004
+      - id: PRXL-SEC-004
         name: "No Sensitive Data in Logs"
         description: "Sanitize logs - no sensitive data (PIN, password, token)"
         severity: critical
@@ -237,8 +220,7 @@ coding_standards:
           message_template: "Potential sensitive data in log statement"
         fix_hint: "Remove sensitive data from log messages or mask the values"
 
-      cors_any_origin:
-        id: PRXL-SEC-005
+      - id: PRXL-SEC-005
         name: "CORS Any Origin Prohibited"
         description: "Do not use AllowAnyOrigin() in CORS configuration"
         severity: critical
@@ -247,15 +229,13 @@ coding_standards:
           message_template: "AllowAnyOrigin() is prohibited - specify allowed origins explicitly"
         fix_hint: "Use WithOrigins() to specify allowed domains"
 
-      secure_string_usage:
-        id: PRXL-SEC-006
+      - id: PRXL-SEC-006
         name: "Use SecureString for Secrets"
         description: "Avoid keeping secrets as plain strings in memory"
         severity: high
-        skip: true  # Skipped - SecureString is deprecated in .NET Core
+        skip: true
 
-      weak_encryption:
-        id: PRXL-SEC-007
+      - id: PRXL-SEC-007
         name: "Use Strong Encryption"
         description: "Use proper RSA encryption with OAEP padding"
         severity: critical
@@ -267,16 +247,14 @@ coding_standards:
   exceptions:
     enabled: true
     rules:
-      empty_catch:
-        id: PRXL-EXC-001
+      - id: PRXL-EXC-001
         name: "No Empty Catch Blocks"
         description: "Catch blocks should not be empty - handle or log exceptions"
         severity: high
         parameters:
           allow_comment: false
 
-      catching_base_exception:
-        id: PRXL-EXC-002
+      - id: PRXL-EXC-002
         name: "Avoid Catching Base Exception"
         description: "Catch specific exceptions, not System.Exception"
         severity: medium
@@ -284,8 +262,7 @@ coding_standards:
           allow_rethrow: true
           allow_logging: true
 
-      domain_exceptions:
-        id: PRXL-EXC-003
+      - id: PRXL-EXC-003
         name: "Use Domain-Specific Exceptions"
         description: "Throw domain-specific exceptions when needed"
         severity: low
@@ -293,8 +270,7 @@ coding_standards:
   async:
     enabled: true
     rules:
-      no_blocking_async:
-        id: PRXL-ASYNC-001
+      - id: PRXL-ASYNC-001
         name: "No Blocking on Async"
         description: "Don't block async with .Result or .Wait() - deadlock risk"
         severity: critical
@@ -305,20 +281,18 @@ coding_standards:
         parameters:
           allow_in_main: false
 
-      async_void:
-        id: PRXL-ASYNC-002
+      - id: PRXL-ASYNC-002
         name: "No Async Void"
         description: "Always await async calls - avoid async void except for event handlers"
         severity: high
         parameters:
           allow_event_handlers: true
 
-      configure_await:
-        id: PRXL-ASYNC-003
+      - id: PRXL-ASYNC-003
         name: "Use ConfigureAwait in Libraries"
         description: "Use ConfigureAwait(false) in library code"
         severity: low
-        skip: true  # Skipped for application code
+        skip: true
         exclude:
           - "**/Controllers/**"
           - "**/Pages/**"
@@ -327,20 +301,17 @@ coding_standards:
   dependency_injection:
     enabled: true
     rules:
-      interface_dependency:
-        id: PRXL-DI-001
+      - id: PRXL-DI-001
         name: "Depend on Interfaces"
         description: "Depend on interfaces, not concrete types"
         severity: high
 
-      avoid_new_in_logic:
-        id: PRXL-DI-002
+      - id: PRXL-DI-002
         name: "Avoid New in Business Logic"
         description: "Use dependency injection instead of 'new' inside business logic"
         severity: medium
 
-      no_service_locator:
-        id: PRXL-DI-003
+      - id: PRXL-DI-003
         name: "No Service Locator Anti-Pattern"
         description: "Avoid service locator pattern - use constructor injection"
         severity: high
@@ -351,8 +322,7 @@ coding_standards:
   constants:
     enabled: true
     rules:
-      magic_numbers:
-        id: PRXL-CONST-001
+      - id: PRXL-CONST-001
         name: "No Magic Numbers"
         description: "Avoid magic numbers in code - use named constants or enums"
         severity: medium
@@ -360,8 +330,7 @@ coding_standards:
           allowed_numbers: [0, 1, -1, 2, 100]
           check_strings: false
 
-      magic_strings:
-        id: PRXL-CONST-002
+      - id: PRXL-CONST-002
         name: "No Magic Strings"
         description: "Avoid magic strings - use constants or resource files"
         severity: low
@@ -369,14 +338,12 @@ coding_standards:
   validation:
     enabled: true
     rules:
-      dto_validation:
-        id: PRXL-VAL-001
+      - id: PRXL-VAL-001
         name: "DTO Validation Required"
         description: "Always validate input DTOs using attributes or FluentValidation"
         severity: high
 
-      account_number_validation:
-        id: PRXL-VAL-002
+      - id: PRXL-VAL-002
         name: "Account Number Validation"
         description: "Account numbers must be validated with proper regex"
         severity: critical
@@ -384,8 +351,7 @@ coding_standards:
   logging:
     enabled: true
     rules:
-      structured_logging:
-        id: PRXL-LOG-001
+      - id: PRXL-LOG-001
         name: "Use Structured Logging"
         description: "Use structured logging with named parameters"
         severity: medium
@@ -394,25 +360,22 @@ coding_standards:
           message_template: "Use structured logging instead of string interpolation"
         fix_hint: "Use _logger.LogInformation(\"Message {Param}\", value) instead of $\"Message {value}\""
 
-      log_levels:
-        id: PRXL-LOG-002
+      - id: PRXL-LOG-002
         name: "Appropriate Log Levels"
         description: "Use appropriate log levels (Info, Warning, Error, Critical)"
         severity: low
 
   documentation:
-    enabled: false  # Disabled entirely - team prefers minimal comments
+    enabled: false
     skip: true
     rules:
-      xml_comments:
-        id: PRXL-DOC-001
+      - id: PRXL-DOC-001
         name: "Public API Documentation"
         description: "Document public APIs appropriately"
         severity: low
         skip: true
 
-      redundant_comments:
-        id: PRXL-DOC-002
+      - id: PRXL-DOC-002
         name: "No Redundant Comments"
         description: "Comment why, not what - avoid redundant comments"
         severity: info
@@ -420,20 +383,17 @@ coding_standards:
   immutability:
     enabled: true
     rules:
-      readonly_fields:
-        id: PRXL-IMM-001
+      - id: PRXL-IMM-001
         name: "Use Readonly for Fields"
         description: "Use readonly for fields that shouldn't change"
         severity: medium
 
-      mutable_collections:
-        id: PRXL-IMM-002
+      - id: PRXL-IMM-002
         name: "No Mutable Collection Exposure"
         description: "Avoid exposing mutable collections"
         severity: medium
 
-      public_fields:
-        id: PRXL-IMM-003
+      - id: PRXL-IMM-003
         name: "No Public Fields"
         description: "Use properties instead of public fields"
         severity: high
@@ -446,8 +406,7 @@ coding_standards:
   testing:
     enabled: true
     rules:
-      test_naming:
-        id: PRXL-TEST-001
+      - id: PRXL-TEST-001
         name: "Clear Test Names"
         description: "Use clear test names: MethodName_StateUnderTest_ExpectedBehavior"
         severity: medium
@@ -455,36 +414,31 @@ coding_standards:
           regex: "\\[Test\\]\\s*public\\s+\\w+\\s+Test\\d+\\s*\\("
           message_template: "Test name should follow pattern: MethodName_StateUnderTest_ExpectedBehavior"
 
-      single_assertion:
-        id: PRXL-TEST-002
+      - id: PRXL-TEST-002
         name: "Single Assertion Per Test"
         description: "Tests should have one assertion per test"
         severity: low
-        skip: true  # Skipped - multiple assertions often make sense
+        skip: true
 
   api:
     enabled: true
     rules:
-      cors_configuration:
-        id: PRXL-API-001
+      - id: PRXL-API-001
         name: "Proper CORS Configuration"
         description: "CORS must specify allowed origins explicitly"
         severity: critical
 
-      controller_validation:
-        id: PRXL-API-002
+      - id: PRXL-API-002
         name: "Controller Input Validation"
         description: "All API inputs must be validated"
         severity: high
 
-      idempotency_keys:
-        id: PRXL-API-003
+      - id: PRXL-API-003
         name: "Idempotency Keys for Mutations"
         description: "POST/PUT/DELETE endpoints should support idempotency keys"
         severity: high
 
-      restful_endpoints:
-        id: PRXL-API-004
+      - id: PRXL-API-004
         name: "RESTful Endpoint Design"
         description: "Use proper HTTP methods for RESTful endpoints"
         severity: medium
@@ -493,38 +447,32 @@ coding_standards:
           options: [ignorecase]
           message_template: "Use proper HTTP verbs instead of action names in routes"
 
-      http_status_codes:
-        id: PRXL-API-005
+      - id: PRXL-API-005
         name: "Proper HTTP Status Codes"
         description: "Return appropriate HTTP status codes"
         severity: medium
 
-      api_versioning:
-        id: PRXL-API-006
+      - id: PRXL-API-006
         name: "API Versioning Required"
         description: "APIs must be versioned"
         severity: high
 
-      response_consistency:
-        id: PRXL-API-007
+      - id: PRXL-API-007
         name: "Consistent API Responses"
         description: "Use consistent response format (ApiResponse<T>)"
         severity: medium
 
-      rate_limiting:
-        id: PRXL-API-008
+      - id: PRXL-API-008
         name: "Rate Limiting Required"
         description: "API endpoints should have rate limiting"
         severity: high
 
-      controller_logging:
-        id: PRXL-API-009
+      - id: PRXL-API-009
         name: "Controller Logging Required"
         description: "Log important operations in controllers"
         severity: medium
 
-      authorization_required:
-        id: PRXL-API-010
+      - id: PRXL-API-010
         name: "Authorization Required"
         description: "API endpoints must have authorization"
         severity: critical
@@ -535,27 +483,23 @@ coding_standards:
           - "**/HealthController.cs"
           - "**/StatusController.cs"
 
-      controller_error_handling:
-        id: PRXL-API-011
+      - id: PRXL-API-011
         name: "Controller Error Handling"
         description: "Controllers should handle exceptions properly"
         severity: high
 
-      data_sanitization:
-        id: PRXL-API-012
+      - id: PRXL-API-012
         name: "Data Sanitization Required"
         description: "Sanitize user input before processing"
         severity: critical
 
-      content_negotiation:
-        id: PRXL-API-013
+      - id: PRXL-API-013
         name: "Content Negotiation Support"
         description: "APIs should support content negotiation"
         severity: low
-        skip: true  # Skipped - not required for internal APIs
+        skip: true
 
-      api_documentation:
-        id: PRXL-API-014
+      - id: PRXL-API-014
         name: "API Documentation Required"
         description: "APIs must have proper documentation"
         severity: medium
@@ -578,7 +522,7 @@ custom_validators:
     description: "Detect TODO/FIXME comments that need attention"
     type: regex
     regex: "//\\s*(TODO|FIXME|HACK|XXX):"
-    message_template: "Found {match} comment that needs attention"
+    message_template: "Found TODO/FIXME comment that needs attention"
     severity: info
 
   hardcoded_connection_string:
@@ -592,11 +536,11 @@ custom_validators:
 
   deprecated_api:
     enabled: false
-    skip: true  # Skipped - handled by compiler warnings
+    skip: true
     description: "Detect usage of deprecated APIs"
     type: regex
     regex: "\\[Obsolete"
     message_template: "Usage of deprecated/obsolete API detected"
-    severity: warning
+    severity: medium
 
 custom_rules: []

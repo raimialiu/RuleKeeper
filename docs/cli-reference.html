@@ -677,7 +677,7 @@ dotnet run --project src/RuleKeeper.Cli -- --help</code></pre>
 
         <section id="generate-editorconfig">
             <h2>generate-editorconfig Command</h2>
-            <p>Generates an .editorconfig file based on RuleKeeper rules.</p>
+            <p>Generates IDE configuration files, pre-commit hooks, and Roslyn analyzers based on RuleKeeper rules.</p>
 
             <div class="command-box">
                 <div class="command">rulekeeper generate-editorconfig [options]</div>
@@ -690,31 +690,130 @@ dotnet run --project src/RuleKeeper.Cli -- --help</code></pre>
                         <th>Option</th>
                         <th>Alias</th>
                         <th>Description</th>
+                        <th>Default</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td><code>--output</code></td>
                         <td><code>-o</code></td>
-                        <td>Output file path (default: .editorconfig)</td>
+                        <td>Output directory</td>
+                        <td><code>.</code></td>
                     </tr>
                     <tr>
                         <td><code>--config</code></td>
                         <td><code>-c</code></td>
                         <td>RuleKeeper config to base settings on</td>
+                        <td>Auto-detected</td>
                     </tr>
                     <tr>
                         <td><code>--append</code></td>
                         <td><code>-a</code></td>
                         <td>Append to existing file</td>
+                        <td><code>false</code></td>
                     </tr>
                     <tr>
                         <td><code>--force</code></td>
                         <td><code>-f</code></td>
                         <td>Overwrite without prompting</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--languages</code></td>
+                        <td><code>-L</code></td>
+                        <td>Languages to generate config for</td>
+                        <td>All from config</td>
+                    </tr>
+                    <tr>
+                        <td><code>--hooks</code></td>
+                        <td></td>
+                        <td>Generate pre-commit hooks</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--analyzer</code></td>
+                        <td></td>
+                        <td>Generate Roslyn analyzer for C# (IDE squiggles)</td>
+                        <td><code>false</code></td>
                     </tr>
                 </tbody>
             </table>
+
+            <h3>Generated Files by Language</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Language</th>
+                        <th>Config File</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="language-tag lang-csharp">C#</span></td>
+                        <td><code>.editorconfig</code></td>
+                        <td>EditorConfig with naming/style rules</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-javascript">JS</span></td>
+                        <td><code>.eslintrc.json</code></td>
+                        <td>ESLint configuration</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-typescript">TS</span></td>
+                        <td><code>.eslintrc.json</code></td>
+                        <td>ESLint + TypeScript config</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-python">Py</span></td>
+                        <td><code>pyproject.toml</code></td>
+                        <td>Ruff/Black/Flake8 settings</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-go">Go</span></td>
+                        <td><code>.golangci.yml</code></td>
+                        <td>GolangCI-Lint configuration</td>
+                    </tr>
+                    <tr>
+                        <td><span class="language-tag lang-java">Java</span></td>
+                        <td><code>checkstyle.xml</code></td>
+                        <td>Checkstyle rules</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Pre-commit Hooks (<code>--hooks</code>)</h3>
+            <p>When <code>--hooks</code> is specified, generates:</p>
+            <ul style="margin: 10px 0 20px 30px;">
+                <li><code>.pre-commit-config.yaml</code> - Pre-commit framework config</li>
+                <li><code>.git/hooks/pre-commit</code> - Git hook script (bash)</li>
+            </ul>
+
+            <h3>Roslyn Analyzer (<code>--analyzer</code>)</h3>
+            <p>For C# projects, <code>--analyzer</code> generates a full Roslyn analyzer project for <strong>IDE squiggle support</strong>:</p>
+            <ul style="margin: 10px 0 20px 30px;">
+                <li><code>RuleKeeper.Analyzers/RuleKeeper.Analyzers.csproj</code></li>
+                <li><code>RuleKeeper.Analyzers/GeneratedAnalyzer.cs</code></li>
+                <li><code>Directory.Build.props</code> (auto-references analyzer)</li>
+            </ul>
+
+            <h3>Examples</h3>
+            <div class="command-box">
+                <div class="command"># Generate .editorconfig only
+rulekeeper generate-editorconfig
+
+# Generate for specific languages
+rulekeeper generate-editorconfig -L csharp,typescript
+
+# Generate with pre-commit hooks
+rulekeeper generate-editorconfig --hooks
+
+# Generate C# analyzer for IDE integration
+rulekeeper generate-editorconfig --analyzer
+
+# Full generation: config + hooks + analyzer
+rulekeeper generate-editorconfig -c rulekeeper.yaml --hooks --analyzer</div>
+            </div>
         </section>
 
         <section id="language-options">

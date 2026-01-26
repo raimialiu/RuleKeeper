@@ -180,7 +180,7 @@ rulekeeper validate <config-path>
 
 ### generate-editorconfig Command
 
-Generates an .editorconfig file based on RuleKeeper rules.
+Generates IDE configuration files, pre-commit hooks, and Roslyn analyzers based on RuleKeeper rules.
 
 ```bash
 rulekeeper generate-editorconfig [options]
@@ -188,12 +188,77 @@ rulekeeper generate-editorconfig [options]
 
 #### Options
 
-| Option | Alias | Description |
-|--------|-------|-------------|
-| `--output` | `-o` | Output file path (default: .editorconfig) |
-| `--config` | `-c` | RuleKeeper config to base settings on |
-| `--append` | `-a` | Append to existing file |
-| `--force` | `-f` | Overwrite without prompting |
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `--output` | `-o` | Output directory | `.` |
+| `--config` | `-c` | RuleKeeper config to base settings on | Auto-detected |
+| `--append` | `-a` | Append to existing file | `false` |
+| `--force` | `-f` | Overwrite without prompting | `false` |
+| `--languages` | `-L` | Languages to generate config for | All from config |
+| `--hooks` | | Generate pre-commit hooks | `false` |
+| `--analyzer` | | Generate Roslyn analyzer for C# | `false` |
+
+#### Generated Files by Language
+
+| Language | Config File | Description |
+|----------|-------------|-------------|
+| C# | `.editorconfig` | EditorConfig with naming/style rules |
+| JavaScript | `.eslintrc.json` | ESLint configuration |
+| TypeScript | `.eslintrc.json` | ESLint + TypeScript config |
+| Python | `pyproject.toml` | Ruff/Black/Flake8 settings |
+| Go | `.golangci.yml` | GolangCI-Lint configuration |
+| Java | `checkstyle.xml` | Checkstyle rules |
+
+#### Pre-commit Hooks (`--hooks`)
+
+When `--hooks` is specified, generates:
+
+- `.pre-commit-config.yaml` - Pre-commit framework config
+- `.git/hooks/pre-commit` - Git hook script (bash)
+
+```bash
+# Generate hooks for all languages
+rulekeeper generate-editorconfig -c rulekeeper.yaml --hooks
+
+# The pre-commit hook will run rulekeeper on staged files
+```
+
+#### Roslyn Analyzer (`--analyzer`)
+
+For C# projects, `--analyzer` generates a full Roslyn analyzer project:
+
+```bash
+rulekeeper generate-editorconfig -c rulekeeper.yaml --analyzer
+```
+
+**Generated Files:**
+- `RuleKeeper.Analyzers/RuleKeeper.Analyzers.csproj`
+- `RuleKeeper.Analyzers/GeneratedAnalyzer.cs`
+- `Directory.Build.props` (auto-references analyzer)
+
+This provides **full IDE squiggle support** in Visual Studio, Rider, and VS Code for custom rules defined in YAML.
+
+#### Examples
+
+```bash
+# Generate .editorconfig only
+rulekeeper generate-editorconfig
+
+# Generate for specific languages
+rulekeeper generate-editorconfig -L csharp,typescript
+
+# Generate with pre-commit hooks
+rulekeeper generate-editorconfig --hooks
+
+# Generate C# analyzer for IDE integration
+rulekeeper generate-editorconfig --analyzer
+
+# Full generation: config + hooks + analyzer
+rulekeeper generate-editorconfig -c rulekeeper.yaml --hooks --analyzer
+
+# Custom output directory
+rulekeeper generate-editorconfig -o ./config --hooks
+```
 
 ---
 

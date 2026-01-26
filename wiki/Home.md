@@ -38,6 +38,13 @@ Practical examples for common scenarios: CI/CD integration, multi-language analy
 
 ---
 
+### [[YAML Reference]]
+Complete reference for YAML configuration files. Covers all 10 custom rule types: patterns, AST queries, expressions, scripts, validators, and more.
+
+**Tags:** 10 Rule Types, Configuration, Custom Rules
+
+---
+
 ## Supported Languages
 
 | Language | Implementation | Extensions |

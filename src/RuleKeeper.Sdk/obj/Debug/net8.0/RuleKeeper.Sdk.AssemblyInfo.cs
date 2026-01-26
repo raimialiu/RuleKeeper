@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyDescriptionAttribute(("SDK for creating custom RuleKeeper rules. Build cross-language or language-specif" +
     "ic analyzers for C#, Python, JavaScript, TypeScript, Java, and Go."))]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("2.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+8cb89395aa60765a1b051da1840f152687380390")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+8a6becc904ad3262daac293739156ff607be9381")]
 [assembly: System.Reflection.AssemblyProductAttribute("RuleKeeper.Sdk")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RuleKeeper.Sdk")]
 [assembly: System.Reflection.AssemblyVersionAttribute("2.0.0.0")]
