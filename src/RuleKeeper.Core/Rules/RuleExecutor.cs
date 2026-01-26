@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.Extensions.FileSystemGlobbing;
 using RuleKeeper.Core.Configuration.Models;
+using RuleKeeper.Core.Validators;
 using RuleKeeper.Sdk;
 using AnalysisContext = RuleKeeper.Sdk.AnalysisContext;
 
@@ -11,8 +12,28 @@ namespace RuleKeeper.Core.Rules;
 /// <summary>
 /// Executes rules against source code.
 /// </summary>
-public class RuleExecutor(RuleRegistry registry)
+public class RuleExecutor
 {
+    private readonly RuleRegistry _registry;
+    private readonly ValidatorRegistry _validatorRegistry;
+    private readonly ValidatorFactory _validatorFactory;
+
+    public RuleExecutor(RuleRegistry registry, ValidatorRegistry? validatorRegistry = null)
+    {
+        _registry = registry;
+        _validatorRegistry = validatorRegistry ?? new ValidatorRegistry();
+        _validatorFactory = new ValidatorFactory(_validatorRegistry);
+    }
+    /// <summary>
+    /// Gets the validator registry.
+    /// </summary>
+    public ValidatorRegistry ValidatorRegistry => _validatorRegistry;
+
+    /// <summary>
+    /// Gets the validator factory.
+    /// </summary>
+    public ValidatorFactory ValidatorFactory => _validatorFactory;
+
     /// <summary>
     /// Executes all enabled rules from the configuration against the given context.
     /// </summary>
@@ -26,7 +47,7 @@ public class RuleExecutor(RuleRegistry registry)
         {
             if (!category.Enabled)
                 continue;
-            
+
             if (IsExcluded(context.FilePath, category.Exclude))
                 continue;
 
@@ -35,10 +56,10 @@ public class RuleExecutor(RuleRegistry registry)
                 cancellationToken.ThrowIfCancellationRequested();
                 if (!ruleDefinition.IsEnabled)
                     continue;
-                
+
                 if (IsExcluded(context.FilePath, ruleDefinition.Exclude))
                     continue;
-                
+
                 if (!string.IsNullOrEmpty(ruleDefinition.FilePattern))
                 {
                     var matcher = new Matcher();
@@ -47,11 +68,18 @@ public class RuleExecutor(RuleRegistry registry)
                         continue;
                 }
 
+                // Check language filter
+                if (ruleDefinition.Languages.Count > 0 &&
+                    !ruleDefinition.Languages.Any(l => l.Equals(context.Language.ToString(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    continue;
+                }
+
                 var ruleViolations = await ExecuteRuleAsync(context, ruleDefinition, category.Severity, cancellationToken);
                 violations.AddRange(ruleViolations);
             }
         }
-        
+
         foreach (var (policyName, policy) in config.PrebuiltPolicies)
         {
             if (!policy.Enabled)
@@ -62,13 +90,13 @@ public class RuleExecutor(RuleRegistry registry)
 
             // Pre-built policies are handled by built-in analyzers
             // We look up the policy rules in the registry
-            var policyRules = registry.GetRulesByCategory(policyName);
+            var policyRules = _registry.GetRulesByCategory(policyName);
             foreach (var ruleInfo in policyRules)
             {
                 if (policy.SkipRules.Contains(ruleInfo.RuleId, StringComparer.OrdinalIgnoreCase))
                     continue;
 
-                var analyzer = registry.CreateAnalyzer(ruleInfo.RuleId);
+                var analyzer = _registry.CreateAnalyzer(ruleInfo.RuleId);
                 if (analyzer == null)
                     continue;
 
@@ -99,31 +127,86 @@ public class RuleExecutor(RuleRegistry registry)
         var severity = rule.Severity;
         if (categorySeverity.HasValue)
             severity = categorySeverity.Value;
-        
-        if (!string.IsNullOrEmpty(rule.Id))
-        {
-            var analyzer = registry.CreateAnalyzer(rule.Id, rule.Parameters);
-            if (analyzer != null)
-            {
-                var ruleContext = context with
-                {
-                    Severity = severity,
-                    CustomMessage = rule.Message,
-                    FixHint = rule.FixHint
-                };
 
-                violations.AddRange(analyzer.Analyze(ruleContext));
-                return violations;
-            }
-        }
-        
-        if (!string.IsNullOrEmpty(rule.Pattern) || !string.IsNullOrEmpty(rule.AntiPattern))
+        var validationType = rule.GetValidationType();
+
+        switch (validationType)
         {
-            await Task.Run(() =>
-            {
-                violations.AddRange(ExecutePatternRule(context, rule, severity));
-            }, cancellationToken);
+            case RuleValidationType.BuiltIn:
+                // Try built-in analyzer first
+                var analyzer = _registry.CreateAnalyzer(rule.Id!, rule.Parameters);
+                if (analyzer != null)
+                {
+                    var ruleContext = context with
+                    {
+                        Severity = severity,
+                        CustomMessage = rule.Message,
+                        FixHint = rule.FixHint
+                    };
+
+                    violations.AddRange(analyzer.Analyze(ruleContext));
+                    return violations;
+                }
+                break;
+
+            case RuleValidationType.EnhancedPattern:
+            case RuleValidationType.AstQuery:
+            case RuleValidationType.MultiMatch:
+            case RuleValidationType.Expression:
+            case RuleValidationType.Script:
+            case RuleValidationType.Validator:
+            case RuleValidationType.CustomValidator:
+                // Use the new validator system
+                var customViolations = await ExecuteCustomValidatorAsync(context, rule, severity, cancellationToken);
+                violations.AddRange(customViolations);
+                return violations;
+
+            case RuleValidationType.SimplePattern:
+                // Legacy simple pattern matching
+                await Task.Run(() =>
+                {
+                    violations.AddRange(ExecutePatternRule(context, rule, severity));
+                }, cancellationToken);
+                return violations;
         }
+
+        return violations;
+    }
+
+    /// <summary>
+    /// Executes a rule using the custom validator system.
+    /// </summary>
+    private async Task<List<Violation>> ExecuteCustomValidatorAsync(
+        AnalysisContext context,
+        RuleDefinition rule,
+        SeverityLevel severity,
+        CancellationToken cancellationToken)
+    {
+        var violations = new List<Violation>();
+
+        // Create validator from rule definition
+        var validator = _validatorFactory.CreateFromRuleDefinition(rule);
+        if (validator == null)
+            return violations;
+
+        // Check language support
+        if (!validator.SupportsLanguage(context.Language))
+            return violations;
+
+        // Initialize with rule parameters
+        validator.Initialize(rule.Parameters);
+
+        // Create validation context
+        var validationContext = ValidationContext.FromRoslynContext(context, rule.Id, rule.Name);
+        validationContext = validationContext.WithOverrides(
+            severity: severity,
+            message: rule.Message,
+            fixHint: rule.FixHint,
+            additionalParameters: rule.Parameters);
+
+        // Execute validator
+        var validatorViolations = await validator.ValidateAsync(validationContext, cancellationToken);
+        violations.AddRange(validatorViolations);
 
         return violations;
     }

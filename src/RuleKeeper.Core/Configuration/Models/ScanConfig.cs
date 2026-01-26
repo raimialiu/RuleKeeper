@@ -95,6 +95,18 @@ public class ScanConfig
     public long MaxFileSize { get; set; } = 10 * 1024 * 1024; // 10 MB
 
     /// <summary>
+    /// Baseline configuration for incremental scanning.
+    /// When enabled, only new or changed code is reported.
+    /// </summary>
+    [YamlMember(Alias = "baseline")]
+    public BaselineConfig? Baseline { get; set; }
+
+    /// <summary>
+    /// Returns true if baseline scanning is enabled.
+    /// </summary>
+    public bool IsBaselineEnabled => Baseline?.Enabled == true;
+
+    /// <summary>
     /// Gets the default file patterns for the configured language.
     /// </summary>
     public static List<string> GetDefaultIncludePatterns(Language language)
@@ -165,6 +177,92 @@ public class ScanConfig
 
         return patterns.ToList();
     }
+}
+
+/// <summary>
+/// Configuration for baseline/incremental scanning.
+/// Allows scanning only new or changed code to avoid breaking existing projects.
+/// </summary>
+public class BaselineConfig
+{
+    /// <summary>
+    /// Whether baseline scanning is enabled.
+    /// </summary>
+    [YamlMember(Alias = "enabled")]
+    public bool Enabled { get; set; } = false;
+
+    /// <summary>
+    /// Baseline mode: git, file, or date.
+    /// - git: Compare against a git commit, branch, or tag
+    /// - file: Use a baseline file storing previous violations
+    /// - date: Only scan files modified after a specific date
+    /// </summary>
+    [YamlMember(Alias = "mode")]
+    public string Mode { get; set; } = "git";
+
+    /// <summary>
+    /// Git reference to compare against (branch, tag, or commit hash).
+    /// Examples: "main", "origin/main", "v1.0.0", "abc123"
+    /// </summary>
+    [YamlMember(Alias = "git_ref")]
+    public string? GitRef { get; set; }
+
+    /// <summary>
+    /// Only scan files changed in git (not the entire file, just changed lines).
+    /// When false, scans entire files that have any changes.
+    /// </summary>
+    [YamlMember(Alias = "changed_lines_only")]
+    public bool ChangedLinesOnly { get; set; } = false;
+
+    /// <summary>
+    /// Include uncommitted changes (staged and unstaged).
+    /// </summary>
+    [YamlMember(Alias = "include_uncommitted")]
+    public bool IncludeUncommitted { get; set; } = true;
+
+    /// <summary>
+    /// Include untracked (new) files.
+    /// </summary>
+    [YamlMember(Alias = "include_untracked")]
+    public bool IncludeUntracked { get; set; } = true;
+
+    /// <summary>
+    /// Path to baseline file (when mode = file).
+    /// Stores violations from a previous run for comparison.
+    /// </summary>
+    [YamlMember(Alias = "baseline_file")]
+    public string? BaselineFile { get; set; }
+
+    /// <summary>
+    /// Date to compare against (when mode = date).
+    /// Only files modified after this date are scanned.
+    /// Format: YYYY-MM-DD or ISO 8601
+    /// </summary>
+    [YamlMember(Alias = "since_date")]
+    public string? SinceDate { get; set; }
+
+    /// <summary>
+    /// Action to take when baseline is outdated or missing.
+    /// - warn: Show warning but continue scanning all files
+    /// - fail: Exit with error
+    /// - ignore: Silently scan all files
+    /// </summary>
+    [YamlMember(Alias = "on_missing")]
+    public string OnMissing { get; set; } = "warn";
+
+    /// <summary>
+    /// Whether to update the baseline file after scanning.
+    /// Only applicable when mode = file.
+    /// </summary>
+    [YamlMember(Alias = "auto_update")]
+    public bool AutoUpdate { get; set; } = false;
+
+    /// <summary>
+    /// Filter violations to only those on changed lines (post-processing).
+    /// This is applied after scanning to filter results.
+    /// </summary>
+    [YamlMember(Alias = "filter_to_diff")]
+    public bool FilterToDiff { get; set; } = true;
 }
 
 /// <summary>

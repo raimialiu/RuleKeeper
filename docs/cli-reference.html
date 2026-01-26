@@ -289,6 +289,7 @@
         <a href="#language-options">Language Options</a>
         <a href="#output-options">Output Options</a>
         <a href="#threshold-options">Threshold Options</a>
+        <a href="#baseline-options">Baseline Options</a>
 
         <h3>Examples</h3>
         <a href="#basic-examples">Basic Usage</a>
@@ -519,6 +520,67 @@ dotnet run --project src/RuleKeeper.Cli -- --help</code></pre>
                     </tr>
                 </tbody>
             </table>
+
+            <h3 id="baseline-options">Baseline Options (Incremental Scanning)</h3>
+            <p>Use baseline options to add RuleKeeper to existing projects without breaking builds. Only scan new or changed code.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Alias</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--baseline</code></td>
+                        <td><code>-b</code></td>
+                        <td>Enable baseline mode (git, file, or date)</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><code>--baseline-ref</code></td>
+                        <td></td>
+                        <td>Git reference for comparison (branch, tag, commit)</td>
+                        <td><code>main</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--baseline-file</code></td>
+                        <td></td>
+                        <td>Path to baseline violations file</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td><code>--filter-to-diff</code></td>
+                        <td></td>
+                        <td>Only report violations on changed lines</td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--include-uncommitted</code></td>
+                        <td></td>
+                        <td>Include uncommitted changes in git mode</td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--include-untracked</code></td>
+                        <td></td>
+                        <td>Include untracked files in git mode</td>
+                        <td><code>true</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--since-date</code></td>
+                        <td></td>
+                        <td>Only scan files modified after this date (date mode)</td>
+                        <td>None</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note" style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+                <strong>Tip:</strong> Use <code>--baseline git --baseline-ref main</code> for CI/CD to only fail on new violations in pull requests.
+            </div>
         </section>
 
         <section id="init">

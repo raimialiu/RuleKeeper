@@ -592,9 +592,96 @@ RUN rulekeeper scan . \
 
 ## Custom Rules
 
-### Cross-Language Custom Rule
+RuleKeeper supports two ways to create custom rules:
+1. **YAML-Based Rules** - Define rules directly in configuration (no code required)
+2. **SDK-Based Rules** - Write rules in C# using the RuleKeeper SDK
 
-Create a rule that works across all languages:
+### YAML-Based Custom Rules (No Code Required)
+
+Define custom rules directly in your `rulekeeper.yaml` without writing C# code.
+
+#### Regex Pattern Rules
+
+```yaml
+coding_standards:
+  security:
+    rules:
+      no_console_output:
+        id: CUSTOM-SEC-001
+        name: "No Console Output"
+        severity: medium
+        anti_pattern_match:
+          regex: "Console\\.(WriteLine|Write)\\s*\\("
+          options: [ignorecase]
+          message_template: "Use ILogger instead of Console.{match}"
+        exclude: ["**/Tests/**"]
+```
+
+#### AST Query Rules
+
+Query specific AST nodes declaratively:
+
+```yaml
+coding_standards:
+  design:
+    rules:
+      no_public_fields:
+        id: CUSTOM-DESIGN-001
+        name: "No Public Fields"
+        severity: high
+        ast_query:
+          node_kinds: [FieldDeclaration]
+          properties:
+            IsPublic: true
+            IsConst: false
+        message: "Public fields should be properties"
+```
+
+#### Multi-Pattern Rules (AND/OR Logic)
+
+Combine multiple conditions:
+
+```yaml
+coding_standards:
+  security:
+    rules:
+      sql_injection_risk:
+        id: CUSTOM-SEC-002
+        name: "SQL Injection Risk"
+        severity: critical
+        match:
+          all:
+            - pattern:
+                regex: "(ExecuteSqlRaw|FromSqlRaw)"
+            - ast_query:
+                has_children: [BinaryExpression]
+          none:
+            - pattern:
+                regex: "@\\w+"
+        message: "Use parameterized queries"
+```
+
+#### Expression-Based Rules
+
+Use C# expressions for complex logic:
+
+```yaml
+coding_standards:
+  design:
+    rules:
+      method_too_long:
+        id: CUSTOM-DESIGN-002
+        name: "Method Too Long"
+        severity: medium
+        expression:
+          condition: "Node is IMethodNode m && GetLineCount() > (int)Parameters[\"max_lines\"]"
+        parameters:
+          max_lines: 30
+```
+
+### Cross-Language Custom Rule (SDK)
+
+Create a rule that works across all languages using C#:
 
 ```csharp
 // TodoCommentAnalyzer.cs - Detects TODO comments in any language
@@ -876,22 +963,70 @@ exit 0
 
 ### Baseline Workflow
 
-Establish a baseline of existing violations and only fail on new ones:
+RuleKeeper supports three baseline modes for incremental scanning: git-based, file-based, and date-based.
 
-```bash
-# Step 1: Generate baseline from current state
-rulekeeper scan . --output json --output-file baseline.json
+#### Git-Based Baseline (Recommended)
 
-# Step 2: In CI, compare against baseline
-rulekeeper scan . \
-    --baseline baseline.json \
-    --fail-on-new \
-    --output console
+Only scan files changed since a specific git reference:
 
-# Only fails if NEW violations are introduced
+```yaml
+# rulekeeper.yaml
+scan:
+  baseline:
+    enabled: true
+    mode: git
+    git_ref: main           # Compare against main branch
+    include_uncommitted: true
+    include_untracked: true
+    filter_to_diff: true    # Only report violations on changed lines
 ```
 
-> **Baseline Strategy:** Use baselines when adopting RuleKeeper in existing projects. This lets you enforce quality standards on new code while gradually fixing legacy issues.
+```bash
+# Or via CLI
+rulekeeper scan . --baseline git --baseline-ref main
+```
+
+#### File-Based Baseline
+
+Store known violations and only report new ones:
+
+```yaml
+# rulekeeper.yaml
+scan:
+  baseline:
+    enabled: true
+    mode: file
+    baseline_file: .rulekeeper-baseline.json
+    auto_update: false      # Set true to auto-update baseline
+    on_missing: warn        # warn, fail, or ignore
+```
+
+```bash
+# Step 1: Generate initial baseline
+rulekeeper scan . --output json --output-file .rulekeeper-baseline.json
+
+# Step 2: Enable file baseline - only new violations reported
+rulekeeper scan . --baseline file --baseline-file .rulekeeper-baseline.json
+```
+
+#### Date-Based Baseline
+
+Only scan files modified after a specific date:
+
+```yaml
+# rulekeeper.yaml
+scan:
+  baseline:
+    enabled: true
+    mode: date
+    since_date: "2024-01-01"
+```
+
+```bash
+rulekeeper scan . --baseline date --since-date "2024-01-01"
+```
+
+> **Baseline Strategy:** Use baselines when adopting RuleKeeper in existing projects. This lets you enforce quality standards on new code while gradually fixing legacy issues. Git-based baseline is recommended for CI/CD integration.
 
 ---
 

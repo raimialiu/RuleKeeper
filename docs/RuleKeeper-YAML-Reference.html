@@ -195,14 +195,16 @@
             <li><a href="#root">3. Root Configuration</a></li>
             <li><a href="#metadata">4. metadata Section</a></li>
             <li><a href="#scan">5. scan Section</a></li>
+            <li style="margin-left: 20px;"><a href="#baseline">5.1 Baseline Configuration (Incremental Scanning)</a></li>
             <li><a href="#output">6. output Section</a></li>
             <li><a href="#prebuilt-policies">7. prebuilt_policies Section</a></li>
             <li><a href="#coding-standards">8. coding_standards Section</a></li>
             <li><a href="#custom-validators">9. custom_validators Section</a></li>
-            <li><a href="#custom-rules">10. custom_rules Section</a></li>
-            <li><a href="#custom-fix-providers">10.1 custom_fix_providers Section</a></li>
-            <li><a href="#complete-example">11. Complete Example</a></li>
-            <li><a href="#severity-levels">12. Severity Levels</a></li>
+            <li><a href="#advanced-rules">10. Advanced Custom Rules (NEW)</a></li>
+            <li><a href="#custom-rules">11. custom_rules Section</a></li>
+            <li><a href="#custom-fix-providers">11.1 custom_fix_providers Section</a></li>
+            <li><a href="#complete-example">12. Complete Example</a></li>
+            <li><a href="#severity-levels">13. Severity Levels</a></li>
         </ul>
     </div>
 
@@ -433,6 +435,120 @@
             <td>All files in any Tests directory</td>
         </tr>
     </table>
+
+    <h3 id="baseline">5.1 Baseline Configuration (Incremental Scanning)</h3>
+
+    <div class="tip">
+        <strong>New in v1.1:</strong> Baseline scanning allows you to add RuleKeeper to existing projects without being overwhelmed by violations in legacy code. Only new or changed code is reported.
+    </div>
+
+    <pre><span class="yaml-key">scan</span>:
+  <span class="yaml-comment"># ... other scan options ...</span>
+
+  <span class="yaml-key">baseline</span>:
+    <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">mode</span>: <span class="yaml-string">git</span>
+    <span class="yaml-key">git_ref</span>: <span class="yaml-string">main</span>
+    <span class="yaml-key">include_uncommitted</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">include_untracked</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">filter_to_diff</span>: <span class="yaml-bool">true</span>
+    <span class="yaml-key">on_missing</span>: <span class="yaml-string">warn</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>enabled</td>
+            <td>boolean</td>
+            <td><span class="default-value">false</span></td>
+            <td>Enable baseline/incremental scanning</td>
+        </tr>
+        <tr>
+            <td>mode</td>
+            <td>string</td>
+            <td><span class="default-value">git</span></td>
+            <td>Baseline mode: <code>git</code>, <code>file</code>, or <code>date</code></td>
+        </tr>
+        <tr>
+            <td>git_ref</td>
+            <td>string</td>
+            <td><span class="default-value">HEAD~1</span></td>
+            <td>Git reference to compare against (branch, tag, or commit)</td>
+        </tr>
+        <tr>
+            <td>changed_lines_only</td>
+            <td>boolean</td>
+            <td><span class="default-value">false</span></td>
+            <td>Only scan changed lines (not entire changed files)</td>
+        </tr>
+        <tr>
+            <td>include_uncommitted</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Include uncommitted changes (staged and unstaged)</td>
+        </tr>
+        <tr>
+            <td>include_untracked</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Include untracked (new) files</td>
+        </tr>
+        <tr>
+            <td>filter_to_diff</td>
+            <td>boolean</td>
+            <td><span class="default-value">true</span></td>
+            <td>Filter violations to only those on changed lines</td>
+        </tr>
+        <tr>
+            <td>baseline_file</td>
+            <td>string</td>
+            <td><span class="default-value">null</span></td>
+            <td>Path to baseline file (when mode = file)</td>
+        </tr>
+        <tr>
+            <td>since_date</td>
+            <td>string</td>
+            <td><span class="default-value">null</span></td>
+            <td>Date to compare against (when mode = date, format: YYYY-MM-DD)</td>
+        </tr>
+        <tr>
+            <td>on_missing</td>
+            <td>string</td>
+            <td><span class="default-value">warn</span></td>
+            <td>Action when baseline is missing: <code>warn</code>, <code>fail</code>, <code>ignore</code></td>
+        </tr>
+        <tr>
+            <td>auto_update</td>
+            <td>boolean</td>
+            <td><span class="default-value">false</span></td>
+            <td>Auto-update baseline file after scanning (file mode only)</td>
+        </tr>
+    </table>
+
+    <h4>Baseline Mode Examples</h4>
+
+    <p><strong>Git Mode</strong> - Compare against a branch or commit:</p>
+    <pre><span class="yaml-key">baseline</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">mode</span>: <span class="yaml-string">git</span>
+  <span class="yaml-key">git_ref</span>: <span class="yaml-string">origin/main</span>  <span class="yaml-comment"># or: main, v1.0.0, abc123</span></pre>
+
+    <p><strong>File Mode</strong> - Compare against a stored baseline:</p>
+    <pre><span class="yaml-key">baseline</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">mode</span>: <span class="yaml-string">file</span>
+  <span class="yaml-key">baseline_file</span>: <span class="yaml-string">.rulekeeper-baseline.json</span>
+  <span class="yaml-key">auto_update</span>: <span class="yaml-bool">true</span></pre>
+
+    <p><strong>Date Mode</strong> - Scan files modified since a date:</p>
+    <pre><span class="yaml-key">baseline</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">mode</span>: <span class="yaml-string">date</span>
+  <span class="yaml-key">since_date</span>: <span class="yaml-string">"2026-01-01"</span></pre>
 
     <h2 id="output">6. output Section</h2>
 
@@ -905,7 +1021,239 @@
         </tr>
     </table>
 
-    <h2 id="custom-rules">10. custom_rules Section</h2>
+    <h2 id="advanced-rules">10. Advanced Custom Rules (NEW in v1.1)</h2>
+
+    <div class="tip">
+        <strong>New Feature:</strong> Define custom rules directly in YAML without writing C# code. Supports enhanced patterns, AST queries, multi-condition matching, expressions, and scripts.
+    </div>
+
+    <h3>10.1 Enhanced Pattern Rules</h3>
+    <p>Enhanced patterns support captures, regex options, and message interpolation:</p>
+
+    <pre><span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">security</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CUSTOM-SEC-001</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"No Console Output"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+      <span class="yaml-key">anti_pattern_match</span>:
+        <span class="yaml-key">regex</span>: <span class="yaml-string">"Console\\.(WriteLine|Write)\\s*\\("</span>
+        <span class="yaml-key">options</span>: [<span class="yaml-string">ignorecase</span>]
+        <span class="yaml-key">message_template</span>: <span class="yaml-string">"Use ILogger instead of Console.{match}"</span>
+      <span class="yaml-key">message</span>: <span class="yaml-string">"Use ILogger instead of Console"</span>
+      <span class="yaml-key">exclude</span>: [<span class="yaml-string">"**/Tests/**"</span>]</pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>pattern_match / anti_pattern_match</td>
+            <td>object</td>
+            <td>Enhanced pattern configuration</td>
+        </tr>
+        <tr>
+            <td>.regex</td>
+            <td>string</td>
+            <td>The regex pattern</td>
+        </tr>
+        <tr>
+            <td>.options</td>
+            <td>array</td>
+            <td>Regex options: ignorecase, multiline, singleline, compiled</td>
+        </tr>
+        <tr>
+            <td>.captures</td>
+            <td>object</td>
+            <td>Named capture groups mapping</td>
+        </tr>
+        <tr>
+            <td>.scope</td>
+            <td>string</td>
+            <td>Scope: file, class, method, block</td>
+        </tr>
+        <tr>
+            <td>.message_template</td>
+            <td>string</td>
+            <td>Message with {capture} interpolation</td>
+        </tr>
+    </table>
+
+    <h3>10.2 AST Query Rules</h3>
+    <p>Query AST nodes declaratively by kind, properties, and structure:</p>
+
+    <pre><span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">design</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CUSTOM-DESIGN-001</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"No Public Fields"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">high</span>
+      <span class="yaml-key">ast_query</span>:
+        <span class="yaml-key">node_kinds</span>: [<span class="yaml-string">FieldDeclaration</span>]
+        <span class="yaml-key">properties</span>:
+          <span class="yaml-key">IsPublic</span>: <span class="yaml-bool">true</span>
+          <span class="yaml-key">IsConst</span>: <span class="yaml-bool">false</span>
+        <span class="yaml-key">no_attribute</span>: [<span class="yaml-string">Obsolete</span>]
+      <span class="yaml-key">message</span>: <span class="yaml-string">"Public fields should be properties"</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>node_kinds</td>
+            <td>array</td>
+            <td>AST node kinds to match (MethodDeclaration, ClassDeclaration, etc.)</td>
+        </tr>
+        <tr>
+            <td>properties</td>
+            <td>object</td>
+            <td>Property values to match (IsPublic: true, etc.)</td>
+        </tr>
+        <tr>
+            <td>has_children</td>
+            <td>array</td>
+            <td>Required child node kinds</td>
+        </tr>
+        <tr>
+            <td>no_children</td>
+            <td>array</td>
+            <td>Excluded child node kinds</td>
+        </tr>
+        <tr>
+            <td>has_ancestor</td>
+            <td>array</td>
+            <td>Required ancestor node kinds</td>
+        </tr>
+        <tr>
+            <td>no_ancestor</td>
+            <td>array</td>
+            <td>Excluded ancestor node kinds</td>
+        </tr>
+        <tr>
+            <td>text_matches</td>
+            <td>string</td>
+            <td>Regex to match node text</td>
+        </tr>
+        <tr>
+            <td>name_matches</td>
+            <td>string</td>
+            <td>Regex to match node name/identifier</td>
+        </tr>
+        <tr>
+            <td>has_attribute / no_attribute</td>
+            <td>array</td>
+            <td>Required/excluded attributes</td>
+        </tr>
+        <tr>
+            <td>languages</td>
+            <td>array</td>
+            <td>Limit to specific languages</td>
+        </tr>
+    </table>
+
+    <h3>10.3 Multi-Pattern Rules (AND/OR/NOT)</h3>
+    <p>Combine multiple conditions with logical operators:</p>
+
+    <pre><span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">security</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CUSTOM-SEC-002</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"SQL Injection Risk"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">critical</span>
+      <span class="yaml-key">match</span>:
+        <span class="yaml-key">all</span>:  <span class="yaml-comment"># AND: all conditions must match</span>
+          - <span class="yaml-key">pattern</span>:
+              <span class="yaml-key">regex</span>: <span class="yaml-string">"(ExecuteSqlRaw|FromSqlRaw)"</span>
+          - <span class="yaml-key">ast_query</span>:
+              <span class="yaml-key">has_children</span>: [<span class="yaml-string">BinaryExpression</span>]
+        <span class="yaml-key">none</span>:  <span class="yaml-comment"># NOT: none of these should match</span>
+          - <span class="yaml-key">pattern</span>:
+              <span class="yaml-key">regex</span>: <span class="yaml-string">"@\\w+"</span>
+      <span class="yaml-key">message</span>: <span class="yaml-string">"Use parameterized queries"</span></pre>
+
+    <table class="property-table">
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>all</td>
+            <td>array</td>
+            <td>All conditions must match (AND logic)</td>
+        </tr>
+        <tr>
+            <td>any</td>
+            <td>array</td>
+            <td>At least one condition must match (OR logic)</td>
+        </tr>
+        <tr>
+            <td>none</td>
+            <td>array</td>
+            <td>None of these conditions should match (NOT logic)</td>
+        </tr>
+        <tr>
+            <td>min_any_matches</td>
+            <td>integer</td>
+            <td>Minimum matches required for 'any' (default: 1)</td>
+        </tr>
+    </table>
+
+    <h3>10.4 Expression Rules</h3>
+    <p>Use C# expressions for complex validation logic:</p>
+
+    <pre><span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">design</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CUSTOM-DESIGN-002</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"Method Too Long"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">medium</span>
+      <span class="yaml-key">expression</span>:
+        <span class="yaml-key">condition</span>: <span class="yaml-string">"Node is IMethodNode m && GetLineCount() > (int)Parameters[\"max_lines\"]"</span>
+        <span class="yaml-key">message_expression</span>: <span class="yaml-string">"$\"Method has {GetLineCount()} lines (max: {Parameters[\"max_lines\"]})\""</span>
+      <span class="yaml-key">parameters</span>:
+        <span class="yaml-key">max_lines</span>: <span class="yaml-number">30</span></pre>
+
+    <h3>10.5 Script Rules</h3>
+    <p>Full C# scripts for the most complex validation scenarios:</p>
+
+    <pre><span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">custom</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">CUSTOM-SCRIPT-001</span>
+      <span class="yaml-key">name</span>: <span class="yaml-string">"Custom Complexity Check"</span>
+      <span class="yaml-key">severity</span>: <span class="yaml-string">high</span>
+      <span class="yaml-key">script</span>:
+        <span class="yaml-key">code</span>: |
+          <span class="yaml-string">var violations = new List&lt;Violation&gt;();
+          foreach (var method in GetMethods())
+          {
+              var complexity = CalculateComplexity(method);
+              if (complexity > GetParameter&lt;int&gt;("max_complexity", 10))
+                  violations.Add(CreateViolation(method, $"Complexity: {complexity}"));
+          }
+          return violations;</span>
+      <span class="yaml-key">parameters</span>:
+        <span class="yaml-key">max_complexity</span>: <span class="yaml-number">10</span></pre>
+
+    <h3>10.6 Validator Reference</h3>
+    <p>Reference reusable validators or external DLLs:</p>
+
+    <pre><span class="yaml-comment"># Define reusable validators</span>
+<span class="yaml-key">custom_validators</span>:
+  <span class="yaml-key">company_rules</span>:
+    <span class="yaml-key">type</span>: <span class="yaml-string">assembly</span>
+    <span class="yaml-key">assembly</span>: <span class="yaml-string">"./plugins/CompanyRules.dll"</span>
+    <span class="yaml-key">type_name</span>: <span class="yaml-string">"Company.Rules.StandardsValidator"</span>
+
+<span class="yaml-comment"># Reference in rules</span>
+<span class="yaml-key">coding_standards</span>:
+  <span class="yaml-key">enterprise</span>:
+    - <span class="yaml-key">id</span>: <span class="yaml-string">ENTERPRISE-001</span>
+      <span class="yaml-key">validator</span>:
+        <span class="yaml-key">reference</span>: <span class="yaml-string">company_rules</span></pre>
+
+    <h2 id="custom-rules">11. custom_rules Section</h2>
 
     <pre><span class="yaml-key">custom_rules</span>:
   - <span class="yaml-key">path</span>: <span class="yaml-string">"./custom-rules/MyCompany.Rules.dll"</span>

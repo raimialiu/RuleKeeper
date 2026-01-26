@@ -104,6 +104,17 @@ rulekeeper scan <path> [options]
 | `--high-threshold` | `--ht` | Maximum high severity violations | `0` |
 | `--total-threshold` | `--tt` | Maximum total violations | `0` |
 
+#### Baseline Options
+
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `--baseline` | `-b` | Enable baseline mode (git, file, or date) | None |
+| `--baseline-ref` | | Git reference for comparison | `main` |
+| `--baseline-file` | | Path to baseline violations file | None |
+| `--filter-to-diff` | | Only report violations on changed lines | `true` |
+| `--include-uncommitted` | | Include uncommitted changes | `true` |
+| `--include-untracked` | | Include untracked files | `true` |
+
 ---
 
 ### init Command

@@ -1,7 +1,9 @@
 using System.Collections.Concurrent;
 using RuleKeeper.Core.Configuration;
 using RuleKeeper.Core.Configuration.Models;
+using RuleKeeper.Core.Plugins;
 using RuleKeeper.Core.Rules;
+using RuleKeeper.Core.Validators;
 using RuleKeeper.Sdk;
 using AnalysisContext = RuleKeeper.Sdk.AnalysisContext;
 
@@ -13,22 +15,96 @@ namespace RuleKeeper.Core.Analysis;
 public class AnalysisEngine : IDisposable
 {
     private readonly RuleRegistry _ruleRegistry;
+    private readonly ValidatorRegistry _validatorRegistry;
     private readonly RuleExecutor _ruleExecutor;
     private readonly RoslynWorkspaceLoader _workspaceLoader;
     private readonly ConfigurationValidator _configValidator;
+    private readonly PluginLoader _pluginLoader;
 
-    public AnalysisEngine(RuleRegistry? ruleRegistry = null)
+    public AnalysisEngine(RuleRegistry? ruleRegistry = null, ValidatorRegistry? validatorRegistry = null)
     {
         _ruleRegistry = ruleRegistry ?? new RuleRegistry();
-        _ruleExecutor = new RuleExecutor(_ruleRegistry);
+        _validatorRegistry = validatorRegistry ?? new ValidatorRegistry();
+        _ruleExecutor = new RuleExecutor(_ruleRegistry, _validatorRegistry);
         _workspaceLoader = new RoslynWorkspaceLoader();
         _configValidator = new ConfigurationValidator();
+        _pluginLoader = new PluginLoader();
+
+        // Add default plugin search paths
+        _pluginLoader.AddSearchPath(Path.Combine(Environment.CurrentDirectory, "plugins"));
     }
 
     /// <summary>
     /// Gets the rule registry for this engine.
     /// </summary>
     public RuleRegistry RuleRegistry => _ruleRegistry;
+
+    /// <summary>
+    /// Gets the validator registry for this engine.
+    /// </summary>
+    public ValidatorRegistry ValidatorRegistry => _validatorRegistry;
+
+    /// <summary>
+    /// Gets the plugin loader for this engine.
+    /// </summary>
+    public PluginLoader PluginLoader => _pluginLoader;
+
+    /// <summary>
+    /// Gets the rule executor for this engine.
+    /// </summary>
+    public RuleExecutor RuleExecutor => _ruleExecutor;
+
+    /// <summary>
+    /// Initialize custom validators from configuration.
+    /// Call this before AnalyzeAsync if using custom validators defined in YAML.
+    /// </summary>
+    public void InitializeFromConfiguration(RuleKeeperConfig config)
+    {
+        // Load custom validators from configuration
+        if (config.CustomValidators != null && config.CustomValidators.Count > 0)
+        {
+            // Convert old CustomValidatorConfig to EnhancedCustomValidatorConfig
+            var enhancedConfigs = new Dictionary<string, EnhancedCustomValidatorConfig>();
+            foreach (var (name, oldConfig) in config.CustomValidators)
+            {
+                enhancedConfigs[name] = new EnhancedCustomValidatorConfig
+                {
+                    Description = oldConfig.Description,
+                    Type = oldConfig.Type,
+                    Regex = oldConfig.Pattern,
+                    ScriptCode = oldConfig.Script,
+                    Assembly = oldConfig.Assembly,
+                    TypeName = oldConfig.TypeName
+                };
+            }
+            _validatorRegistry.LoadFromConfiguration(enhancedConfigs, _ruleExecutor.ValidatorFactory);
+        }
+
+        // Load plugins from custom rule sources
+        foreach (var source in config.CustomRules)
+        {
+            if (!string.IsNullOrEmpty(source.Path))
+            {
+                if (File.Exists(source.Path))
+                {
+                    _pluginLoader.LoadPlugin(source.Path);
+                }
+                else if (Directory.Exists(source.Path))
+                {
+                    foreach (var plugin in _pluginLoader.LoadPluginsFromDirectory(source.Path))
+                    {
+                        // Plugin loaded
+                    }
+                }
+            }
+        }
+
+        // Register rules from loaded plugins
+        _pluginLoader.RegisterRulesWithRegistry(_ruleRegistry);
+
+        // Load custom rules from paths
+        _ruleRegistry.LoadCustomRules(config);
+    }
 
     /// <summary>
     /// Analyzes code at the specified path using the given configuration.
@@ -42,15 +118,49 @@ public class AnalysisEngine : IDisposable
         // Validate configuration
         _configValidator.ValidateAndThrow(config);
 
+        // Initialize validators and plugins from configuration
+        InitializeFromConfiguration(config);
+
         var report = new AnalysisReport
         {
             AnalyzedPath = Path.GetFullPath(path)
         };
 
+        // Initialize baseline filter if configured
+        BaselineFilter? baselineFilter = null;
+        if (config.Scan.IsBaselineEnabled && config.Scan.Baseline != null)
+        {
+            baselineFilter = new BaselineFilter(config.Scan.Baseline, Path.GetFullPath(path));
+            try
+            {
+                progress?.Report(new AnalysisProgress { Stage = "Initializing baseline", Current = 0, Total = 0 });
+                await baselineFilter.InitializeAsync(cancellationToken);
+                report.Metadata["BaselineMode"] = config.Scan.Baseline.Mode;
+                report.Metadata["ChangedFiles"] = baselineFilter.GetChangedFiles().Count;
+            }
+            catch (Exception ex)
+            {
+                report.Errors.Add(new AnalysisError
+                {
+                    FilePath = path,
+                    Message = $"Baseline initialization failed: {ex.Message}",
+                    Exception = ex
+                });
+            }
+        }
+
         try
         {
             progress?.Report(new AnalysisProgress { Stage = "Loading files", Current = 0, Total = 0 });
             var analysisUnits = await _workspaceLoader.LoadFilesAsync(path, config.Scan, cancellationToken);
+
+            // Filter files based on baseline if configured
+            if (baselineFilter != null)
+            {
+                var originalCount = analysisUnits.Count;
+                analysisUnits = analysisUnits.Where(u => baselineFilter.ShouldScanFile(u.FilePath)).ToList();
+                report.Metadata["FilteredFiles"] = originalCount - analysisUnits.Count;
+            }
 
             report.AnalyzedFiles.AddRange(analysisUnits.Select(u => u.FilePath));
             if (config.Scan.Parallel && analysisUnits.Count > 1)
@@ -61,7 +171,21 @@ public class AnalysisEngine : IDisposable
             {
                 await AnalyzeSequentialAsync(analysisUnits, config, report, progress, cancellationToken);
             }
-            
+
+            // Filter violations based on baseline (only new violations)
+            if (baselineFilter != null)
+            {
+                var originalViolationCount = report.Violations.Count;
+                report.Violations = baselineFilter.FilterViolations(report.Violations);
+                report.Metadata["FilteredViolations"] = originalViolationCount - report.Violations.Count;
+
+                // Auto-update baseline if configured
+                if (config.Scan.Baseline?.AutoUpdate == true)
+                {
+                    await baselineFilter.SaveBaselineAsync(report.Violations, cancellationToken);
+                }
+            }
+
             ApplyOutputLimits(report, config.Output);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

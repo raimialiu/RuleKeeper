@@ -589,4 +589,116 @@ custom_rules:
 
 ---
 
+## YAML-Based Custom Rules
+
+For simpler rules, you can define them directly in YAML without writing C# code.
+
+### Validator Types
+
+| Type | Description |
+|------|-------------|
+| `regex` | Pattern matching using regular expressions |
+| `ast_query` | Query unified AST nodes by kind and properties |
+| `expression` | Evaluate C# expressions |
+| `script` | Execute full C# scripts |
+| `assembly` | Load validators from external DLLs |
+
+### Regex Validator
+
+```yaml
+custom_validators:
+  no_console:
+    type: regex
+    description: "Detect Console.WriteLine usage"
+    regex: "Console\\.(WriteLine|Write)\\s*\\("
+    options: [ignorecase]
+    message_template: "Use ILogger instead of {match}"
+```
+
+### AST Query Validator
+
+```yaml
+coding_standards:
+  design:
+    rules:
+      no_public_fields:
+        id: CUSTOM-001
+        ast_query:
+          node_kinds: [FieldDeclaration]
+          properties:
+            IsPublic: true
+            IsConst: false
+          exclude_parents: [InterfaceDeclaration]
+```
+
+### Expression Validator
+
+```yaml
+coding_standards:
+  complexity:
+    rules:
+      method_length:
+        id: CUSTOM-002
+        expression:
+          condition: "Node is IMethodNode m && m.GetLineCount() > Parameters.GetInt(\"max\")"
+        parameters:
+          max: 50
+```
+
+### Script Validator
+
+```yaml
+custom_validators:
+  complex_check:
+    type: script
+    description: "Complex validation logic"
+    script: |
+      var violations = new List<Violation>();
+      foreach (var method in GetMethods())
+      {
+          if (method.Parameters.Count > 5)
+          {
+              violations.Add(CreateViolation(method, "Too many parameters"));
+          }
+      }
+      return violations;
+```
+
+### Plugin Providers
+
+Implement `IRuleProvider` to create plugin assemblies:
+
+```csharp
+using RuleKeeper.Sdk.Plugins;
+
+public class MyRuleProvider : IRuleProvider
+{
+    public RuleProviderMetadata Metadata => new()
+    {
+        Name = "MyCompany Rules",
+        Version = "1.0.0",
+        Author = "MyCompany"
+    };
+
+    public IEnumerable<ICrossLanguageRule> GetCrossLanguageRules()
+    {
+        yield return new MyCustomRule();
+    }
+
+    public IEnumerable<IRoslynRule> GetRoslynRules()
+    {
+        yield return new MyCSharpRule();
+    }
+}
+```
+
+Load in configuration:
+
+```yaml
+custom_rules:
+  - path: "./plugins/MyCompany.Rules.dll"
+```
+
+---
+
 *RuleKeeper SDK Documentation (c) 2024*

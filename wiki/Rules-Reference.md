@@ -22,6 +22,9 @@ Complete documentation of all built-in rules across all supported languages
 - [JavaScript Rules](#javascript-rules)
   - [Debugging](#javascript-debugging-rules)
   - [Best Practices](#javascript-best-practices)
+- [Custom Rules](#custom-rules)
+  - [YAML-Based Rules](#yaml-based-rules)
+  - [External DLL Plugins](#external-dll-plugins)
 
 ---
 
@@ -239,6 +242,98 @@ Use const or let instead of var for variable declarations. var has function scop
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `prefer_const` | Suggest const as preferred | true |
+
+---
+
+## Custom Rules
+
+RuleKeeper supports defining custom rules directly in YAML configuration without writing C# code.
+
+### YAML-Based Rules
+
+#### Rule Types
+
+| Type | Description | Use Case |
+|------|-------------|----------|
+| **Pattern Match** | Regex-based text matching | Find specific code patterns |
+| **Anti-Pattern** | Regex to detect violations | Detect forbidden patterns |
+| **AST Query** | Query syntax tree nodes | Check code structure |
+| **Multi-Match** | Combine conditions (AND/OR/NOT) | Complex rule logic |
+| **Expression** | C# expression evaluation | Dynamic conditions |
+| **Script** | Full C# script execution | Complex analysis |
+
+#### Pattern Match Rule
+
+```yaml
+coding_standards:
+  security:
+    rules:
+      detect_hardcoded_ip:
+        id: CUSTOM-SEC-010
+        name: "Hardcoded IP Address"
+        severity: medium
+        anti_pattern_match:
+          regex: "\\b(?:[0-9]{1,3}\\.){3}[0-9]{1,3}\\b"
+          scope: string_literals  # Only in strings
+          message_template: "Hardcoded IP address detected: {match}"
+        fix_hint: "Use configuration or environment variables"
+```
+
+#### AST Query Rule
+
+```yaml
+coding_standards:
+  design:
+    rules:
+      no_nested_loops:
+        id: CUSTOM-DESIGN-010
+        name: "No Nested Loops"
+        severity: medium
+        ast_query:
+          node_kinds: [ForStatement, WhileStatement, ForEachStatement]
+          has_children: [ForStatement, WhileStatement, ForEachStatement]
+        message: "Avoid nested loops - consider extracting to a method"
+```
+
+#### Multi-Pattern Rule
+
+```yaml
+coding_standards:
+  async:
+    rules:
+      async_without_await:
+        id: CUSTOM-ASYNC-001
+        name: "Async Without Await"
+        severity: warning
+        match:
+          all:
+            - ast_query:
+                node_kinds: [MethodDeclaration]
+                properties:
+                  IsAsync: true
+          none:
+            - ast_query:
+                has_children: [AwaitExpression]
+        message: "Async method contains no await expressions"
+```
+
+### External DLL Plugins
+
+Load custom rules from external DLL assemblies:
+
+```yaml
+custom_rules:
+  - path: "./plugins/MyCompany.Rules.dll"
+  - nuget: "MyCompany.RuleKeeper.Rules:1.0.0"
+
+custom_validators:
+  company_standards:
+    type: assembly
+    assembly: "./plugins/CompanyRules.dll"
+    type_name: "Company.Rules.StandardsValidator"
+```
+
+See the [[SDK Reference]] for building custom rule assemblies.
 
 ---
 

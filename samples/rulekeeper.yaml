@@ -20,6 +20,17 @@ scan:
   parallel: true
   cache: true
 
+  # Baseline configuration - only scan new/changed code
+  # This is useful when adding RuleKeeper to an existing project
+  baseline:
+    enabled: false  # Set to true to enable incremental scanning
+    mode: git       # Options: git, file, date
+    git_ref: main   # Compare against main branch
+    include_uncommitted: true
+    include_untracked: true
+    filter_to_diff: true  # Only report violations on changed lines
+    on_missing: warn      # Options: warn, fail, ignore
+
 # Output configuration
 output:
   format: console
@@ -163,6 +174,61 @@ custom_validators:
     description: "Prevent Console.WriteLine in production code"
     type: regex
     pattern: "Console\\.(WriteLine|Write)\\s*\\("
+
+# ============================================
+# ADVANCED CUSTOM RULES (NEW IN v1.1)
+# ============================================
+# You can define custom rules directly in YAML without writing C# code.
+# The following examples show different rule types:
+
+# Example: Enhanced pattern with captures
+#   custom_security:
+#     - id: CUSTOM-SEC-001
+#       name: "No Console Output"
+#       severity: medium
+#       anti_pattern_match:
+#         regex: "Console\\.(WriteLine|Write)\\s*\\("
+#         options: [ignorecase]
+#         message_template: "Use ILogger instead of Console.{match}"
+#       exclude: ["**/Tests/**"]
+
+# Example: AST Query rule (language-agnostic)
+#   custom_design:
+#     - id: CUSTOM-DESIGN-001
+#       name: "No Public Fields"
+#       severity: high
+#       ast_query:
+#         node_kinds: [FieldDeclaration]
+#         properties:
+#           IsPublic: true
+#           IsConst: false
+#       message: "Public fields should be properties"
+
+# Example: Multi-pattern rule with AND/OR logic
+#   custom_security:
+#     - id: CUSTOM-SEC-002
+#       name: "SQL Injection Risk"
+#       severity: critical
+#       match:
+#         all:
+#           - pattern:
+#               regex: "(ExecuteSqlRaw|FromSqlRaw)"
+#           - ast_query:
+#               has_children: [BinaryExpression]
+#         none:
+#           - pattern:
+#               regex: "@\\w+"
+#       message: "Use parameterized queries"
+
+# Example: Expression-based rule
+#   custom_complexity:
+#     - id: CUSTOM-DESIGN-002
+#       name: "Method Too Long"
+#       severity: medium
+#       expression:
+#         condition: "Node is IMethodNode m && GetLineCount() > (int)Parameters[\"max_lines\"]"
+#       parameters:
+#         max_lines: 30
 
 # Custom rule assemblies (plugins)
 custom_rules: []

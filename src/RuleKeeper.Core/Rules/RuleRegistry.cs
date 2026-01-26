@@ -95,6 +95,50 @@ public class RuleRegistry
     }
 
     /// <summary>
+    /// Registers a cross-language rule type.
+    /// </summary>
+    public void RegisterCrossLanguageType(Type type)
+    {
+        if (!typeof(ICrossLanguageRule).IsAssignableFrom(type))
+        {
+            throw new ArgumentException($"Type {type.Name} does not implement ICrossLanguageRule");
+        }
+
+        var ruleAttribute = type.GetCustomAttribute<RuleAttribute>();
+        string ruleId;
+
+        if (ruleAttribute != null)
+        {
+            ruleId = ruleAttribute.RuleId;
+        }
+        else
+        {
+            // Try to create an instance to get the RuleId
+            try
+            {
+                var instance = (ICrossLanguageRule)Activator.CreateInstance(type)!;
+                ruleId = instance.RuleId;
+            }
+            catch
+            {
+                ruleId = type.Name;
+            }
+        }
+
+        _ruleTypes[ruleId] = type;
+        _ruleInfos[ruleId] = CreateCrossLanguageRuleInfo(type, ruleId, ruleAttribute);
+    }
+
+    /// <summary>
+    /// Registers a cross-language rule type with a specific ID.
+    /// </summary>
+    public void RegisterCrossLanguageType<T>(string ruleId) where T : ICrossLanguageRule
+    {
+        _ruleTypes[ruleId] = typeof(T);
+        _ruleInfos[ruleId] = CreateCrossLanguageRuleInfo(typeof(T), ruleId, null);
+    }
+
+    /// <summary>
     /// Creates an instance of a rule analyzer by ID.
     /// </summary>
     public IRuleAnalyzer? CreateAnalyzer(string ruleId)
@@ -203,6 +247,33 @@ public class RuleRegistry
             Type = type,
             SupportedLanguages = supportedLanguages,
             IsCrossLanguage = isCrossLanguage
+        };
+    }
+
+    private RuleInfo CreateCrossLanguageRuleInfo(Type type, string ruleId, RuleAttribute? attr)
+    {
+        // Get supported languages from attribute - cross-language rules support all by default
+        var supportedLangsAttr = type.GetCustomAttribute<SupportedLanguagesAttribute>();
+        var supportedLanguages = supportedLangsAttr?.Languages ?? new[]
+        {
+            Language.CSharp,
+            Language.Python,
+            Language.JavaScript,
+            Language.TypeScript,
+            Language.Java,
+            Language.Go
+        };
+
+        return new RuleInfo
+        {
+            RuleId = ruleId,
+            Name = attr?.Name ?? type.Name,
+            Description = attr?.Description ?? "",
+            Category = attr?.Category ?? "General",
+            DefaultSeverity = attr?.Severity ?? SeverityLevel.Medium,
+            Type = type,
+            SupportedLanguages = supportedLanguages,
+            IsCrossLanguage = true
         };
     }
 }

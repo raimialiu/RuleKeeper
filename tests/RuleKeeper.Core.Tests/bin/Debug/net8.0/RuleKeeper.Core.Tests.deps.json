@@ -168,6 +168,61 @@
           }
         }
       },
+      "Microsoft.CodeAnalysis.CSharp.Scripting/4.8.0": {
+        "dependencies": {
+          "Microsoft.CSharp": "4.7.0",
+          "Microsoft.CodeAnalysis.CSharp": "4.8.0",
+          "Microsoft.CodeAnalysis.Common": "4.8.0",
+          "Microsoft.CodeAnalysis.Scripting.Common": "4.8.0"
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.CodeAnalysis.CSharp.Scripting.dll": {
+            "assemblyVersion": "4.8.0.0",
+            "fileVersion": "4.800.23.55801"
+          }
+        },
+        "resources": {
+          "lib/net7.0/cs/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/net7.0/de/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "de"
+          },
+          "lib/net7.0/es/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "es"
+          },
+          "lib/net7.0/fr/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/net7.0/it/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "it"
+          },
+          "lib/net7.0/ja/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/net7.0/ko/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/net7.0/pl/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/net7.0/pt-BR/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/net7.0/ru/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/net7.0/tr/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/net7.0/zh-Hans/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/net7.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.Scripting.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
       "Microsoft.CodeAnalysis.CSharp.Workspaces/4.8.0": {
         "dependencies": {
           "Humanizer.Core": "2.14.1",
@@ -219,6 +274,58 @@
             "locale": "zh-Hans"
           },
           "lib/net7.0/zh-Hant/Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll": {
+            "locale": "zh-Hant"
+          }
+        }
+      },
+      "Microsoft.CodeAnalysis.Scripting.Common/4.8.0": {
+        "dependencies": {
+          "Microsoft.CodeAnalysis.Common": "4.8.0"
+        },
+        "runtime": {
+          "lib/net7.0/Microsoft.CodeAnalysis.Scripting.dll": {
+            "assemblyVersion": "4.8.0.0",
+            "fileVersion": "4.800.23.55801"
+          }
+        },
+        "resources": {
+          "lib/net7.0/cs/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "cs"
+          },
+          "lib/net7.0/de/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "de"
+          },
+          "lib/net7.0/es/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "es"
+          },
+          "lib/net7.0/fr/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "fr"
+          },
+          "lib/net7.0/it/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "it"
+          },
+          "lib/net7.0/ja/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "ja"
+          },
+          "lib/net7.0/ko/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "ko"
+          },
+          "lib/net7.0/pl/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "pl"
+          },
+          "lib/net7.0/pt-BR/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "pt-BR"
+          },
+          "lib/net7.0/ru/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "ru"
+          },
+          "lib/net7.0/tr/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "tr"
+          },
+          "lib/net7.0/zh-Hans/Microsoft.CodeAnalysis.Scripting.resources.dll": {
+            "locale": "zh-Hans"
+          },
+          "lib/net7.0/zh-Hant/Microsoft.CodeAnalysis.Scripting.resources.dll": {
             "locale": "zh-Hant"
           }
         }
@@ -347,6 +454,7 @@
           }
         }
       },
+      "Microsoft.CSharp/4.7.0": {},
       "Microsoft.Extensions.FileSystemGlobbing/8.0.0": {
         "runtime": {
           "lib/net8.0/Microsoft.Extensions.FileSystemGlobbing.dll": {
@@ -1507,10 +1615,11 @@
         "dependencies": {
           "Microsoft.Build.Locator": "1.6.10",
           "Microsoft.CodeAnalysis.CSharp": "4.8.0",
+          "Microsoft.CodeAnalysis.CSharp.Scripting": "4.8.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.8.0",
           "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.8.0",
           "Microsoft.Extensions.FileSystemGlobbing": "8.0.0",
-          "RuleKeeper.Sdk": "1.0.0",
+          "RuleKeeper.Sdk": "2.0.0",
           "Spectre.Console": "0.48.0",
           "YamlDotNet": "15.1.0"
         },
@@ -1521,14 +1630,14 @@
           }
         }
       },
-      "RuleKeeper.Sdk/1.0.0": {
+      "RuleKeeper.Sdk/2.0.0": {
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.8.0"
         },
         "runtime": {
           "RuleKeeper.Sdk.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
           }
         }
       }
@@ -1603,12 +1712,26 @@
       "path": "microsoft.codeanalysis.csharp/4.8.0",
       "hashPath": "microsoft.codeanalysis.csharp.4.8.0.nupkg.sha512"
     },
+    "Microsoft.CodeAnalysis.CSharp.Scripting/4.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pLFJuVYmQ3Wea0uYlFJBAxboFF4a7ugYReLyaXRkNuXOgcJiFKs1y+gt0DiAQ9ggeLO08hLoWHrLGnKczvbJNQ==",
+      "path": "microsoft.codeanalysis.csharp.scripting/4.8.0",
+      "hashPath": "microsoft.codeanalysis.csharp.scripting.4.8.0.nupkg.sha512"
+    },
     "Microsoft.CodeAnalysis.CSharp.Workspaces/4.8.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-3amm4tq4Lo8/BGvg9p3BJh3S9nKq2wqCXfS7138i69TUpo/bD+XvD0hNurpEBtcNZhi1FyutiomKJqVF39ugYA==",
       "path": "microsoft.codeanalysis.csharp.workspaces/4.8.0",
       "hashPath": "microsoft.codeanalysis.csharp.workspaces.4.8.0.nupkg.sha512"
+    },
+    "Microsoft.CodeAnalysis.Scripting.Common/4.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ysiNNbAASVhV9wEd5oY2x99EwaVYtB13XZRjHsgWT/R1mQkxZF8jWsf7JWaZxD1+jNoz1QCQ6nbe+vr+6QvlFA==",
+      "path": "microsoft.codeanalysis.scripting.common/4.8.0",
+      "hashPath": "microsoft.codeanalysis.scripting.common.4.8.0.nupkg.sha512"
     },
     "Microsoft.CodeAnalysis.Workspaces.Common/4.8.0": {
       "type": "package",
@@ -1630,6 +1753,13 @@
       "sha512": "sha512-KC8SXWbGIdoFVdlxKk9WHccm0llm9HypcHMLUUFabRiTS3SO2fQXNZfdiF3qkEdTJhbRrxhdRxjL4jbtwPq4Ew==",
       "path": "microsoft.codecoverage/17.8.0",
       "hashPath": "microsoft.codecoverage.17.8.0.nupkg.sha512"
+    },
+    "Microsoft.CSharp/4.7.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-pTj+D3uJWyN3My70i2Hqo+OXixq3Os2D1nJ2x92FFo6sk8fYS1m1WLNTs0Dc1uPaViH0YvEEwvzddQ7y4rhXmA==",
+      "path": "microsoft.csharp/4.7.0",
+      "hashPath": "microsoft.csharp.4.7.0.nupkg.sha512"
     },
     "Microsoft.Extensions.FileSystemGlobbing/8.0.0": {
       "type": "package",
@@ -2413,7 +2543,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "RuleKeeper.Sdk/1.0.0": {
+    "RuleKeeper.Sdk/2.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

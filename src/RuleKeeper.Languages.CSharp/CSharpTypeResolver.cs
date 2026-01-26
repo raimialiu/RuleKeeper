@@ -74,21 +74,19 @@ public class CSharpTypeResolver : ITypeResolver
     /// <inheritdoc />
     public bool InheritsFrom(ITypeInfo type, string baseTypeName)
     {
-        if (type is CSharpTypeInfo csType && csType.Symbol is INamedTypeSymbol namedType)
+        if (type is not CSharpTypeInfo { Symbol: INamedTypeSymbol namedType }) return false;
+        var current = namedType.BaseType;
+        while (current != null)
         {
-            var current = namedType.BaseType;
-            while (current != null)
-            {
-                if (current.Name == baseTypeName || current.ToString() == baseTypeName)
-                    return true;
-                current = current.BaseType;
-            }
+            if (current.Name == baseTypeName || current.ToString() == baseTypeName)
+                return true;
+            current = current.BaseType;
+        }
 
-            foreach (var iface in namedType.AllInterfaces)
-            {
-                if (iface.Name == baseTypeName || iface.ToString() == baseTypeName)
-                    return true;
-            }
+        foreach (var iface in namedType.AllInterfaces)
+        {
+            if (iface.Name == baseTypeName || iface.ToString() == baseTypeName)
+                return true;
         }
 
         return false;

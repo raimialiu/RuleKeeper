@@ -2505,6 +2505,177 @@
             <param name="language">The language.</param>
             <returns>True if the language uses ANTLR parsing.</returns>
         </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.IRuleProvider">
+            <summary>
+            Interface for external DLL-based rule providers.
+            Plugins implement this interface to provide custom rules that can be loaded dynamically.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.IRuleProvider.Metadata">
+            <summary>
+            Gets metadata about this rule provider.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.IRuleProvider.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Initialize the provider with configuration.
+            Called once when the plugin is loaded.
+            </summary>
+            <param name="configuration">Configuration dictionary from YAML.</param>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.IRuleProvider.GetRuleAnalyzers">
+            <summary>
+            Get all rule analyzers provided by this plugin.
+            </summary>
+            <returns>Collection of rule analyzers.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.IRuleProvider.GetCrossLanguageRules">
+            <summary>
+            Get all cross-language rules provided by this plugin.
+            </summary>
+            <returns>Collection of cross-language rules.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.RuleProviderBase">
+            <summary>
+            Base class for rule providers with common functionality.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.RuleProviderBase.GetConfig``1(System.String,``0)">
+            <summary>
+            Get a configuration value with default.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.RuleProviderAttribute">
+            <summary>
+            Attribute to mark a class as a rule provider for automatic discovery.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.ProviderId">
+            <summary>
+            Unique identifier for the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Name">
+            <summary>
+            Display name of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Description">
+            <summary>
+            Description of what rules this provider offers.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Version">
+            <summary>
+            Version of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Author">
+            <summary>
+            Author or organization.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.RuleProviderMetadata">
+            <summary>
+            Metadata about a rule provider plugin.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.ProviderId">
+            <summary>
+            Unique identifier for the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Name">
+            <summary>
+            Display name of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Description">
+            <summary>
+            Description of what rules this provider offers.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Version">
+            <summary>
+            Version of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Author">
+            <summary>
+            Author or organization name.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Url">
+            <summary>
+            URL for more information.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.SupportedLanguages">
+            <summary>
+            Languages supported by rules in this provider.
+            Empty means all languages.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Categories">
+            <summary>
+            Categories of rules provided.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.MinRuleKeeperVersion">
+            <summary>
+            Minimum RuleKeeper version required.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Properties">
+            <summary>
+            Additional metadata properties.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.FromAttribute(RuleKeeper.Sdk.Plugins.RuleProviderAttribute)">
+            <summary>
+            Create metadata from a RuleProviderAttribute.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.PluginInfo">
+            <summary>
+            Information about a loaded plugin.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.Metadata">
+            <summary>
+            The provider metadata.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.Provider">
+            <summary>
+            The provider instance.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.AssemblyPath">
+            <summary>
+            Path to the assembly file.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.LoadedAt">
+            <summary>
+            When the plugin was loaded.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.RuleCount">
+            <summary>
+            Number of rules provided.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.IsLoaded">
+            <summary>
+            Whether the plugin loaded successfully.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.ErrorMessage">
+            <summary>
+            Error message if loading failed.
+            </summary>
+        </member>
         <member name="T:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule">
             <summary>
             Base class for cross-language rules that provides common functionality.

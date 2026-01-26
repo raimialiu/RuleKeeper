@@ -1021,11 +1021,89 @@ RUN rulekeeper scan . \
             <!-- Custom Rules -->
             <h2 id="custom-rules">Custom Rules</h2>
 
+            <p>RuleKeeper supports two ways to create custom rules:</p>
+            <ul style="margin: 15px 0 25px 30px;">
+                <li><strong>YAML-Based Rules</strong> - Define rules directly in configuration (no code required)</li>
+                <li><strong>SDK-Based Rules</strong> - Write rules in C# using the RuleKeeper SDK</li>
+            </ul>
+
             <div class="example-card">
-                <h4><span class="icon">&#x1F3D7;</span> Cross-Language Custom Rule</h4>
+                <h4><span class="icon">&#x1F4DD;</span> YAML-Based Custom Rules (No Code Required)</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <p>Define custom rules directly in your <code>rulekeeper.yaml</code> without writing C# code.</p>
+
+                <h4>Regex Pattern Rules</h4>
+                <pre><span style="color:#93c5fd;"># rulekeeper.yaml</span>
+coding_standards:
+  security:
+    rules:
+      no_console_output:
+        id: CUSTOM-SEC-001
+        name: "No Console Output"
+        severity: medium
+        anti_pattern_match:
+          regex: "Console\\.(WriteLine|Write)\\s*\\("
+          options: [ignorecase]
+          message_template: "Use ILogger instead of Console.{match}"
+        exclude: ["**/Tests/**"]</pre>
+
+                <h4>AST Query Rules</h4>
+                <pre><span style="color:#93c5fd;"># Query specific AST nodes declaratively</span>
+coding_standards:
+  design:
+    rules:
+      no_public_fields:
+        id: CUSTOM-DESIGN-001
+        name: "No Public Fields"
+        severity: high
+        ast_query:
+          node_kinds: [FieldDeclaration]
+          properties:
+            IsPublic: true
+            IsConst: false
+        message: "Public fields should be properties"</pre>
+
+                <h4>Multi-Pattern Rules (AND/OR Logic)</h4>
+                <pre><span style="color:#93c5fd;"># Combine multiple conditions</span>
+coding_standards:
+  security:
+    rules:
+      sql_injection_risk:
+        id: CUSTOM-SEC-002
+        name: "SQL Injection Risk"
+        severity: critical
+        match:
+          all:
+            - pattern:
+                regex: "(ExecuteSqlRaw|FromSqlRaw)"
+            - ast_query:
+                has_children: [BinaryExpression]
+          none:
+            - pattern:
+                regex: "@\\w+"
+        message: "Use parameterized queries"</pre>
+
+                <h4>Expression-Based Rules</h4>
+                <pre><span style="color:#93c5fd;"># Use C# expressions for complex logic</span>
+coding_standards:
+  design:
+    rules:
+      method_too_long:
+        id: CUSTOM-DESIGN-002
+        name: "Method Too Long"
+        severity: medium
+        expression:
+          condition: "Node is IMethodNode m && GetLineCount() > (int)Parameters[\"max_lines\"]"
+        parameters:
+          max_lines: 30</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F3D7;</span> Cross-Language Custom Rule (SDK)</h4>
                 <span class="tag tag-advanced">Advanced</span>
 
-                <p>Create a rule that works across all languages:</p>
+                <p>Create a rule that works across all languages using C#:</p>
 
                 <pre><span style="color:#93c5fd;">// TodoCommentAnalyzer.cs - Detects TODO comments in any language</span>
 using RuleKeeper.Sdk;
@@ -1348,25 +1426,61 @@ exit 0</pre>
             </div>
 
             <div class="example-card">
-                <h4><span class="icon">&#x1F504;</span> Baseline Workflow</h4>
+                <h4><span class="icon">&#x1F504;</span> Baseline Workflow (Incremental Scanning)</h4>
                 <span class="tag tag-advanced">Advanced</span>
 
-                <p>Establish a baseline of existing violations and only fail on new ones:</p>
+                <p>RuleKeeper supports three baseline modes for incremental scanning: <strong>git-based</strong>, <strong>file-based</strong>, and <strong>date-based</strong>.</p>
 
-                <pre><span style="color:#93c5fd;"># Step 1: Generate baseline from current state</span>
-rulekeeper scan . --output json --output-file baseline.json
+                <h4>Git-Based Baseline (Recommended)</h4>
+                <p>Only scan files changed since a specific git reference:</p>
 
-<span style="color:#93c5fd;"># Step 2: In CI, compare against baseline</span>
-rulekeeper scan . \
-    --baseline baseline.json \
-    --fail-on-new \
-    --output console
+                <pre><span style="color:#93c5fd;"># YAML Configuration</span>
+scan:
+  baseline:
+    enabled: true
+    mode: git
+    git_ref: main           <span style="color:#93c5fd;"># Compare against main branch</span>
+    include_uncommitted: true
+    include_untracked: true
+    filter_to_diff: true    <span style="color:#93c5fd;"># Only report violations on changed lines</span>
 
-<span style="color:#93c5fd;"># Only fails if NEW violations are introduced</span></pre>
+<span style="color:#93c5fd;"># Or via CLI</span>
+rulekeeper scan . --baseline git --baseline-ref main</pre>
+
+                <h4>File-Based Baseline</h4>
+                <p>Store known violations and only report new ones:</p>
+
+                <pre><span style="color:#93c5fd;"># Step 1: Generate initial baseline</span>
+rulekeeper scan . --output json --output-file .rulekeeper-baseline.json
+
+<span style="color:#93c5fd;"># Step 2: Enable file baseline - only new violations reported</span>
+rulekeeper scan . --baseline file --baseline-file .rulekeeper-baseline.json
+
+<span style="color:#93c5fd;"># YAML Configuration</span>
+scan:
+  baseline:
+    enabled: true
+    mode: file
+    baseline_file: .rulekeeper-baseline.json
+    auto_update: false      <span style="color:#93c5fd;"># Set true to auto-update baseline</span>
+    on_missing: warn        <span style="color:#93c5fd;"># warn, fail, or ignore</span></pre>
+
+                <h4>Date-Based Baseline</h4>
+                <p>Only scan files modified after a specific date:</p>
+
+                <pre><span style="color:#93c5fd;"># YAML Configuration</span>
+scan:
+  baseline:
+    enabled: true
+    mode: date
+    since_date: "2024-01-01"
+
+<span style="color:#93c5fd;"># Or via CLI</span>
+rulekeeper scan . --baseline date --since-date "2024-01-01"</pre>
 
                 <div class="tip">
                     <div class="tip-title">Baseline Strategy</div>
-                    <p>Use baselines when adopting RuleKeeper in existing projects. This lets you enforce quality standards on new code while gradually fixing legacy issues.</p>
+                    <p>Use baselines when adopting RuleKeeper in existing projects. This lets you enforce quality standards on new code while gradually fixing legacy issues. Git-based baseline is recommended for CI/CD integration.</p>
                 </div>
             </div>
 

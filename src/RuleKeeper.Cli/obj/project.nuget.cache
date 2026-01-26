@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "JJ4gFqJ4Suo=",
+  "dgSpecHash": "pkZW+2AicOQ=",
   "success": true,
   "projectFilePath": "/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Cli/RuleKeeper.Cli.csproj",
   "expectedPackageFiles": [
@@ -11,9 +11,12 @@
     "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.analyzers/3.3.4/microsoft.codeanalysis.analyzers.3.3.4.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.common/4.8.0/microsoft.codeanalysis.common.4.8.0.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.csharp/4.8.0/microsoft.codeanalysis.csharp.4.8.0.nupkg.sha512",
+    "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.csharp.scripting/4.8.0/microsoft.codeanalysis.csharp.scripting.4.8.0.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.csharp.workspaces/4.8.0/microsoft.codeanalysis.csharp.workspaces.4.8.0.nupkg.sha512",
+    "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.scripting.common/4.8.0/microsoft.codeanalysis.scripting.common.4.8.0.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.workspaces.common/4.8.0/microsoft.codeanalysis.workspaces.common.4.8.0.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.codeanalysis.workspaces.msbuild/4.8.0/microsoft.codeanalysis.workspaces.msbuild.4.8.0.nupkg.sha512",
+    "/Users/raimialiu/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.extensions.filesystemglobbing/8.0.0/microsoft.extensions.filesystemglobbing.8.0.0.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.netcore.platforms/3.1.0/microsoft.netcore.platforms.3.1.0.nupkg.sha512",
     "/Users/raimialiu/.nuget/packages/microsoft.win32.systemevents/4.7.0/microsoft.win32.systemevents.4.7.0.nupkg.sha512",

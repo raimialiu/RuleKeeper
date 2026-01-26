@@ -53,6 +53,11 @@ public record AnalysisReport
     public string? ConfigFilePath { get; init; }
 
     /// <summary>
+    /// Additional metadata about the analysis run.
+    /// </summary>
+    public Dictionary<string, object> Metadata { get; init; } = new();
+
+    /// <summary>
     /// Total number of files analyzed.
     /// </summary>
     public int FileCount => AnalyzedFiles.Count;

@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RuleKeeper.Sdk;
 using RuleKeeper.Sdk.Abstractions;
 
@@ -37,19 +36,17 @@ public class CSharpUnifiedNode : UnifiedSyntaxNodeBase
     {
         get
         {
-            if (_location == null)
-            {
-                var lineSpan = _node.GetLocation().GetLineSpan();
-                _location = new SourceLocation(
-                    _filePath,
-                    lineSpan.StartLinePosition.Line + 1,
-                    lineSpan.StartLinePosition.Character + 1,
-                    lineSpan.EndLinePosition.Line + 1,
-                    lineSpan.EndLinePosition.Character + 1,
-                    _node.SpanStart,
-                    _node.Span.End
-                );
-            }
+            if (_location != null) return _location.Value;
+            var lineSpan = _node.GetLocation().GetLineSpan();
+            _location = new SourceLocation(
+                _filePath,
+                lineSpan.StartLinePosition.Line + 1,
+                lineSpan.StartLinePosition.Character + 1,
+                lineSpan.EndLinePosition.Line + 1,
+                lineSpan.EndLinePosition.Character + 1,
+                _node.SpanStart,
+                _node.Span.End
+            );
             return _location.Value;
         }
     }
@@ -63,12 +60,9 @@ public class CSharpUnifiedNode : UnifiedSyntaxNodeBase
     /// <inheritdoc />
     public override IEnumerable<IUnifiedSyntaxNode> Children
     {
-        get
-        {
-            foreach (var child in _node.ChildNodes())
-            {
-                yield return new CSharpUnifiedNode(child, this, _filePath);
-            }
+        get { 
+            return _node.ChildNodes().Select(child => 
+            new CSharpUnifiedNode(child, this, _filePath)); 
         }
     }
 
@@ -93,18 +87,13 @@ public class CSharpUnifiedNode : UnifiedSyntaxNodeBase
     {
         return kind switch
         {
-            // Compilation units
             SyntaxKind.CompilationUnit => UnifiedSyntaxKind.CompilationUnit,
             SyntaxKind.NamespaceDeclaration or SyntaxKind.FileScopedNamespaceDeclaration => UnifiedSyntaxKind.Module,
-
-            // Type declarations
             SyntaxKind.ClassDeclaration => UnifiedSyntaxKind.ClassDeclaration,
             SyntaxKind.InterfaceDeclaration => UnifiedSyntaxKind.InterfaceDeclaration,
             SyntaxKind.StructDeclaration => UnifiedSyntaxKind.StructDeclaration,
             SyntaxKind.EnumDeclaration => UnifiedSyntaxKind.EnumDeclaration,
             SyntaxKind.RecordDeclaration or SyntaxKind.RecordStructDeclaration => UnifiedSyntaxKind.RecordDeclaration,
-
-            // Member declarations
             SyntaxKind.MethodDeclaration => UnifiedSyntaxKind.MethodDeclaration,
             SyntaxKind.ConstructorDeclaration => UnifiedSyntaxKind.ConstructorDeclaration,
             SyntaxKind.DestructorDeclaration => UnifiedSyntaxKind.DestructorDeclaration,
@@ -114,15 +103,11 @@ public class CSharpUnifiedNode : UnifiedSyntaxNodeBase
             SyntaxKind.IndexerDeclaration => UnifiedSyntaxKind.IndexerDeclaration,
             SyntaxKind.OperatorDeclaration => UnifiedSyntaxKind.OperatorDeclaration,
             SyntaxKind.EnumMemberDeclaration => UnifiedSyntaxKind.EnumMemberDeclaration,
-
-            // Parameters
             SyntaxKind.Parameter => UnifiedSyntaxKind.Parameter,
             SyntaxKind.TypeParameter => UnifiedSyntaxKind.TypeParameter,
             SyntaxKind.Argument => UnifiedSyntaxKind.Argument,
             SyntaxKind.ParameterList => UnifiedSyntaxKind.ParameterList,
             SyntaxKind.ArgumentList or SyntaxKind.BracketedArgumentList => UnifiedSyntaxKind.ArgumentList,
-
-            // Statements
             SyntaxKind.Block => UnifiedSyntaxKind.Block,
             SyntaxKind.LocalDeclarationStatement => UnifiedSyntaxKind.LocalDeclaration,
             SyntaxKind.ExpressionStatement => UnifiedSyntaxKind.ExpressionStatement,
@@ -147,8 +132,6 @@ public class CSharpUnifiedNode : UnifiedSyntaxNodeBase
             SyntaxKind.GotoStatement => UnifiedSyntaxKind.GotoStatement,
             SyntaxKind.LabeledStatement => UnifiedSyntaxKind.LabeledStatement,
             SyntaxKind.EmptyStatement => UnifiedSyntaxKind.EmptyStatement,
-
-            // Expressions
             SyntaxKind.NumericLiteralExpression or SyntaxKind.StringLiteralExpression or
             SyntaxKind.CharacterLiteralExpression or SyntaxKind.TrueLiteralExpression or
             SyntaxKind.FalseLiteralExpression or SyntaxKind.NullLiteralExpression =>
@@ -195,8 +178,6 @@ public class CSharpUnifiedNode : UnifiedSyntaxNodeBase
             SyntaxKind.ThisExpression => UnifiedSyntaxKind.ThisExpression,
             SyntaxKind.BaseExpression => UnifiedSyntaxKind.BaseExpression,
             SyntaxKind.QueryExpression => UnifiedSyntaxKind.QueryExpression,
-
-            // Types
             SyntaxKind.PredefinedType or SyntaxKind.QualifiedName => UnifiedSyntaxKind.TypeName,
             SyntaxKind.GenericName => UnifiedSyntaxKind.GenericType,
             SyntaxKind.ArrayType => UnifiedSyntaxKind.ArrayType,
@@ -204,22 +185,14 @@ public class CSharpUnifiedNode : UnifiedSyntaxNodeBase
             SyntaxKind.TupleType => UnifiedSyntaxKind.TupleType,
             SyntaxKind.PointerType => UnifiedSyntaxKind.PointerType,
             SyntaxKind.RefType => UnifiedSyntaxKind.ReferenceType,
-
-            // Imports
             SyntaxKind.UsingDirective => UnifiedSyntaxKind.ImportDeclaration,
             SyntaxKind.ExternAliasDirective => UnifiedSyntaxKind.ExternDeclaration,
-
-            // Attributes
             SyntaxKind.AttributeList or SyntaxKind.Attribute => UnifiedSyntaxKind.Attribute,
             SyntaxKind.AttributeArgument => UnifiedSyntaxKind.AttributeArgument,
-
-            // Comments
             SyntaxKind.SingleLineCommentTrivia => UnifiedSyntaxKind.SingleLineComment,
             SyntaxKind.MultiLineCommentTrivia => UnifiedSyntaxKind.MultiLineComment,
             SyntaxKind.SingleLineDocumentationCommentTrivia or SyntaxKind.MultiLineDocumentationCommentTrivia =>
                 UnifiedSyntaxKind.DocumentationComment,
-
-            // Preprocessor
             SyntaxKind.IfDirectiveTrivia or SyntaxKind.EndIfDirectiveTrivia or
             SyntaxKind.DefineDirectiveTrivia or SyntaxKind.RegionDirectiveTrivia =>
                 UnifiedSyntaxKind.PreprocessorDirective,

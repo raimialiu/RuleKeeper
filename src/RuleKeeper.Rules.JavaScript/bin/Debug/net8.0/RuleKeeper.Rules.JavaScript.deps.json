@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "RuleKeeper.Rules.JavaScript/1.0.0": {
         "dependencies": {
-          "RuleKeeper.Sdk": "1.0.0"
+          "RuleKeeper.Sdk": "2.0.0"
         },
         "runtime": {
           "RuleKeeper.Rules.JavaScript.dll": {}
@@ -129,14 +129,14 @@
         }
       },
       "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
-      "RuleKeeper.Sdk/1.0.0": {
+      "RuleKeeper.Sdk/2.0.0": {
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "4.8.0"
         },
         "runtime": {
           "RuleKeeper.Sdk.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.0.0.0"
           }
         }
       }
@@ -190,7 +190,7 @@
       "path": "system.runtime.compilerservices.unsafe/6.0.0",
       "hashPath": "system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512"
     },
-    "RuleKeeper.Sdk/1.0.0": {
+    "RuleKeeper.Sdk/2.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

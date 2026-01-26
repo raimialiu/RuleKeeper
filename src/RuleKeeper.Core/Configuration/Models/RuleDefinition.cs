@@ -5,6 +5,8 @@ namespace RuleKeeper.Core.Configuration.Models;
 
 /// <summary>
 /// Defines configuration for a single rule.
+/// Supports multiple validation modes: built-in analyzers, patterns, AST queries,
+/// expressions, scripts, and external validators.
 /// </summary>
 public class RuleDefinition
 {
@@ -45,16 +47,60 @@ public class RuleDefinition
     public bool Skip { get; set; } = false;
 
     /// <summary>
-    /// Regex pattern for valid code (must match).
+    /// Simple regex pattern for valid code (must match).
+    /// For more advanced pattern matching, use PatternMatch instead.
     /// </summary>
     [YamlMember(Alias = "pattern")]
     public string? Pattern { get; set; }
 
     /// <summary>
-    /// Regex pattern for invalid code (must not match).
+    /// Simple regex pattern for invalid code (must not match).
+    /// For more advanced anti-pattern matching, use AntiPatternMatch instead.
     /// </summary>
     [YamlMember(Alias = "anti_pattern")]
     public string? AntiPattern { get; set; }
+
+    /// <summary>
+    /// Enhanced pattern configuration with captures, options, and scope.
+    /// </summary>
+    [YamlMember(Alias = "pattern_match")]
+    public PatternConfig? PatternMatch { get; set; }
+
+    /// <summary>
+    /// Enhanced anti-pattern configuration with captures, options, and scope.
+    /// </summary>
+    [YamlMember(Alias = "anti_pattern_match")]
+    public PatternConfig? AntiPatternMatch { get; set; }
+
+    /// <summary>
+    /// AST query configuration for declarative node matching.
+    /// </summary>
+    [YamlMember(Alias = "ast_query")]
+    public AstQueryConfig? AstQuery { get; set; }
+
+    /// <summary>
+    /// Multi-pattern match configuration for AND/OR/NONE logic.
+    /// </summary>
+    [YamlMember(Alias = "match")]
+    public MatchConfig? Match { get; set; }
+
+    /// <summary>
+    /// C# expression-based validation.
+    /// </summary>
+    [YamlMember(Alias = "expression")]
+    public ExpressionConfig? Expression { get; set; }
+
+    /// <summary>
+    /// Full C# script-based validation.
+    /// </summary>
+    [YamlMember(Alias = "script")]
+    public ScriptConfig? Script { get; set; }
+
+    /// <summary>
+    /// Validator reference or inline definition.
+    /// </summary>
+    [YamlMember(Alias = "validator")]
+    public ValidatorConfig? Validator { get; set; }
 
     /// <summary>
     /// List of syntax elements this rule applies to.
@@ -69,13 +115,14 @@ public class RuleDefinition
     public string? FilePattern { get; set; }
 
     /// <summary>
-    /// Name of a custom validator to use.
+    /// Name of a custom validator to use (reference to custom_validators section).
     /// </summary>
     [YamlMember(Alias = "custom_validator")]
     public string? CustomValidator { get; set; }
 
     /// <summary>
     /// Message to display when the rule is violated.
+    /// Supports template interpolation with {capture_name} for pattern captures.
     /// </summary>
     [YamlMember(Alias = "message")]
     public string? Message { get; set; }
@@ -99,7 +146,67 @@ public class RuleDefinition
     public List<string> Exclude { get; set; } = new();
 
     /// <summary>
+    /// Languages this rule applies to (empty = all languages).
+    /// </summary>
+    [YamlMember(Alias = "languages")]
+    public List<string> Languages { get; set; } = new();
+
+    /// <summary>
     /// Returns true if this rule is effectively enabled.
     /// </summary>
     public bool IsEnabled => Enabled && !Skip;
+
+    /// <summary>
+    /// Determines the validation type based on which configuration is provided.
+    /// </summary>
+    public RuleValidationType GetValidationType()
+    {
+        if (Validator != null)
+            return RuleValidationType.Validator;
+        if (Script != null)
+            return RuleValidationType.Script;
+        if (Expression != null)
+            return RuleValidationType.Expression;
+        if (Match != null)
+            return RuleValidationType.MultiMatch;
+        if (AstQuery != null)
+            return RuleValidationType.AstQuery;
+        if (PatternMatch != null || AntiPatternMatch != null)
+            return RuleValidationType.EnhancedPattern;
+        if (!string.IsNullOrEmpty(Pattern) || !string.IsNullOrEmpty(AntiPattern))
+            return RuleValidationType.SimplePattern;
+        if (!string.IsNullOrEmpty(CustomValidator))
+            return RuleValidationType.CustomValidator;
+        if (!string.IsNullOrEmpty(Id))
+            return RuleValidationType.BuiltIn;
+
+        return RuleValidationType.None;
+    }
+}
+
+/// <summary>
+/// Types of rule validation.
+/// </summary>
+public enum RuleValidationType
+{
+    /// <summary>No validation configured.</summary>
+    None,
+    /// <summary>Built-in analyzer by rule ID.</summary>
+    BuiltIn,
+    /// <summary>Simple regex pattern matching.</summary>
+    SimplePattern,
+    /// <summary>Enhanced pattern with captures and options.</summary>
+    EnhancedPattern,
+    /// <summary>AST node query matching.</summary>
+    AstQuery,
+    /// <summary>Multi-pattern AND/OR/NONE matching.</summary>
+    MultiMatch,
+    /// <summary>C# expression-based validation.</summary>
+    Expression,
+    /// <summary>Full C# script validation.</summary>
+    Script,
+    /// <summary>External validator reference.</summary>
+    Validator,
+    /// <summary>Custom validator from custom_validators section.</summary>
+    CustomValidator
 }
