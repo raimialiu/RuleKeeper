@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Java language adapter for RuleKeeper using ANTLR.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6db1dfd3735c8fe41c11c60244101c896ad6e3e5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3331b18c0cbc7fbaa7632b56aa4ea09f0c55f2fe")]
 [assembly: System.Reflection.AssemblyProductAttribute("RuleKeeper.Languages.Java")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RuleKeeper.Languages.Java")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

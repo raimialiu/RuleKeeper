@@ -34,22 +34,18 @@ public class ConfigurationValidator
     public void ValidateAndThrow(RuleKeeperConfig config)
     {
         var errors = Validate(config);
-        if (errors.Count > 0)
-        {
-            var message = string.Join(Environment.NewLine, errors.Select(e => $"  - {e.Path}: {e.Message}"));
-            throw new ConfigurationException($"Configuration validation failed:{Environment.NewLine}{message}");
-        }
+        if (errors.Count <= 0) return;
+        var message = string.Join(Environment.NewLine, errors.Select(e => $"  - {e.Path}: {e.Message}"));
+        throw new ConfigurationException($"Configuration validation failed:{Environment.NewLine}{message}");
     }
 
     private void ValidateVersion(RuleKeeperConfig config, List<ValidationError> errors)
     {
-        if (!string.IsNullOrEmpty(config.Version))
+        if (string.IsNullOrEmpty(config.Version)) return;
+        var validVersions = new[] { "1.0", "1" };
+        if (!validVersions.Contains(config.Version))
         {
-            var validVersions = new[] { "1.0", "1" };
-            if (!validVersions.Contains(config.Version))
-            {
-                errors.Add(new ValidationError("version", $"Unsupported version '{config.Version}'. Supported versions: {string.Join(", ", validVersions)}"));
-            }
+            errors.Add(new ValidationError("version", $"Unsupported version '{config.Version}'. Supported versions: {string.Join(", ", validVersions)}"));
         }
     }
 

@@ -36,7 +36,7 @@ public static class AdapterFactory
             }
             catch
             {
-                // Skip types that can't be instantiated
+                // Dont know what to do here, so I'll leave this one for now
             }
         }
 

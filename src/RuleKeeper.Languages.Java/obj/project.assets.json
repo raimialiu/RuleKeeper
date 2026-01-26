@@ -190,7 +190,7 @@
           "buildTransitive/netcoreapp3.1/_._": {}
         }
       },
-      "RuleKeeper.Sdk/1.0.0": {
+      "RuleKeeper.Sdk/2.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
@@ -1025,7 +1025,7 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "RuleKeeper.Sdk/1.0.0": {
+    "RuleKeeper.Sdk/2.0.0": {
       "type": "project",
       "path": "../RuleKeeper.Sdk/RuleKeeper.Sdk.csproj",
       "msbuildProject": "../RuleKeeper.Sdk/RuleKeeper.Sdk.csproj"
@@ -1034,7 +1034,7 @@
   "projectFileDependencyGroups": {
     "net8.0": [
       "Antlr4.Runtime.Standard >= 4.13.1",
-      "RuleKeeper.Sdk >= 1.0.0"
+      "RuleKeeper.Sdk >= 2.0.0"
     ]
   },
   "packageFolders": {

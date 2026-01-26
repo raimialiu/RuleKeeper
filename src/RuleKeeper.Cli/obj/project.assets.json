@@ -852,7 +852,7 @@
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.8.0",
           "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.8.0",
           "Microsoft.Extensions.FileSystemGlobbing": "8.0.0",
-          "RuleKeeper.Sdk": "1.0.0",
+          "RuleKeeper.Sdk": "2.0.0",
           "Spectre.Console": "0.48.0",
           "YamlDotNet": "15.1.0"
         },
@@ -876,7 +876,7 @@
           "bin/placeholder/RuleKeeper.Rules.dll": {}
         }
       },
-      "RuleKeeper.Sdk/1.0.0": {
+      "RuleKeeper.Sdk/2.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
         "dependencies": {
@@ -2666,7 +2666,7 @@
       "path": "../RuleKeeper.Rules/RuleKeeper.Rules.csproj",
       "msbuildProject": "../RuleKeeper.Rules/RuleKeeper.Rules.csproj"
     },
-    "RuleKeeper.Sdk/1.0.0": {
+    "RuleKeeper.Sdk/2.0.0": {
       "type": "project",
       "path": "../RuleKeeper.Sdk/RuleKeeper.Sdk.csproj",
       "msbuildProject": "../RuleKeeper.Sdk/RuleKeeper.Sdk.csproj"
@@ -2684,7 +2684,7 @@
     "/Users/raimialiu/.nuget/packages/": {}
   },
   "project": {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "restore": {
       "projectUniqueName": "/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Cli/RuleKeeper.Cli.csproj",
       "projectName": "RuleKeeper.Cli",

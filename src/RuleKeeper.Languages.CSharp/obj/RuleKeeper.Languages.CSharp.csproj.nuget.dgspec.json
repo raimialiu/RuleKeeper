@@ -89,7 +89,7 @@
       }
     },
     "/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Sdk/RuleKeeper.Sdk.csproj": {
-      "version": "1.0.0",
+      "version": "2.0.0",
       "restore": {
         "projectUniqueName": "/Users/raimialiu/Desktop/Development/projects/p/RuleKeeper/src/RuleKeeper.Sdk/RuleKeeper.Sdk.csproj",
         "projectName": "RuleKeeper.Sdk",

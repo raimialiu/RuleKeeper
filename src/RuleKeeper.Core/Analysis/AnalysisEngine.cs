@@ -49,13 +49,10 @@ public class AnalysisEngine : IDisposable
 
         try
         {
-            // Load files
             progress?.Report(new AnalysisProgress { Stage = "Loading files", Current = 0, Total = 0 });
             var analysisUnits = await _workspaceLoader.LoadFilesAsync(path, config.Scan, cancellationToken);
 
             report.AnalyzedFiles.AddRange(analysisUnits.Select(u => u.FilePath));
-
-            // Analyze files
             if (config.Scan.Parallel && analysisUnits.Count > 1)
             {
                 await AnalyzeParallelAsync(analysisUnits, config, report, progress, cancellationToken);
@@ -64,8 +61,7 @@ public class AnalysisEngine : IDisposable
             {
                 await AnalyzeSequentialAsync(analysisUnits, config, report, progress, cancellationToken);
             }
-
-            // Apply output limits
+            
             ApplyOutputLimits(report, config.Output);
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
@@ -222,11 +218,9 @@ public class AnalysisEngine : IDisposable
                 report.Violations.AddRange(group.Take(output.MaxPerRule.Value));
             }
         }
-
-        // Apply total limit
+        
         if (output.MaxTotal.HasValue && report.Violations.Count > output.MaxTotal.Value)
         {
-            // Keep highest severity violations
             report.Violations = report.Violations
                 .OrderByDescending(v => v.Severity)
                 .ThenBy(v => v.FilePath)
@@ -240,17 +234,4 @@ public class AnalysisEngine : IDisposable
     {
         _workspaceLoader.Dispose();
     }
-}
-
-/// <summary>
-/// Progress information for analysis.
-/// </summary>
-public class AnalysisProgress
-{
-    public required string Stage { get; init; }
-    public int Current { get; init; }
-    public int Total { get; init; }
-    public string? CurrentFile { get; init; }
-
-    public double Percentage => Total > 0 ? (double)Current / Total * 100 : 0;
 }
