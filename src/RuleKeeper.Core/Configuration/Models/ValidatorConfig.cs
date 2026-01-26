@@ -68,20 +68,17 @@ public class InlineValidatorConfig
     public string? TypeName { get; set; }
 }
 
-/// <summary>
-/// Enhanced custom validator configuration for the custom_validators section.
-/// </summary>
 public class EnhancedCustomValidatorConfig
 {
-    /// <summary>
-    /// Description of what this validator checks.
-    /// </summary>
+    [YamlMember(Alias = "enabled")]
+    public bool Enabled { get; set; } = true;
+
+    [YamlMember(Alias = "skip")]
+    public bool Skip { get; set; } = false;
+
     [YamlMember(Alias = "description")]
     public string? Description { get; set; }
 
-    /// <summary>
-    /// Type of validator: pattern, ast_query, expression, script, assembly.
-    /// </summary>
     [YamlMember(Alias = "type")]
     public string Type { get; set; } = "pattern";
 
@@ -151,9 +148,11 @@ public class EnhancedCustomValidatorConfig
     [YamlMember(Alias = "message")]
     public string? Message { get; set; }
 
-    /// <summary>
-    /// Additional parameters for the validator.
-    /// </summary>
     [YamlMember(Alias = "parameters")]
     public Dictionary<string, object> Parameters { get; set; } = new();
+
+    [YamlMember(Alias = "exclude")]
+    public List<string> Exclude { get; set; } = new();
+
+    public bool IsEnabled => Enabled && !Skip;
 }

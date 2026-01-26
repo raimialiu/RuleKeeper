@@ -153,7 +153,6 @@ public class ValidatorRegistry
             }
             catch
             {
-                // Skip types that fail to instantiate
             }
         }
 
@@ -186,20 +185,19 @@ public class ValidatorRegistry
             }
             catch
             {
-                // Skip assemblies that fail to load
             }
         }
 
         return count;
     }
 
-    /// <summary>
-    /// Create validators from YAML custom_validators configuration.
-    /// </summary>
     public void LoadFromConfiguration(Dictionary<string, EnhancedCustomValidatorConfig> customValidators, ValidatorFactory factory)
     {
         foreach (var (name, config) in customValidators)
         {
+            if (!config.IsEnabled)
+                continue;
+
             var validator = factory.CreateFromConfig(name, config);
             if (validator != null)
             {

@@ -44,7 +44,6 @@ public class LongLinesAnalyzer : BaseRuleAnalyzer
             if (IgnoreUrls && ContainsUrl(lineText))
                 continue;
 
-            // Skip lines that are mostly string literals
             if (IgnoreStrings && IsMostlyString(lineText))
                 continue;
 

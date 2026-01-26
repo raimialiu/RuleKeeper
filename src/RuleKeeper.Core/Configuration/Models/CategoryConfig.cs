@@ -11,29 +11,25 @@ namespace RuleKeeper.Core.Configuration.Models;
 /// </summary>
 public class CategoryConfig
 {
-    /// <summary>
-    /// Whether this entire category is enabled.
-    /// </summary>
     [YamlMember(Alias = "enabled")]
     public bool Enabled { get; set; } = true;
 
-    /// <summary>
-    /// Default severity for rules in this category.
-    /// </summary>
+    [YamlMember(Alias = "skip")]
+    public bool Skip { get; set; } = false;
+
     [YamlMember(Alias = "severity")]
     public SeverityLevel? Severity { get; set; }
 
-    /// <summary>
-    /// Rules in this category as a list.
-    /// </summary>
     [YamlIgnore]
     public List<RuleDefinition> Rules { get; set; } = new();
 
-    /// <summary>
-    /// File patterns to exclude for this category.
-    /// </summary>
     [YamlMember(Alias = "exclude")]
     public List<string> Exclude { get; set; } = new();
+
+    [YamlMember(Alias = "skip_rules")]
+    public List<string> SkipRules { get; set; } = new();
+
+    public bool IsEnabled => Enabled && !Skip;
 
     /// <summary>
     /// Creates a CategoryConfig from a list of rule definitions (simple format).
@@ -49,29 +45,22 @@ public class CategoryConfig
 /// </summary>
 public class PrebuiltPolicyConfig
 {
-    /// <summary>
-    /// Whether this policy is enabled.
-    /// </summary>
     [YamlMember(Alias = "enabled")]
     public bool Enabled { get; set; } = true;
 
-    /// <summary>
-    /// Override severity for this policy.
-    /// </summary>
+    [YamlMember(Alias = "skip")]
+    public bool Skip { get; set; } = false;
+
     [YamlMember(Alias = "severity")]
     public SeverityLevel? Severity { get; set; }
 
-    /// <summary>
-    /// File patterns to exclude for this policy.
-    /// </summary>
     [YamlMember(Alias = "exclude")]
     public List<string> Exclude { get; set; } = new();
 
-    /// <summary>
-    /// Rules to skip within this policy.
-    /// </summary>
     [YamlMember(Alias = "skip_rules")]
     public List<string> SkipRules { get; set; } = new();
+
+    public bool IsEnabled => Enabled && !Skip;
 }
 
 /// <summary>
@@ -79,39 +68,46 @@ public class PrebuiltPolicyConfig
 /// </summary>
 public class CustomValidatorConfig
 {
-    /// <summary>
-    /// Description of what this validator checks.
-    /// </summary>
+    [YamlMember(Alias = "enabled")]
+    public bool Enabled { get; set; } = true;
+
+    [YamlMember(Alias = "skip")]
+    public bool Skip { get; set; } = false;
+
     [YamlMember(Alias = "description")]
     public string? Description { get; set; }
 
-    /// <summary>
-    /// Type of validator (regex, roslyn, script).
-    /// </summary>
     [YamlMember(Alias = "type")]
     public string Type { get; set; } = "regex";
 
-    /// <summary>
-    /// Pattern for regex validators.
-    /// </summary>
     [YamlMember(Alias = "pattern")]
     public string? Pattern { get; set; }
 
-    /// <summary>
-    /// Script content for script validators.
-    /// </summary>
+    [YamlMember(Alias = "regex")]
+    public string? Regex { get; set; }
+
+    [YamlMember(Alias = "options")]
+    public List<string> Options { get; set; } = new();
+
+    [YamlMember(Alias = "message_template")]
+    public string? MessageTemplate { get; set; }
+
+    [YamlMember(Alias = "severity")]
+    public SeverityLevel Severity { get; set; } = SeverityLevel.Medium;
+
     [YamlMember(Alias = "script")]
     public string? Script { get; set; }
 
-    /// <summary>
-    /// Path to external validator assembly.
-    /// </summary>
     [YamlMember(Alias = "assembly")]
     public string? Assembly { get; set; }
 
-    /// <summary>
-    /// Type name in the assembly.
-    /// </summary>
     [YamlMember(Alias = "type_name")]
     public string? TypeName { get; set; }
+
+    [YamlMember(Alias = "exclude")]
+    public List<string> Exclude { get; set; } = new();
+
+    public bool IsEnabled => Enabled && !Skip;
+
+    public string? GetPattern() => Regex ?? Pattern;
 }

@@ -45,7 +45,7 @@ public class RuleExecutor
         var violations = new List<Violation>();
         foreach (var (_, category) in config.CodingStandards)
         {
-            if (!category.Enabled)
+            if (!category.IsEnabled)
                 continue;
 
             if (IsExcluded(context.FilePath, category.Exclude))
@@ -55,6 +55,9 @@ public class RuleExecutor
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (!ruleDefinition.IsEnabled)
+                    continue;
+
+                if (category.SkipRules.Contains(ruleDefinition.Id ?? "", StringComparer.OrdinalIgnoreCase))
                     continue;
 
                 if (IsExcluded(context.FilePath, ruleDefinition.Exclude))
@@ -82,7 +85,7 @@ public class RuleExecutor
 
         foreach (var (policyName, policy) in config.PrebuiltPolicies)
         {
-            if (!policy.Enabled)
+            if (!policy.IsEnabled)
                 continue;
 
             if (IsExcluded(context.FilePath, policy.Exclude))

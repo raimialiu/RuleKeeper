@@ -84,7 +84,6 @@ public static class FixProviderRegistry
             }
             catch
             {
-                // Skip providers that can't be instantiated
             }
         }
 

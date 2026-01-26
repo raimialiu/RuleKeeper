@@ -197,7 +197,11 @@ public class RuleRegistry
             {
                 LoadFromPath(source.Path);
             }
-            // NuGet loading would require additional implementation
+
+            if (!string.IsNullOrEmpty(source.NuGet))
+            {
+                LoadFromNuGet(source.NuGet);
+            }
         }
     }
 
@@ -222,8 +226,64 @@ public class RuleRegistry
                 }
                 catch
                 {
-                    // Skip assemblies that can't be loaded
                 }
+            }
+        }
+    }
+
+    public void LoadFromNuGet(string packageReference)
+    {
+        if (string.IsNullOrEmpty(packageReference))
+            return;
+
+        var parts = packageReference.Split(':');
+        var packageName = parts[0];
+        var version = parts.Length > 1 ? parts[1] : null;
+
+        var nugetPackagesPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            ".nuget", "packages", packageName.ToLowerInvariant());
+
+        if (!Directory.Exists(nugetPackagesPath))
+            return;
+
+        string? packagePath = null;
+        if (!string.IsNullOrEmpty(version))
+        {
+            packagePath = Path.Combine(nugetPackagesPath, version);
+        }
+        else
+        {
+            var versions = Directory.GetDirectories(nugetPackagesPath)
+                .OrderByDescending(d => d)
+                .FirstOrDefault();
+            packagePath = versions;
+        }
+
+        if (packagePath == null || !Directory.Exists(packagePath))
+            return;
+
+        var libPath = Path.Combine(packagePath, "lib");
+        if (!Directory.Exists(libPath))
+            return;
+
+        var targetFramework = Directory.GetDirectories(libPath)
+            .Where(d => Path.GetFileName(d).StartsWith("net"))
+            .OrderByDescending(d => d)
+            .FirstOrDefault();
+
+        if (targetFramework == null)
+            return;
+
+        foreach (var dll in Directory.GetFiles(targetFramework, "*.dll"))
+        {
+            try
+            {
+                var assembly = Assembly.LoadFrom(dll);
+                RegisterAssembly(assembly);
+            }
+            catch
+            {
             }
         }
     }

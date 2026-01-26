@@ -141,7 +141,6 @@ public class AssemblyValidatorLoader
             }
             catch
             {
-                // Skip types that fail to instantiate
             }
 
             if (validator != null)
@@ -186,7 +185,6 @@ public class AssemblyValidatorLoader
             }
             catch
             {
-                // Skip assemblies that fail to load
             }
 
             if (validators != null)

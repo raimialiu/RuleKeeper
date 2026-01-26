@@ -294,7 +294,6 @@ internal class AutoDiscoveredRuleProvider : IRuleProvider
             }
             catch
             {
-                // Skip types that fail to instantiate
             }
 
             if (analyzer != null)
@@ -319,7 +318,6 @@ internal class AutoDiscoveredRuleProvider : IRuleProvider
             }
             catch
             {
-                // Skip types that fail to instantiate
             }
 
             if (rule != null)

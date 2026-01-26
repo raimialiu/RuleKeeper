@@ -285,14 +285,13 @@ public static class ScanCommand
 
             // Initialize rule registry
             var registry = new RuleRegistry();
-            registry.RegisterAssembly(typeof(RuleKeeper.Rules.Naming.ClassNamingAnalyzer).Assembly);
+            registry.RegisterAssembly(typeof(Rules.Naming.ClassNamingAnalyzer).Assembly);
             registry.LoadCustomRules(config);
 
             // Run analysis with progress
             AnalysisReport report;
 
             using var engine = new AnalysisEngine(registry);
-
             if (!noColor && outputFormat == "console")
             {
                 report = await AnsiConsole.Progress()
@@ -321,8 +320,6 @@ public static class ScanCommand
             }
 
             report = report with { ConfigFilePath = usedConfigPath };
-
-            // Generate and output primary report
             var reporter = ReportGeneratorFactory.Create(outputFormat);
             var reportContent = reporter.Generate(report, config.Output);
 
