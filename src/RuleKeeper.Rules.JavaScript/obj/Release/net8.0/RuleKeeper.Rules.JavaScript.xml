@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Rules.JavaScript</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Rules.JavaScript.NoConsoleLogAnalyzer">
+            <summary>
+            JavaScript/TypeScript rule that detects console.log statements.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.JavaScript.NoConsoleLogAnalyzer.TargetLanguage">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Rules.JavaScript.NoConsoleLogAnalyzer.AllowErrorWarn">
+            <summary>
+            Whether to allow console.error and console.warn.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.JavaScript.NoConsoleLogAnalyzer.ExcludePatterns">
+            <summary>
+            Patterns to exclude from checking (e.g., test files).
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Rules.JavaScript.NoConsoleLogAnalyzer.Analyze(RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Rules.JavaScript.PreferConstLetAnalyzer">
+            <summary>
+            JavaScript/TypeScript rule that prefers const/let over var.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Rules.JavaScript.PreferConstLetAnalyzer.TargetLanguage">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Rules.JavaScript.PreferConstLetAnalyzer.PreferConst">
+            <summary>
+            Whether to suggest const as the preferred alternative.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Rules.JavaScript.PreferConstLetAnalyzer.Analyze(RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

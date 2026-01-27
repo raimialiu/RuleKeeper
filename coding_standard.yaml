@@ -114,9 +114,7 @@ coding_standards:
     enabled: true
     severity: medium
     rules:
-
-      class_naming:
-        id: CS-NAME-001
+      - id: CS-NAME-001
         name: "Class Naming Convention"
         description: "Classes must use PascalCase naming"
         enabled: true
@@ -127,8 +125,7 @@ coding_standards:
         message: "Class '{0}' does not follow PascalCase naming convention"
         fix_hint: "Rename to PascalCase (e.g., 'UserManager' not 'userManager')"
 
-      method_naming:
-        id: CS-NAME-002
+      - id: CS-NAME-002
         name: "Method Naming Convention"
         description: "Methods must use PascalCase naming"
         enabled: true
@@ -138,32 +135,29 @@ coding_standards:
         message: "Method '{0}' does not follow PascalCase naming convention"
         fix_hint: "Rename to PascalCase (e.g., 'GetAccountBalance' not 'getAccountBalance')"
 
-      async_method_naming:
-        id: CS-NAME-003
+      - id: CS-NAME-003
         name: "Async Method Naming"
         description: "Async methods should end with 'Async' suffix"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           require_suffix: true
           exclude_event_handlers: true
         message: "Async method '{0}' should end with 'Async' suffix"
         fix_hint: "Rename '{0}' to '{0}Async'"
 
-      private_field_naming:
-        id: CS-NAME-004
+      - id: CS-NAME-004
         name: "Private Field Naming"
         description: "Private fields should use _camelCase with underscore prefix"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           prefix: "_"
           style: camel_case
         message: "Private field '{0}' should start with underscore and use camelCase"
         fix_hint: "Rename to '_camelCase' (e.g., '_accountRepository')"
 
-      property_naming:
-        id: CS-NAME-005
+      - id: CS-NAME-005
         name: "Property Naming Convention"
         description: "Properties must use PascalCase naming"
         enabled: true
@@ -171,17 +165,15 @@ coding_standards:
         parameters:
           style: pascal_case
 
-      constant_naming:
-        id: CS-NAME-006
+      - id: CS-NAME-006
         name: "Constant Naming Convention"
         description: "Constants should use UPPER_SNAKE_CASE"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           style: upper_snake_case
 
-      interface_naming:
-        id: CS-NAME-007
+      - id: CS-NAME-007
         name: "Interface Naming Convention"
         description: "Interfaces must start with 'I' prefix and use PascalCase"
         enabled: true
@@ -200,13 +192,11 @@ coding_standards:
     enabled: true
     severity: low
     rules:
-
-      multiple_classes_per_file:
-        id: CS-DESIGN-012
+      - id: CS-DESIGN-012
         name: "Multiple Classes Per File"
         description: "Each file should contain only one class"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           allow_nested: true
           allow_private: true
@@ -224,9 +214,7 @@ coding_standards:
     enabled: true
     severity: medium
     rules:
-
-      method_length:
-        id: CS-DESIGN-001
+      - id: CS-DESIGN-001
         name: "Method Length"
         description: "Methods should not exceed 30 lines per Parallex standard"
         enabled: true
@@ -238,31 +226,28 @@ coding_standards:
         message: "Method '{0}' has {1} lines (max: 30 per Parallex standard)"
         fix_hint: "Extract logic into smaller, focused methods"
 
-      parameter_count:
-        id: CS-DESIGN-002
+      - id: CS-DESIGN-002
         name: "Parameter Count"
         description: "Methods should not have too many parameters"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_parameters: 4
           exclude_constructors: false
         message: "Method '{0}' has {1} parameters (max: 4)"
         fix_hint: "Consider using a DTO/options object (e.g., TransferRequest)"
 
-      cyclomatic_complexity:
-        id: CS-DESIGN-003
+      - id: CS-DESIGN-003
         name: "Cyclomatic Complexity"
         description: "Methods should have low cyclomatic complexity for testability"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_complexity: 10
         message: "Method '{0}' has complexity {1} (max: 10)"
         fix_hint: "Reduce complexity by extracting methods or using polymorphism"
 
-      cognitive_complexity:
-        id: CS-CODE-008
+      - id: CS-CODE-008
         name: "Cognitive Complexity"
         description: "Methods should not be too cognitively complex"
         enabled: true
@@ -272,20 +257,17 @@ coding_standards:
         message: "Method '{0}' has cognitive complexity of {1} (max: 15)"
         fix_hint: "Simplify logic, reduce nesting, extract helper methods"
 
-      class_length:
-        id: CS-DESIGN-004
+      - id: CS-DESIGN-004
         name: "Class Length"
         description: "Classes should not be too long (SRP violation)"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_lines: 300
           count_blank_lines: false
           count_comments: false
 
-      # NEW RULES - Not in original but critical for code quality
-      max_nesting_depth:
-        id: CS-DESIGN-005
+      - id: CS-DESIGN-005
         name: "Max Nesting Depth"
         description: "Code should not have too many levels of nesting"
         enabled: true
@@ -297,8 +279,7 @@ coding_standards:
         message: "Nesting depth of {0} exceeds maximum of 3"
         fix_hint: "Use guard clauses (early returns), extract methods, or flatten logic"
 
-      nested_conditionals:
-        id: CS-DESIGN-006
+      - id: CS-DESIGN-006
         name: "Nested Conditionals"
         description: "Avoid deeply nested if statements (max 2 levels)"
         enabled: true
@@ -309,8 +290,7 @@ coding_standards:
         message: "Nested if depth of {0} exceeds maximum of 2"
         fix_hint: "Use guard clauses, extract methods, or combine conditions"
 
-      nested_loops:
-        id: CS-DESIGN-007
+      - id: CS-DESIGN-007
         name: "Nested Loops"
         description: "Avoid nested loops which can cause O(n²) complexity"
         enabled: true
@@ -321,12 +301,11 @@ coding_standards:
         message: "Nested loop detected - may cause O(n²) complexity"
         fix_hint: "Use Dictionary/HashSet for lookups, LINQ methods, or extract to method"
 
-      god_class:
-        id: CS-DESIGN-011
+      - id: CS-DESIGN-011
         name: "God Class"
         description: "Classes should not have too many methods or fields"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_methods: 20
           max_fields: 15
@@ -334,12 +313,11 @@ coding_standards:
         message: "Class may be a God Class - violates Single Responsibility Principle"
         fix_hint: "Split into smaller, focused classes"
 
-      file_length:
-        id: CS-DESIGN-010
+      - id: CS-DESIGN-010
         name: "File Length"
         description: "Files should not exceed 500 lines"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_lines: 500
           count_blank_lines: true
@@ -356,9 +334,7 @@ coding_standards:
     enabled: true
     severity: critical
     rules:
-
-      sql_injection:
-        id: CS-SEC-001
+      - id: CS-SEC-001
         name: "SQL Injection Prevention"
         description: "Detect potential SQL injection vulnerabilities"
         enabled: true
@@ -366,8 +342,7 @@ coding_standards:
         message: "Potential SQL injection: SQL query built with string concatenation"
         fix_hint: "Use parameterized queries: cmd.Parameters.AddWithValue(\"@id\", id)"
 
-      hardcoded_secrets:
-        id: CS-SEC-002
+      - id: CS-SEC-002
         name: "Hardcoded Secrets Detection"
         description: "Detect hardcoded passwords, API keys, and tokens"
         enabled: true
@@ -375,8 +350,7 @@ coding_standards:
         message: "Hardcoded secret detected"
         fix_hint: "Use Azure Key Vault, environment variables, or secrets manager"
 
-      xss_prevention:
-        id: CS-SEC-003
+      - id: CS-SEC-003
         name: "XSS Prevention"
         description: "Detect potential cross-site scripting vulnerabilities"
         enabled: true
@@ -385,8 +359,7 @@ coding_standards:
           check_raw_html: true
           check_html_string: true
 
-      path_traversal:
-        id: CS-SEC-004
+      - id: CS-SEC-004
         name: "Path Traversal Prevention"
         description: "Detect potential path traversal vulnerabilities"
         enabled: true
@@ -395,8 +368,7 @@ coding_standards:
           check_file_operations: true
           check_path_combine: true
 
-      sensitive_logging:
-        id: CS-SEC-005
+      - id: CS-SEC-005
         name: "Sensitive Data Logging"
         description: "Detect logging of sensitive information (PIN, password, token)"
         enabled: true
@@ -428,9 +400,7 @@ coding_standards:
     enabled: true
     severity: high
     rules:
-
-      empty_catch:
-        id: CS-EXC-001
+      - id: CS-EXC-001
         name: "Empty Catch Block"
         description: "Catch blocks should not be empty"
         enabled: true
@@ -440,26 +410,23 @@ coding_standards:
         message: "Empty catch block detected"
         fix_hint: "Log the exception or handle it appropriately"
 
-      catch_base_exception:
-        id: CS-EXC-002
+      - id: CS-EXC-002
         name: "Catching Base Exception"
         description: "Avoid catching System.Exception directly"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           allow_in_top_level: true
           allow_rethrow: true
           allow_logging: true
 
-      throw_in_finally:
-        id: CS-EXC-003
+      - id: CS-EXC-003
         name: "Throw in Finally Block"
         description: "Avoid throwing exceptions in finally blocks"
         enabled: true
         severity: error
 
-      exception_swallowing:
-        id: CS-EXC-004
+      - id: CS-EXC-004
         name: "Exception Swallowing"
         description: "Caught exceptions should be logged or rethrown"
         enabled: true
@@ -479,9 +446,7 @@ coding_standards:
     enabled: true
     severity: high
     rules:
-
-      async_void:
-        id: CS-ASYNC-001
+      - id: CS-ASYNC-001
         name: "No Async Void"
         description: "Async methods should not return void (except event handlers)"
         enabled: true
@@ -491,8 +456,7 @@ coding_standards:
         message: "Async method '{0}' returns void. Use Task instead"
         fix_hint: "Change return type from 'async void' to 'async Task'"
 
-      blocking_async:
-        id: CS-ASYNC-002
+      - id: CS-ASYNC-002
         name: "Blocking Async Calls"
         description: "Avoid .Result, .Wait(), .GetAwaiter().GetResult() - causes deadlocks"
         enabled: true
@@ -503,8 +467,7 @@ coding_standards:
         message: "Blocking call detected: {0}. This can cause deadlocks"
         fix_hint: "Use 'await' instead of .Result or .Wait()"
 
-      configure_await:
-        id: CS-ASYNC-003
+      - id: CS-ASYNC-003
         name: "ConfigureAwait Usage"
         description: "Library code should use ConfigureAwait(false)"
         enabled: true
@@ -521,15 +484,13 @@ coding_standards:
   # ===========================================================================
   dependency_injection:
     enabled: true
-    severity: warning
+    severity: low
     rules:
-
-      concrete_type_injection:
-        id: CS-DI-001
+      - id: CS-DI-001
         name: "Concrete Type Injection"
         description: "Constructor parameters should use interfaces, not concrete types"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           check_constructor_params: true
           check_fields: true
@@ -542,8 +503,7 @@ coding_standards:
         message: "Injecting concrete type '{0}'. Use an interface instead"
         fix_hint: "Create interface I{0} and inject that instead"
 
-      service_locator:
-        id: CS-DI-002
+      - id: CS-DI-002
         name: "Service Locator Anti-Pattern"
         description: "Avoid using service locator pattern"
         enabled: true
@@ -566,13 +526,11 @@ coding_standards:
     enabled: true
     severity: low
     rules:
-
-      magic_numbers:
-        id: CS-DESIGN-008
+      - id: CS-DESIGN-008
         name: "Magic Numbers"
         description: "Avoid magic numbers; use named constants instead"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           allowed_values: "-1,0,1,2"
           ignore_in_tests: true
@@ -580,32 +538,16 @@ coding_standards:
         message: "Magic number '{0}' should be replaced with a named constant"
         fix_hint: "Create a constant: private const int MEANINGFUL_NAME = {0};"
 
-      magic_strings:
-        id: CS-DESIGN-009
+      - id: CS-DESIGN-009
         name: "Magic Strings"
         description: "Avoid magic strings; use named constants instead"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           min_length: 3
           ignore_empty: true
           ignore_logging: true
           ignore_exceptions: true
-
-  # ===========================================================================
-  # SECTION 9 & 17: DATA VALIDATION / INPUT VALIDATION
-  # Parallex: "Always validate input DTOs using attributes or FluentValidation.
-  #           Validate both client and server side."
-  # (API validation rules would be implemented in separate analyzer)
-  # ===========================================================================
-
-  # ===========================================================================
-  # SECTION 10 & 25: LOGGING STANDARDS
-  # Parallex: "Use structured logging.
-  #           No sensitive data (PIN, password, token).
-  #           Log at appropriate levels (Info, Warning, Error, Critical)."
-  # (Covered by sensitive_logging rule in security section)
-  # ===========================================================================
 
   # ===========================================================================
   # SECTION 12: IMMUTABILITY AND DEFENSIVE CODING
@@ -617,13 +559,11 @@ coding_standards:
     enabled: true
     severity: medium
     rules:
-
-      public_fields:
-        id: CS-DESIGN-013
+      - id: CS-DESIGN-013
         name: "Public Fields"
         description: "Public fields should be properties instead"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           allow_const: true
           allow_readonly: true
@@ -631,21 +571,13 @@ coding_standards:
         message: "Public field '{0}' should be a property"
         fix_hint: "Convert to: public {type} {0} { get; set; }"
 
-      mutable_collections:
-        id: CS-DESIGN-016
+      - id: CS-DESIGN-016
         name: "Mutable Collections"
         description: "Public properties should not expose mutable collections"
         enabled: true
-        severity: warning
+        severity: low
         message: "Property '{0}' exposes mutable collection type"
         fix_hint: "Return IReadOnlyList<T>, IReadOnlyCollection<T>, or IEnumerable<T>"
-
-  # ===========================================================================
-  # SECTION 15: UNIT TESTING STANDARDS
-  # Parallex: "Use clear test names: MethodName_StateUnderTest_ExpectedBehavior.
-  #           One assertion per test. No dependency on external systems."
-  # (Test-specific rules would be in separate analyzer)
-  # ===========================================================================
 
   # ===========================================================================
   # ADDITIONAL DESIGN RULES
@@ -655,21 +587,18 @@ coding_standards:
     enabled: true
     severity: medium
     rules:
-
-      deep_inheritance:
-        id: CS-DESIGN-014
+      - id: CS-DESIGN-014
         name: "Deep Inheritance"
         description: "Classes should not have deep inheritance hierarchies"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_depth: 3
           ignore_system_types: true
         message: "Class '{0}' has inheritance depth of {1} (max: 3)"
         fix_hint: "Consider using composition over inheritance"
 
-      boolean_parameters:
-        id: CS-DESIGN-015
+      - id: CS-DESIGN-015
         name: "Boolean Parameters"
         description: "Avoid boolean parameters; consider enums or separate methods"
         enabled: true
@@ -687,11 +616,9 @@ coding_standards:
   # ===========================================================================
   code_quality:
     enabled: true
-    severity: warning
+    severity: low
     rules:
-
-      todo_comments:
-        id: CS-CODE-001
+      - id: CS-CODE-001
         name: "TODO Comments"
         description: "Detects TODO, FIXME, HACK comments that should be addressed"
         enabled: true
@@ -702,21 +629,19 @@ coding_standards:
         message: "{0} comment found"
         fix_hint: "Create a work item to track this and remove the comment"
 
-      unreachable_code:
-        id: CS-CODE-002
+      - id: CS-CODE-002
         name: "Unreachable Code"
         description: "Detects code that will never execute"
         enabled: true
-        severity: warning
+        severity: low
         message: "Unreachable code detected after terminating statement"
         fix_hint: "Remove the unreachable code or fix the control flow"
 
-      empty_blocks:
-        id: CS-CODE-003
+      - id: CS-CODE-003
         name: "Empty Blocks"
         description: "Detects empty if, else, finally, try blocks and loops"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           check_if: true
           check_else: true
@@ -725,8 +650,7 @@ coding_standards:
           check_loops: true
           check_switch_cases: true
 
-      long_lines:
-        id: CS-CODE-004
+      - id: CS-CODE-004
         name: "Long Lines"
         description: "Lines should not exceed 120 characters"
         enabled: true
@@ -737,8 +661,7 @@ coding_standards:
           ignore_strings: true
           ignore_comments: false
 
-      multiple_returns:
-        id: CS-CODE-005
+      - id: CS-CODE-005
         name: "Multiple Returns"
         description: "Methods should have limited return statements"
         enabled: true
@@ -747,33 +670,30 @@ coding_standards:
           max_returns: 3
           allow_guard_clauses: true
 
-      unused_variables:
-        id: CS-CODE-006
+      - id: CS-CODE-006
         name: "Unused Variables"
         description: "Detects variables that are declared but never used"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           ignore_underscore: true
 
-      unused_parameters:
-        id: CS-CODE-007
+      - id: CS-CODE-007
         name: "Unused Parameters"
         description: "Detects method parameters that are never used"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           ignore_underscore: true
           ignore_overrides: true
           ignore_interface_impl: true
           ignore_event_handlers: true
 
-      string_concat_in_loop:
-        id: CS-CODE-009
+      - id: CS-CODE-009
         name: "String Concatenation in Loop"
         description: "Avoid string concatenation in loops; use StringBuilder"
         enabled: true
-        severity: warning
+        severity: low
         message: "String concatenation in loop causes O(n²) allocations"
         fix_hint: "Use StringBuilder instead"
 
@@ -785,39 +705,34 @@ coding_standards:
     enabled: true
     severity: medium
     rules:
-
-      xl_method_length:
-        id: XL-DESIGN-001
+      - id: XL-DESIGN-001
         name: "Method Length (Cross-Language)"
         description: "Methods should not exceed 30 lines"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_lines: 30
           count_blank_lines: false
           count_comments: false
 
-      xl_parameter_count:
-        id: XL-DESIGN-002
+      - id: XL-DESIGN-002
         name: "Parameter Count (Cross-Language)"
         description: "Functions should not have too many parameters"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_parameters: 4
           exclude_constructors: false
 
-      xl_cyclomatic_complexity:
-        id: XL-DESIGN-003
+      - id: XL-DESIGN-003
         name: "Cyclomatic Complexity (Cross-Language)"
         description: "Functions should have low complexity"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_complexity: 10
 
-      xl_naming:
-        id: XL-NAME-001
+      - id: XL-NAME-001
         name: "Naming Conventions (Cross-Language)"
         description: "Checks naming conventions based on language standards"
         enabled: true
@@ -830,8 +745,7 @@ coding_standards:
           variable_style: auto
           constant_style: upper_snake_case
 
-      xl_max_nesting_depth:
-        id: XL-DESIGN-004
+      - id: XL-DESIGN-004
         name: "Max Nesting Depth (Cross-Language)"
         description: "Code should not have too many levels of nesting"
         enabled: true
@@ -839,8 +753,7 @@ coding_standards:
         parameters:
           max_depth: 3
 
-      xl_nested_loops:
-        id: XL-DESIGN-005
+      - id: XL-DESIGN-005
         name: "Nested Loops (Cross-Language)"
         description: "Avoid nested loops which can cause O(n²) complexity"
         enabled: true
@@ -848,18 +761,16 @@ coding_standards:
         parameters:
           max_nested_loops: 1
 
-      xl_file_length:
-        id: XL-DESIGN-006
+      - id: XL-DESIGN-006
         name: "File Length (Cross-Language)"
         description: "Files should not exceed 500 lines"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           max_lines: 500
           count_blank_lines: true
 
-      xl_todo_comments:
-        id: XL-CODE-001
+      - id: XL-CODE-001
         name: "TODO Comments (Cross-Language)"
         description: "Detects TODO, FIXME comments"
         enabled: true
@@ -868,8 +779,7 @@ coding_standards:
           patterns: "TODO,FIXME,HACK,XXX,BUG"
           case_sensitive: false
 
-      xl_long_lines:
-        id: XL-CODE-002
+      - id: XL-CODE-002
         name: "Long Lines (Cross-Language)"
         description: "Lines should not exceed 120 characters"
         enabled: true
@@ -884,11 +794,9 @@ coding_standards:
   # ===========================================================================
   python:
     enabled: true
-    severity: warning
+    severity: low
     rules:
-
-      pep8_naming:
-        id: PY-NAME-001
+      - id: PY-NAME-001
         name: "PEP 8 Naming Conventions"
         description: "Enforces Python PEP 8 naming: snake_case for functions, PascalCase for classes"
         enabled: true
@@ -896,8 +804,7 @@ coding_standards:
         parameters:
           allow_private_underscore: true
 
-      missing_docstring:
-        id: PY-DOC-001
+      - id: PY-DOC-001
         name: "Missing Docstring"
         description: "Public classes and functions should have docstrings"
         enabled: true
@@ -913,15 +820,13 @@ coding_standards:
   # ===========================================================================
   javascript:
     enabled: true
-    severity: warning
+    severity: low
     rules:
-
-      no_console_log:
-        id: JS-DEBUG-001
+      - id: JS-DEBUG-001
         name: "No Console Log"
         description: "console.log statements should not be in production code"
         enabled: true
-        severity: warning
+        severity: low
         parameters:
           allow_error_warn: true
           exclude_patterns:
@@ -930,8 +835,7 @@ coding_standards:
             - "*.test.ts"
             - "*.spec.ts"
 
-      prefer_const_let:
-        id: JS-VAR-001
+      - id: JS-VAR-001
         name: "Prefer Const/Let over Var"
         description: "Use const or let instead of var"
         enabled: true
@@ -969,7 +873,7 @@ prebuilt_policies:
 
   dependency_injection:
     enabled: true
-    severity: warning
+    severity: low
 
 # =============================================================================
 # CUSTOM RULES

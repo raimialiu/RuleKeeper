@@ -268,6 +268,9 @@ public static class ScanCommand
                 highThreshold, totalThreshold, includes, excludes, parallel, noCache, noColor,
                 noVisualization, noTable, summaryOnly, languages, additionalFormats);
 
+            // Auto-detect legacy files baseline if not configured
+            AutoDetectLegacyBaseline(config, path, verbose);
+
             if (verbose)
             {
                 AnsiConsole.MarkupLine($"[blue]Path:[/] {path}");
@@ -467,5 +470,60 @@ public static class ScanCommand
 
         if (additionalFormats.Length > 0)
             config.Output.AdditionalFormats = additionalFormats.ToList();
+    }
+
+    private static void AutoDetectLegacyBaseline(RuleKeeperConfig config, string path, bool verbose)
+    {
+        // If baseline is already explicitly configured, don't auto-detect
+        if (config.Scan.IsBaselineEnabled)
+            return;
+
+        // Look for the default legacy baseline file
+        var searchDir = Directory.Exists(path) ? path : Path.GetDirectoryName(path) ?? ".";
+        var baselineFile = Path.Combine(searchDir, ".rulekeeper-baseline.json");
+
+        // Also check current working directory
+        if (!File.Exists(baselineFile))
+        {
+            baselineFile = Path.Combine(Environment.CurrentDirectory, ".rulekeeper-baseline.json");
+        }
+
+        if (File.Exists(baselineFile))
+        {
+            try
+            {
+                // Read the baseline file to check its mode
+                var json = File.ReadAllText(baselineFile);
+                if (json.Contains("\"mode\"") && json.Contains("\"legacy_files\""))
+                {
+                    // Auto-configure baseline with legacy_files mode
+                    // Check for track_modifications in snake_case (JSON format)
+                    var trackMods = json.Contains("\"track_modifications\": true") ||
+                                   json.Contains("\"track_modifications\":true");
+
+                    config.Scan.Baseline = new BaselineConfig
+                    {
+                        Enabled = true,
+                        Mode = "legacy_files",
+                        BaselineFile = baselineFile,
+                        TrackModifications = trackMods
+                    };
+
+                    if (verbose)
+                    {
+                        AnsiConsole.MarkupLine($"[blue]Auto-detected legacy baseline:[/] {baselineFile}");
+                        AnsiConsole.MarkupLine($"[blue]Track modifications:[/] {config.Scan.Baseline.TrackModifications}");
+                    }
+                    else
+                    {
+                        AnsiConsole.MarkupLine($"[dim]Using legacy baseline: {Path.GetFileName(baselineFile)}[/]");
+                    }
+                }
+            }
+            catch
+            {
+                // Ignore errors reading baseline file - just don't auto-detect
+            }
+        }
     }
 }

@@ -192,10 +192,11 @@ public class BaselineConfig
     public bool Enabled { get; set; } = false;
 
     /// <summary>
-    /// Baseline mode: git, file, or date.
+    /// Baseline mode: git, file, date, or legacy_files.
     /// - git: Compare against a git commit, branch, or tag
     /// - file: Use a baseline file storing previous violations
     /// - date: Only scan files modified after a specific date
+    /// - legacy_files: Skip files captured at baseline creation (for legacy code adoption)
     /// </summary>
     [YamlMember(Alias = "mode")]
     public string Mode { get; set; } = "git";
@@ -263,6 +264,14 @@ public class BaselineConfig
     /// </summary>
     [YamlMember(Alias = "filter_to_diff")]
     public bool FilterToDiff { get; set; } = true;
+
+    /// <summary>
+    /// When using legacy_files mode, track file modifications.
+    /// If true, files that have been modified since baseline creation will be scanned.
+    /// If false, legacy files are always skipped regardless of modifications.
+    /// </summary>
+    [YamlMember(Alias = "track_modifications")]
+    public bool TrackModifications { get; set; } = true;
 }
 
 /// <summary>

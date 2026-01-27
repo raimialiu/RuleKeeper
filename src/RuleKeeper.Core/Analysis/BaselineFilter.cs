@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text.Json;
 using RuleKeeper.Core.Configuration.Models;
 using RuleKeeper.Sdk;
@@ -7,7 +8,7 @@ namespace RuleKeeper.Core.Analysis;
 
 /// <summary>
 /// Filters files and violations based on baseline configuration.
-/// Supports git-based, file-based, and date-based incremental scanning.
+/// Supports git-based, file-based, date-based, and legacy_files incremental scanning.
 /// </summary>
 public class BaselineFilter
 {
@@ -16,6 +17,9 @@ public class BaselineFilter
     private HashSet<string>? _changedFiles;
     private Dictionary<string, HashSet<int>>? _changedLinesByFile;
     private HashSet<string>? _baselineViolationKeys;
+    private LegacyFilesBaseline? _legacyFilesBaseline;
+    private HashSet<string>? _legacyFiles;
+    private Dictionary<string, string>? _legacyFileHashes;
 
     public BaselineFilter(BaselineConfig config, string workingDirectory)
     {
@@ -42,6 +46,9 @@ public class BaselineFilter
             case "date":
                 await InitializeDateBaselineAsync(cancellationToken);
                 break;
+            case "legacy_files":
+                await InitializeLegacyFilesBaselineAsync(cancellationToken);
+                break;
             default:
                 throw new InvalidOperationException($"Unknown baseline mode: {_config.Mode}");
         }
@@ -52,11 +59,39 @@ public class BaselineFilter
     /// </summary>
     public bool ShouldScanFile(string filePath)
     {
-        if (!_config.Enabled || _changedFiles == null)
+        if (!_config.Enabled)
             return true;
 
-        var relativePath = GetRelativePath(filePath);
-        return _changedFiles.Contains(relativePath) ||
+        // Handle legacy_files mode
+        if (_config.Mode.Equals("legacy_files", StringComparison.OrdinalIgnoreCase) && _legacyFiles != null)
+        {
+            var relativePath = GetRelativePath(filePath).Replace('\\', '/');
+
+            // If file is not in legacy list, scan it (it's a new file)
+            if (!_legacyFiles.Contains(relativePath))
+                return true;
+
+            // If tracking modifications, check if file has been modified
+            if (_config.TrackModifications && _legacyFileHashes != null)
+            {
+                if (_legacyFileHashes.TryGetValue(relativePath, out var originalHash))
+                {
+                    var currentHash = CalculateFileHash(filePath);
+                    // If hash changed, the file has been modified - scan it
+                    return currentHash != originalHash;
+                }
+            }
+
+            // File is legacy and not modified (or not tracking modifications) - skip it
+            return false;
+        }
+
+        // Handle other modes (git, date) that use _changedFiles
+        if (_changedFiles == null)
+            return true;
+
+        var relPath = GetRelativePath(filePath);
+        return _changedFiles.Contains(relPath) ||
                _changedFiles.Contains(filePath) ||
                _changedFiles.Any(f => filePath.EndsWith(f, StringComparison.OrdinalIgnoreCase));
     }
@@ -128,6 +163,49 @@ public class BaselineFilter
         await File.WriteAllTextAsync(_config.BaselineFile, json, cancellationToken);
     }
 
+    private async Task InitializeLegacyFilesBaselineAsync(CancellationToken cancellationToken)
+    {
+        _legacyFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        _legacyFileHashes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        if (string.IsNullOrEmpty(_config.BaselineFile))
+        {
+            HandleMissingBaseline("No baseline file specified for legacy_files mode");
+            return;
+        }
+
+        if (!File.Exists(_config.BaselineFile))
+        {
+            HandleMissingBaseline($"Legacy files baseline not found: {_config.BaselineFile}");
+            return;
+        }
+
+        try
+        {
+            var json = await File.ReadAllTextAsync(_config.BaselineFile, cancellationToken);
+            _legacyFilesBaseline = JsonSerializer.Deserialize<LegacyFilesBaseline>(json, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+            });
+
+            if (_legacyFilesBaseline?.Files != null)
+            {
+                foreach (var file in _legacyFilesBaseline.Files)
+                {
+                    _legacyFiles.Add(file.Path);
+                    if (!string.IsNullOrEmpty(file.Hash))
+                    {
+                        _legacyFileHashes[file.Path] = file.Hash;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            HandleMissingBaseline($"Failed to load legacy files baseline: {ex.Message}");
+        }
+    }
+
     private async Task InitializeGitBaselineAsync(CancellationToken cancellationToken)
     {
         _changedFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -135,19 +213,36 @@ public class BaselineFilter
 
         var gitRef = _config.GitRef ?? "HEAD~1";
 
-        // Get list of changed files
-        var diffCommand = $"git diff --name-only {gitRef}";
-        if (_config.IncludeUncommitted)
-        {
-            diffCommand = $"git diff --name-only {gitRef} HEAD && git diff --name-only";
-        }
-
-        var (exitCode, output) = await RunGitCommandAsync(diffCommand, cancellationToken);
+        // Get list of changed files between git_ref and HEAD
+        var (exitCode, output) = await RunGitCommandAsync($"git diff --name-only {gitRef} HEAD", cancellationToken);
         if (exitCode == 0)
         {
             foreach (var line in output.Split('\n', StringSplitOptions.RemoveEmptyEntries))
             {
                 _changedFiles.Add(line.Trim());
+            }
+        }
+
+        // Get uncommitted changes (staged + unstaged) if configured
+        if (_config.IncludeUncommitted)
+        {
+            var (uncommittedExit, uncommittedOutput) = await RunGitCommandAsync("git diff --name-only", cancellationToken);
+            if (uncommittedExit == 0)
+            {
+                foreach (var line in uncommittedOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    _changedFiles.Add(line.Trim());
+                }
+            }
+
+            // Also get staged changes
+            var (stagedExit, stagedOutput) = await RunGitCommandAsync("git diff --name-only --cached", cancellationToken);
+            if (stagedExit == 0)
+            {
+                foreach (var line in stagedOutput.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                {
+                    _changedFiles.Add(line.Trim());
+                }
             }
         }
 
@@ -352,6 +447,31 @@ public class BaselineFilter
 
         return changedLines;
     }
+
+    private static string CalculateFileHash(string filePath)
+    {
+        try
+        {
+            using var sha256 = SHA256.Create();
+            using var stream = File.OpenRead(filePath);
+            var hash = sha256.ComputeHash(stream);
+            return Convert.ToBase64String(hash);
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
+
+    /// <summary>
+    /// Gets the count of legacy files being skipped.
+    /// </summary>
+    public int GetLegacyFilesCount() => _legacyFiles?.Count ?? 0;
+
+    /// <summary>
+    /// Returns true if using legacy_files mode.
+    /// </summary>
+    public bool IsLegacyFilesMode => _config.Mode.Equals("legacy_files", StringComparison.OrdinalIgnoreCase);
 }
 
 /// <summary>
@@ -373,4 +493,32 @@ public class BaselineViolation
     public string FilePath { get; set; } = "";
     public int StartLine { get; set; }
     public string? Message { get; set; }
+}
+
+/// <summary>
+/// Baseline data for legacy files adoption mode.
+/// Used to track existing files that should be skipped during analysis.
+/// </summary>
+public class LegacyFilesBaseline
+{
+    public string Version { get; set; } = "1.0";
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public string Mode { get; set; } = "legacy_files";
+    public bool TrackModifications { get; set; } = true;
+    public List<string> IncludePatterns { get; set; } = new();
+    public List<string> ExcludePatterns { get; set; } = new();
+    public List<LegacyFileEntry> Files { get; set; } = new();
+}
+
+/// <summary>
+/// Entry for a single legacy file in the baseline.
+/// </summary>
+public class LegacyFileEntry
+{
+    public string Path { get; set; } = "";
+    public DateTime AddedAt { get; set; }
+    public DateTime LastModified { get; set; }
+    public long Size { get; set; }
+    public string? Hash { get; set; }
 }

@@ -398,6 +398,7 @@
                 <a href="#single-language">Single Language</a>
                 <a href="#multi-language">Multi-Language</a>
                 <a href="#configuration">Configuration</a>
+                <a href="#legacy-adoption">Legacy Code Adoption</a>
                 <a href="#cicd">CI/CD Integration</a>
                 <a href="#custom-rules">Custom Rules</a>
                 <a href="#output-formats">Output Formats</a>
@@ -416,6 +417,7 @@
                     <li><a href="#single-language">Single Language Analysis</a></li>
                     <li><a href="#multi-language">Multi-Language Analysis</a></li>
                     <li><a href="#configuration">Configuration Examples</a></li>
+                    <li><a href="#legacy-adoption">Legacy Code Adoption</a></li>
                     <li><a href="#cicd">CI/CD Integration</a></li>
                     <li><a href="#custom-rules">Custom Rules</a></li>
                     <li><a href="#output-formats">Output Formats</a></li>
@@ -838,6 +840,224 @@ output:
   additional_outputs:
     - format: html
       file: "./reports/rulekeeper-report.html"</pre>
+            </div>
+
+            <!-- Legacy Code Adoption -->
+            <h2 id="legacy-adoption">Legacy Code Adoption</h2>
+
+            <p>RuleKeeper's legacy adoption workflow lets you add static analysis to existing projects without being overwhelmed by existing violations. Only new files and modified legacy files are scanned.</p>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F3E0;</span> Getting Started with Legacy Code</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <p>Use the <code>baseline</code> command to capture your existing codebase as "legacy" and only enforce rules on new code:</p>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Initialize the Baseline</h4>
+                        <p>Capture all existing files as legacy:</p>
+                        <pre>rulekeeper baseline init</pre>
+                        <p>This creates a <code>.rulekeeper-baseline.json</code> file containing all current files with their hashes.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Configure Legacy Mode</h4>
+                        <p>Enable legacy_files mode in your configuration:</p>
+                        <pre><span style="color:#93c5fd;"># rulekeeper.yaml</span>
+scan:
+  baseline:
+    enabled: true
+    mode: legacy_files
+    baseline_file: .rulekeeper-baseline.json
+    track_modifications: true  <span style="color:#93c5fd;"># Re-scan modified legacy files</span></pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Run Scans</h4>
+                        <p>Now only new files and modified legacy files will be analyzed:</p>
+                        <pre>rulekeeper scan ./src</pre>
+                    </div>
+                </div>
+
+                <div class="output-block">
+<span class="info">RuleKeeper v2.0.0 - Legacy Adoption Mode</span>
+<span class="info">Baseline: .rulekeeper-baseline.json (150 files)</span>
+<span class="info">Scanning: 3 new files, 2 modified legacy files</span>
+
+<span class="warning">[CS-NAME-001] NewService.cs:15</span>
+  Method 'processData' should use PascalCase: 'ProcessData'
+
+<span class="success">Analysis complete: 1 violation found</span>
+  Legacy files skipped: 148
+  New files scanned: 3
+  Modified legacy files scanned: 2
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4CA;</span> Checking Baseline Status</h4>
+                <span class="tag tag-beginner">Beginner</span>
+
+                <p>View the current state of your baseline:</p>
+
+                <pre>rulekeeper baseline status</pre>
+
+                <div class="output-block">
+Baseline Status
+===============
+
+Baseline file:         .rulekeeper-baseline.json
+Created:               2024-01-27 10:00:00 UTC
+Mode:                  legacy_files
+Track modifications:   Yes
+
+Legacy files:          150
+  Still exist:         148
+  Missing/deleted:     2
+  Modified:            5 (will be scanned)
+
+New files:             12 (will be scanned)
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F527;</span> Managing the Baseline</h4>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <h4>Add Files to Baseline (Mark as Legacy)</h4>
+                <p>If you want to skip scanning certain files, add them to the baseline:</p>
+                <pre><span style="color:#93c5fd;"># Add specific files</span>
+rulekeeper baseline add src/legacy/OldHelper.cs
+
+<span style="color:#93c5fd;"># Add files matching a pattern</span>
+rulekeeper baseline add "src/legacy/**/*.cs"</pre>
+
+                <h4>Remove Files from Baseline (Start Tracking)</h4>
+                <p>When you've refactored a file and want to enforce rules:</p>
+                <pre><span style="color:#93c5fd;"># Remove a refactored file from baseline</span>
+rulekeeper baseline remove src/services/UserService.cs
+
+<span style="color:#93c5fd;"># Remove all files in a refactored directory</span>
+rulekeeper baseline remove "src/refactored/**/*.cs"</pre>
+
+                <h4>Refresh Baseline Metadata</h4>
+                <p>Clean up deleted files or reset modification tracking:</p>
+                <pre><span style="color:#93c5fd;"># Remove entries for deleted files</span>
+rulekeeper baseline refresh --remove-deleted
+
+<span style="color:#93c5fd;"># Reset modification tracking (update all hashes)</span>
+rulekeeper baseline refresh --update-hashes</pre>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F6A2;</span> CI/CD with Legacy Adoption</h4>
+                <span class="tag tag-cicd">CI/CD</span>
+                <span class="tag tag-intermediate">Intermediate</span>
+
+                <p>Use legacy adoption in your CI/CD pipeline:</p>
+
+                <pre><span style="color:#93c5fd;"># .github/workflows/code-quality.yml</span>
+name: Code Quality
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  rulekeeper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Install RuleKeeper
+        run: dotnet tool install -g RuleKeeper.Cli
+
+      - name: Run Analysis (Legacy Mode)
+        run: |
+          rulekeeper scan . \
+            --languages csharp,typescript,python \
+            --output sarif \
+            --output-file results.sarif \
+            --fail-on error
+        <span style="color:#93c5fd;"># Uses rulekeeper.yaml with legacy_files mode</span>
+        <span style="color:#93c5fd;"># Only new/modified files are scanned</span>
+
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: results.sarif</pre>
+
+                <div class="tip">
+                    <div class="tip-title">Commit the Baseline</div>
+                    <p>Add <code>.rulekeeper-baseline.json</code> to version control so all team members and CI use the same baseline.</p>
+                </div>
+            </div>
+
+            <div class="example-card">
+                <h4><span class="icon">&#x1F4C8;</span> Gradual Improvement Strategy</h4>
+                <span class="tag tag-advanced">Advanced</span>
+
+                <p>Use legacy adoption as part of a gradual code quality improvement strategy:</p>
+
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Week 1: Initialize</h4>
+                        <pre>rulekeeper baseline init
+git add .rulekeeper-baseline.json
+git commit -m "Initialize RuleKeeper baseline"</pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Ongoing: Enforce on New Code</h4>
+                        <p>All new files and PRs must pass quality checks. Legacy files are skipped.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Quarterly: Refactor Legacy Files</h4>
+                        <p>Pick high-value legacy files, refactor them, and remove from baseline:</p>
+                        <pre><span style="color:#93c5fd;"># After refactoring UserService.cs</span>
+rulekeeper baseline remove src/services/UserService.cs
+git add .rulekeeper-baseline.json
+git commit -m "Remove UserService from legacy baseline"</pre>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Monitor Progress</h4>
+                        <p>Track the reduction in legacy files over time:</p>
+                        <pre>rulekeeper baseline status</pre>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <div class="tip-title">Track Modifications</div>
+                    <p>With <code>track_modifications: true</code>, even legacy files are scanned when modified. This ensures refactored code meets quality standards without manually removing from baseline.</p>
+                </div>
             </div>
 
             <!-- CI/CD Integration -->

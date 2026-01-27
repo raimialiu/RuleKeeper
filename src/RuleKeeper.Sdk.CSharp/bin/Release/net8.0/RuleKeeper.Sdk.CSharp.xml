@@ -1,0 +1,268 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Sdk.CSharp</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer">
+            <summary>
+            Base class for C#-specific rule analyzers that use Roslyn.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.RuleId">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.RuleName">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.Category">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.DefaultSeverity">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.TargetLanguage">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.Parameters">
+            <summary>
+            Configuration parameters for this rule.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer"/> class.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.ApplyParameterAttributes">
+            <summary>
+            Applies RuleParameterAttribute values from the parameters dictionary.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.Analyze(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.CreateViolation(Microsoft.CodeAnalysis.Location,System.String,RuleKeeper.Sdk.CSharp.CSharpAnalysisContext,System.String)">
+            <summary>
+            Creates a violation at the specified Roslyn location.
+            </summary>
+            <param name="location">The Roslyn location.</param>
+            <param name="message">The violation message.</param>
+            <param name="context">The analysis context.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.CreateViolation(Microsoft.CodeAnalysis.Location,System.String,RuleKeeper.Sdk.SeverityLevel,System.String)">
+            <summary>
+            Creates a violation at the specified Roslyn location with custom severity.
+            </summary>
+            <param name="location">The Roslyn location.</param>
+            <param name="message">The violation message.</param>
+            <param name="severity">The severity level.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.FromRoslynLocation(Microsoft.CodeAnalysis.Location,System.String,System.String,System.String,RuleKeeper.Sdk.SeverityLevel,System.String)">
+            <summary>
+            Creates a Violation from a Roslyn Location.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.ToSourceLocation(Microsoft.CodeAnalysis.Location)">
+            <summary>
+            Converts a Roslyn Location to a SourceLocation.
+            </summary>
+            <param name="location">The Roslyn location.</param>
+            <returns>A SourceLocation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.GetParameter``1(System.String,``0)">
+            <summary>
+            Gets a parameter value with a default fallback.
+            </summary>
+            <typeparam name="T">The type of the parameter.</typeparam>
+            <param name="name">The parameter name.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns>The parameter value or default.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.BaseCSharpRuleAnalyzer.HasParameter(System.String)">
+            <summary>
+            Checks if a parameter exists.
+            </summary>
+            <param name="name">The parameter name.</param>
+            <returns>True if the parameter exists.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext">
+            <summary>
+            Context for analyzing a C# source file using Roslyn.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.SyntaxTree">
+            <summary>
+            The syntax tree of the file being analyzed.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.SemanticModel">
+            <summary>
+            The semantic model for the file, if available.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.Compilation">
+            <summary>
+            The compilation containing the file, if available.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.FilePath">
+            <summary>
+            The file path of the file being analyzed.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.Severity">
+            <summary>
+            The severity level to use for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.CustomMessage">
+            <summary>
+            Custom message override for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.FixHint">
+            <summary>
+            Fix hint for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.CSharpAnalysisContext.CancellationToken">
+            <summary>
+            Cancellation token for the analysis.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers">
+            <summary>
+            Helper methods for analyzing C# code in custom rules.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetClasses(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <summary>
+            Gets all class declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetMethods(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <summary>
+            Gets all method declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetInterfaces(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <summary>
+            Gets all interface declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetProperties(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <summary>
+            Gets all property declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetFields(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <summary>
+            Gets all field declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetInvocations(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <summary>
+            Gets all invocation expressions from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetSymbol(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext,Microsoft.CodeAnalysis.SyntaxNode)">
+            <summary>
+            Gets the symbol for a syntax node using the semantic model.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetTypeSymbol(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext,Microsoft.CodeAnalysis.SyntaxNode)">
+            <summary>
+            Gets the type symbol for a syntax node using the semantic model.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.IsAsync(Microsoft.CodeAnalysis.CSharp.Syntax.MethodDeclarationSyntax)">
+            <summary>
+            Checks if a method has the async modifier.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.IsPublic(Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax)">
+            <summary>
+            Checks if a member is public.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.IsPrivate(Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax)">
+            <summary>
+            Checks if a member is private.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.IsStatic(Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax)">
+            <summary>
+            Checks if a member is static.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetMethodName(Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax)">
+            <summary>
+            Gets the method name from an invocation expression.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.GetFullMethodName(Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax)">
+            <summary>
+            Gets the full method name (including type) from an invocation expression.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.CSharpAnalyzerHelpers.InheritsFrom(Microsoft.CodeAnalysis.INamedTypeSymbol,System.String)">
+            <summary>
+            Checks if a type inherits from or implements a specific type.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer">
+            <summary>
+            Interface for C#-specific rule analyzers that use Roslyn for analysis.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer.RuleId">
+            <summary>
+            The unique identifier for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer.RuleName">
+            <summary>
+            The display name for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer.Category">
+            <summary>
+            The category this rule belongs to.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer.Description">
+            <summary>
+            A description of what this rule checks.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer.DefaultSeverity">
+            <summary>
+            The default severity level for this rule.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Initializes the analyzer with configuration parameters.
+            </summary>
+            <param name="parameters">Configuration parameters for the rule.</param>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CSharp.ICSharpRuleAnalyzer.Analyze(RuleKeeper.Sdk.CSharp.CSharpAnalysisContext)">
+            <summary>
+            Analyzes the given C# context and returns any violations found.
+            </summary>
+            <param name="context">The analysis context containing the Roslyn syntax tree and semantic model.</param>
+            <returns>Enumerable of violations found.</returns>
+        </member>
+    </members>
+</doc>

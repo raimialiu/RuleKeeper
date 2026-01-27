@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Languages.CSharp</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter">
+            <summary>
+            Language adapter for C# using Roslyn.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.SupportedExtensions">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.DefaultIncludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.DefaultExcludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.ParseAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.CreateTypeResolverAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.CanHandle(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpLanguageAdapter.GetNativeContext(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,RuleKeeper.Sdk.Abstractions.ITypeResolver)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.CSharp.CSharpNativeContext">
+            <summary>
+            Native C# context containing Roslyn-specific objects.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpNativeContext.SyntaxTree">
+            <summary>
+            The Roslyn syntax tree.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpNativeContext.SemanticModel">
+            <summary>
+            The semantic model, if available.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpNativeContext.Compilation">
+            <summary>
+            The compilation, if available.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpNativeContext.FilePath">
+            <summary>
+            The file path.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Languages.CSharp.CSharpTypeResolver">
+            <summary>
+            Type resolver for C# using Roslyn semantic analysis.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeResolver.Compilation">
+            <summary>
+            Gets the underlying Roslyn compilation.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpTypeResolver.#ctor(Microsoft.CodeAnalysis.CSharp.CSharpCompilation)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Languages.CSharp.CSharpTypeResolver"/> class.
+            </summary>
+            <param name="compilation">The Roslyn compilation.</param>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeResolver.Language">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpTypeResolver.GetType(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpTypeResolver.GetSymbol(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpTypeResolver.InheritsFrom(RuleKeeper.Sdk.Abstractions.ITypeInfo,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.CSharp.CSharpTypeInfo">
+            <summary>
+            Type information wrapper for Roslyn type symbols.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.Symbol">
+            <summary>
+            Gets the underlying Roslyn type symbol.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpTypeInfo.#ctor(Microsoft.CodeAnalysis.ITypeSymbol)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Languages.CSharp.CSharpTypeInfo"/> class.
+            </summary>
+            <param name="symbol">The Roslyn type symbol.</param>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.FullName">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.IsPrimitive">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.IsNullable">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.IsArray">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.IsGeneric">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.ElementType">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.TypeArguments">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpTypeInfo.BaseTypes">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.CSharp.CSharpSymbolInfo">
+            <summary>
+            Symbol information wrapper for Roslyn symbols.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.Symbol">
+            <summary>
+            Gets the underlying Roslyn symbol.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.#ctor(Microsoft.CodeAnalysis.ISymbol)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Languages.CSharp.CSharpSymbolInfo"/> class.
+            </summary>
+            <param name="symbol">The Roslyn symbol.</param>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.Type">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.IsPublic">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.IsPrivate">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.IsProtected">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.IsStatic">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.IsAbstract">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.IsVirtual">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.IsAsync">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.ContainingType">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpSymbolInfo.DeclaringLocation">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.CSharp.CSharpUnifiedNode">
+            <summary>
+            Wraps a Roslyn SyntaxNode as a unified syntax node.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.#ctor(Microsoft.CodeAnalysis.SyntaxNode,RuleKeeper.Languages.CSharp.CSharpUnifiedNode,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Languages.CSharp.CSharpUnifiedNode"/> class.
+            </summary>
+            <param name="node">The Roslyn syntax node.</param>
+            <param name="parent">The parent unified node.</param>
+            <param name="filePath">The file path.</param>
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.Location">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.Text">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.Parent">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.Children">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.NativeNode">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.ContainsErrors">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.RoslynNode">
+            <summary>
+            Gets the underlying Roslyn syntax node.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.CSharp.CSharpUnifiedNode.MapSyntaxKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind)">
+            <summary>
+            Maps a C# syntax kind to a unified syntax kind.
+            </summary>
+        </member>
+    </members>
+</doc>

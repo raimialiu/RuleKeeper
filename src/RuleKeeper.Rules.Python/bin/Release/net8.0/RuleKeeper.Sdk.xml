@@ -1,0 +1,2977 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Sdk</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Sdk.Abstractions.ILanguageAdapter">
+            <summary>
+            Interface for language-specific parser adapters that convert language-specific ASTs
+            to the unified syntax tree representation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.Language">
+            <summary>
+            Gets the programming language this adapter handles.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.SupportedExtensions">
+            <summary>
+            Gets the file extensions supported by this adapter (e.g., ".cs", ".py").
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.ParseAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Parses source code and returns a unified syntax tree.
+            </summary>
+            <param name="source">The source code to parse.</param>
+            <param name="filePath">The file path of the source code.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>The root node of the unified syntax tree.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.CreateTypeResolverAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <summary>
+            Creates a type resolver for semantic analysis across multiple files.
+            </summary>
+            <param name="files">The files to include in the type resolution context.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>A type resolver, or null if semantic analysis is not supported.</returns>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.DefaultIncludePatterns">
+            <summary>
+            Gets the default include patterns for this language.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.DefaultExcludePatterns">
+            <summary>
+            Gets the default exclude patterns for this language.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.CanHandle(System.String)">
+            <summary>
+            Determines if this adapter can handle the specified file.
+            </summary>
+            <param name="filePath">The file path to check.</param>
+            <returns>True if this adapter can handle the file.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.ILanguageAdapter.GetNativeContext(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,RuleKeeper.Sdk.Abstractions.ITypeResolver)">
+            <summary>
+            Gets the language-specific analysis context, if the adapter supports it.
+            </summary>
+            <param name="root">The unified syntax tree root.</param>
+            <param name="source">The source text.</param>
+            <param name="filePath">The file path.</param>
+            <param name="typeResolver">Optional type resolver.</param>
+            <returns>A language-specific analysis context, or null.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.ITypeResolver">
+            <summary>
+            Interface for semantic type resolution across files.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.ITypeResolver.GetType(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets the type of a syntax node.
+            </summary>
+            <param name="node">The syntax node.</param>
+            <returns>The type information, or null if unknown.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.ITypeResolver.GetSymbol(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets the symbol for a syntax node (variable, method, type, etc.).
+            </summary>
+            <param name="node">The syntax node.</param>
+            <returns>The symbol information, or null if unknown.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.ITypeResolver.InheritsFrom(RuleKeeper.Sdk.Abstractions.ITypeInfo,System.String)">
+            <summary>
+            Determines if a type inherits from or implements another type.
+            </summary>
+            <param name="type">The type to check.</param>
+            <param name="baseTypeName">The base type or interface name.</param>
+            <returns>True if the type inherits from or implements the base type.</returns>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeResolver.Language">
+            <summary>
+            Gets the programming language this resolver handles.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.ITypeInfo">
+            <summary>
+            Represents type information for a syntax node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.Name">
+            <summary>
+            Gets the name of the type.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.FullName">
+            <summary>
+            Gets the fully qualified name of the type.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.IsPrimitive">
+            <summary>
+            Gets whether this is a primitive/built-in type.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.IsNullable">
+            <summary>
+            Gets whether this is a nullable type.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.IsArray">
+            <summary>
+            Gets whether this is an array type.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.IsGeneric">
+            <summary>
+            Gets whether this is a generic type.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.ElementType">
+            <summary>
+            Gets the element type for arrays or collections.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.TypeArguments">
+            <summary>
+            Gets the type arguments for generic types.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ITypeInfo.BaseTypes">
+            <summary>
+            Gets the base types and interfaces.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.ISymbolInfo">
+            <summary>
+            Represents symbol information for a syntax node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.Name">
+            <summary>
+            Gets the name of the symbol.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.Kind">
+            <summary>
+            Gets the kind of symbol.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.Type">
+            <summary>
+            Gets the type of the symbol.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.IsPublic">
+            <summary>
+            Gets whether the symbol is public.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.IsPrivate">
+            <summary>
+            Gets whether the symbol is private.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.IsProtected">
+            <summary>
+            Gets whether the symbol is protected.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.IsStatic">
+            <summary>
+            Gets whether the symbol is static.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.IsAbstract">
+            <summary>
+            Gets whether the symbol is abstract.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.IsVirtual">
+            <summary>
+            Gets whether the symbol is virtual.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.IsAsync">
+            <summary>
+            Gets whether the symbol is async (for methods).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.ContainingType">
+            <summary>
+            Gets the containing type for members.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.ISymbolInfo.DeclaringLocation">
+            <summary>
+            Gets the declaring location of the symbol.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.SymbolKind">
+            <summary>
+            Kinds of symbols.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Unknown">
+            <summary>
+            Unknown symbol kind.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Namespace">
+            <summary>
+            A namespace or module.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Type">
+            <summary>
+            A type (class, struct, enum, interface).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Method">
+            <summary>
+            A method or function.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Property">
+            <summary>
+            A property.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Field">
+            <summary>
+            A field.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Event">
+            <summary>
+            An event.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Local">
+            <summary>
+            A local variable.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Parameter">
+            <summary>
+            A parameter.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.TypeParameter">
+            <summary>
+            A type parameter.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Label">
+            <summary>
+            A label.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.SymbolKind.Alias">
+            <summary>
+            An alias.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode">
+            <summary>
+            Represents a language-agnostic syntax node in the abstract syntax tree.
+            This interface provides a unified way to traverse and analyze code across different programming languages.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Kind">
+            <summary>
+            Gets the kind of this syntax node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Location">
+            <summary>
+            Gets the source location of this node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Text">
+            <summary>
+            Gets the source text of this node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Parent">
+            <summary>
+            Gets the parent node, or null if this is the root.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Children">
+            <summary>
+            Gets the immediate child nodes.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Descendants">
+            <summary>
+            Gets all descendant nodes.
+            </summary>
+            <returns>An enumerable of all descendant nodes.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.DescendantsOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Gets all descendant nodes of a specific kind.
+            </summary>
+            <param name="kind">The kind to filter by.</param>
+            <returns>An enumerable of matching descendant nodes.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.DescendantsOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind[])">
+            <summary>
+            Gets all descendant nodes of specific kinds.
+            </summary>
+            <param name="kinds">The kinds to filter by.</param>
+            <returns>An enumerable of matching descendant nodes.</returns>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.NativeNode">
+            <summary>
+            Gets the underlying native parser node (e.g., Roslyn SyntaxNode, ANTLR ParseTree).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Language">
+            <summary>
+            Gets the programming language of this node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.ContainsErrors">
+            <summary>
+            Gets whether this node contains any syntax errors.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.Ancestors">
+            <summary>
+            Gets the ancestor nodes from this node up to the root.
+            </summary>
+            <returns>An enumerable of ancestor nodes.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.FirstAncestorOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Gets the first ancestor of a specific kind.
+            </summary>
+            <param name="kind">The kind to search for.</param>
+            <returns>The first matching ancestor, or null if not found.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.FirstChildOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Gets the first child of a specific kind.
+            </summary>
+            <param name="kind">The kind to search for.</param>
+            <returns>The first matching child, or null if not found.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.FirstDescendantOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Gets the first descendant of a specific kind.
+            </summary>
+            <param name="kind">The kind to search for.</param>
+            <returns>The first matching descendant, or null if not found.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.IsKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Determines if this node is of a specific kind.
+            </summary>
+            <param name="kind">The kind to check.</param>
+            <returns>True if this node is of the specified kind.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode.IsKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind[])">
+            <summary>
+            Determines if this node is of any of the specified kinds.
+            </summary>
+            <param name="kinds">The kinds to check.</param>
+            <returns>True if this node is of any of the specified kinds.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions">
+            <summary>
+            Extension methods for <see cref="T:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode"/>.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.DescendantsOfType``1(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all descendants of type <typeparamref name="T"/>.
+            </summary>
+            <typeparam name="T">The type of node to filter.</typeparam>
+            <param name="node">The starting node.</param>
+            <returns>An enumerable of matching descendant nodes.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.GetDepth(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets the depth of this node in the tree.
+            </summary>
+            <param name="node">The node.</param>
+            <returns>The depth (0 for root).</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.Siblings(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all sibling nodes of this node.
+            </summary>
+            <param name="node">The node.</param>
+            <returns>An enumerable of sibling nodes.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.NextSibling(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets the next sibling of this node.
+            </summary>
+            <param name="node">The node.</param>
+            <returns>The next sibling, or null if not found.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.PreviousSibling(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets the previous sibling of this node.
+            </summary>
+            <param name="node">The node.</param>
+            <returns>The previous sibling, or null if not found.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.IsAncestorOf(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Determines if this node is an ancestor of another node.
+            </summary>
+            <param name="node">The potential ancestor.</param>
+            <param name="other">The potential descendant.</param>
+            <returns>True if this node is an ancestor of the other node.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.IsDescendantOf(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Determines if this node is a descendant of another node.
+            </summary>
+            <param name="node">The potential descendant.</param>
+            <param name="other">The potential ancestor.</param>
+            <returns>True if this node is a descendant of the other node.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.GetClasses(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all class declarations from this node.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.GetMethods(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all method declarations from this node.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.GetInterfaces(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all interface declarations from this node.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.GetProperties(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all property declarations from this node.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.GetFields(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all field declarations from this node.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeExtensions.GetInvocations(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode)">
+            <summary>
+            Gets all invocation expressions from this node.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode">
+            <summary>
+            Represents a class or type declaration node with specialized properties.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.Name">
+            <summary>
+            Gets the name of the class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.BaseClassName">
+            <summary>
+            Gets the base class name, if any.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.ImplementedInterfaces">
+            <summary>
+            Gets the implemented interface names.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.Methods">
+            <summary>
+            Gets the methods declared in this class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.Properties">
+            <summary>
+            Gets the properties declared in this class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.Fields">
+            <summary>
+            Gets the fields declared in this class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.Constructors">
+            <summary>
+            Gets the constructors declared in this class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.NestedTypes">
+            <summary>
+            Gets the nested types declared in this class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsStatic">
+            <summary>
+            Gets whether this is a static class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsAbstract">
+            <summary>
+            Gets whether this is an abstract class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsSealed">
+            <summary>
+            Gets whether this is a sealed/final class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsPartial">
+            <summary>
+            Gets whether this is a partial class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsPublic">
+            <summary>
+            Gets whether this is a public class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsPrivate">
+            <summary>
+            Gets whether this is a private class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsInternal">
+            <summary>
+            Gets whether this is an internal class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.Modifiers">
+            <summary>
+            Gets the modifiers as a collection of strings.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.TypeParameters">
+            <summary>
+            Gets the type parameters for generic classes.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.IsGeneric">
+            <summary>
+            Gets whether this is a generic class.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IClassNode.HasBaseClass">
+            <summary>
+            Gets whether this class has a base class.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode">
+            <summary>
+            Represents a property declaration node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.Name">
+            <summary>
+            Gets the name of the property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.TypeName">
+            <summary>
+            Gets the type name of the property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.HasGetter">
+            <summary>
+            Gets whether the property has a getter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.HasSetter">
+            <summary>
+            Gets whether the property has a setter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.IsPublic">
+            <summary>
+            Gets whether this is a public property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.IsPrivate">
+            <summary>
+            Gets whether this is a private property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.IsStatic">
+            <summary>
+            Gets whether this is a static property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.IsAbstract">
+            <summary>
+            Gets whether this is an abstract property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.IsVirtual">
+            <summary>
+            Gets whether this is a virtual property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.IsAutoProperty">
+            <summary>
+            Gets whether this is an auto-implemented property.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.Modifiers">
+            <summary>
+            Gets the modifiers as a collection of strings.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IPropertyNode.Initializer">
+            <summary>
+            Gets the initializer expression, if any.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode">
+            <summary>
+            Represents a field declaration node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.Name">
+            <summary>
+            Gets the name of the field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.TypeName">
+            <summary>
+            Gets the type name of the field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.IsPublic">
+            <summary>
+            Gets whether this is a public field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.IsPrivate">
+            <summary>
+            Gets whether this is a private field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.IsProtected">
+            <summary>
+            Gets whether this is a protected field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.IsStatic">
+            <summary>
+            Gets whether this is a static field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.IsReadOnly">
+            <summary>
+            Gets whether this is a readonly field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.IsConst">
+            <summary>
+            Gets whether this is a constant field.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.Modifiers">
+            <summary>
+            Gets the modifiers as a collection of strings.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IFieldNode.Initializer">
+            <summary>
+            Gets the initializer expression, if any.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.ITryNode">
+            <summary>
+            Represents a try statement node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ITryNode.TryBlock">
+            <summary>
+            Gets the try block.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ITryNode.CatchClauses">
+            <summary>
+            Gets the catch clauses.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ITryNode.FinallyBlock">
+            <summary>
+            Gets the finally block, if present.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ITryNode.HasFinally">
+            <summary>
+            Gets whether this try statement has a finally block.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ITryNode.HasCatch">
+            <summary>
+            Gets whether this try statement has any catch clauses.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode">
+            <summary>
+            Represents a catch clause node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode.ExceptionTypeName">
+            <summary>
+            Gets the exception type name being caught, if specified.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode.ExceptionVariableName">
+            <summary>
+            Gets the exception variable name, if specified.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode.Block">
+            <summary>
+            Gets the catch block.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode.Filter">
+            <summary>
+            Gets the filter expression (when clause in C#), if present.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode.IsCatchAll">
+            <summary>
+            Gets whether this is a catch-all clause (catches all exceptions).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode.HasFilter">
+            <summary>
+            Gets whether this catch has a filter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.ICatchNode.IsEmpty">
+            <summary>
+            Gets whether the catch block is empty.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IThrowNode">
+            <summary>
+            Represents a throw statement or expression.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IThrowNode.Exception">
+            <summary>
+            Gets the exception expression being thrown, if any.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IThrowNode.IsRethrow">
+            <summary>
+            Gets whether this is a rethrow (throw; without expression).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IThrowNode.IsExpression">
+            <summary>
+            Gets whether this is a throw expression (C# 7+).
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode">
+            <summary>
+            Represents a method or function invocation node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.MethodName">
+            <summary>
+            Gets the name of the method being invoked.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.FullMethodName">
+            <summary>
+            Gets the full method name including the target expression (e.g., "object.Method").
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.Target">
+            <summary>
+            Gets the target expression of the invocation (e.g., "object" in "object.Method()").
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.Arguments">
+            <summary>
+            Gets the arguments passed to the method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.ArgumentCount">
+            <summary>
+            Gets the number of arguments.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.TypeArguments">
+            <summary>
+            Gets the type arguments for generic method invocations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.IsGeneric">
+            <summary>
+            Gets whether this is a generic method invocation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.IsMemberAccess">
+            <summary>
+            Gets whether this is a member access invocation (a.Method()).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.IsNullConditional">
+            <summary>
+            Gets whether this is a null-conditional invocation (a?.Method()).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IInvocationNode.IsAwaited">
+            <summary>
+            Gets whether this is an await expression.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IArgumentNode">
+            <summary>
+            Represents an argument passed to a method or function.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IArgumentNode.Name">
+            <summary>
+            Gets the name of the argument, if it's a named argument.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IArgumentNode.Expression">
+            <summary>
+            Gets the expression representing the argument value.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IArgumentNode.IsNamed">
+            <summary>
+            Gets whether this is a named argument.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IArgumentNode.Index">
+            <summary>
+            Gets the index of this argument in the argument list.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IArgumentNode.IsRef">
+            <summary>
+            Gets whether this is a ref argument.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IArgumentNode.IsOut">
+            <summary>
+            Gets whether this is an out argument.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode">
+            <summary>
+            Represents a method or function declaration node with specialized properties.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.Name">
+            <summary>
+            Gets the name of the method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.Parameters">
+            <summary>
+            Gets the parameters of the method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.ParameterCount">
+            <summary>
+            Gets the number of parameters.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.ReturnTypeName">
+            <summary>
+            Gets the return type name, if specified.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.Body">
+            <summary>
+            Gets the body of the method, if it has one.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsAsync">
+            <summary>
+            Gets whether this is an async method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsStatic">
+            <summary>
+            Gets whether this is a static method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsPublic">
+            <summary>
+            Gets whether this is a public method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsPrivate">
+            <summary>
+            Gets whether this is a private method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsProtected">
+            <summary>
+            Gets whether this is a protected method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsAbstract">
+            <summary>
+            Gets whether this is an abstract method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsVirtual">
+            <summary>
+            Gets whether this is a virtual method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsOverride">
+            <summary>
+            Gets whether this is an override method.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.HasBody">
+            <summary>
+            Gets whether this method has a body (not abstract or interface member).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.Modifiers">
+            <summary>
+            Gets the modifiers as a collection of strings.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.TypeParameters">
+            <summary>
+            Gets the type parameters for generic methods.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IMethodNode.IsGeneric">
+            <summary>
+            Gets whether this is a generic method.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode">
+            <summary>
+            Represents a parameter declaration node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.Name">
+            <summary>
+            Gets the name of the parameter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.TypeName">
+            <summary>
+            Gets the type name of the parameter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.HasDefaultValue">
+            <summary>
+            Gets whether this parameter has a default value.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.DefaultValue">
+            <summary>
+            Gets the default value expression, if any.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.IsParams">
+            <summary>
+            Gets whether this is a variadic/params parameter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.IsRef">
+            <summary>
+            Gets whether this is a reference parameter (ref/out in C#).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.IsOut">
+            <summary>
+            Gets whether this is an output parameter (out in C#).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.Nodes.IParameterNode.Index">
+            <summary>
+            Gets the index of this parameter in the parameter list.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.SourceLocation">
+            <summary>
+            Represents a language-agnostic source code location.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.FilePath">
+            <summary>
+            Gets the file path where this location exists.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.StartLine">
+            <summary>
+            Gets the starting line number (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.StartColumn">
+            <summary>
+            Gets the starting column number (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.EndLine">
+            <summary>
+            Gets the ending line number (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.EndColumn">
+            <summary>
+            Gets the ending column number (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.StartOffset">
+            <summary>
+            Gets the starting character offset in the source text.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.EndOffset">
+            <summary>
+            Gets the ending character offset in the source text.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.Length">
+            <summary>
+            Gets the length of the span in characters.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.#ctor(System.String,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Sdk.Abstractions.SourceLocation"/> struct.
+            </summary>
+            <param name="filePath">The file path.</param>
+            <param name="startLine">The starting line number (1-based).</param>
+            <param name="startColumn">The starting column number (1-based).</param>
+            <param name="endLine">The ending line number (1-based).</param>
+            <param name="endColumn">The ending column number (1-based).</param>
+            <param name="startOffset">The starting character offset.</param>
+            <param name="endOffset">The ending character offset.</param>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.FromPoint(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a location representing a single point.
+            </summary>
+            <param name="filePath">The file path.</param>
+            <param name="line">The line number (1-based).</param>
+            <param name="column">The column number (1-based).</param>
+            <param name="offset">The character offset.</param>
+            <returns>A new <see cref="T:RuleKeeper.Sdk.Abstractions.SourceLocation"/>.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.FromLineSpan(System.String,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a location spanning multiple lines.
+            </summary>
+            <param name="filePath">The file path.</param>
+            <param name="startLine">The starting line number (1-based).</param>
+            <param name="startColumn">The starting column number (1-based).</param>
+            <param name="endLine">The ending line number (1-based).</param>
+            <param name="endColumn">The ending column number (1-based).</param>
+            <returns>A new <see cref="T:RuleKeeper.Sdk.Abstractions.SourceLocation"/>.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.FromOffsets(System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            Creates a location from character offsets.
+            </summary>
+            <param name="filePath">The file path.</param>
+            <param name="startOffset">The starting character offset.</param>
+            <param name="endOffset">The ending character offset.</param>
+            <param name="sourceText">The source text for line/column calculation.</param>
+            <returns>A new <see cref="T:RuleKeeper.Sdk.Abstractions.SourceLocation"/>.</returns>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.None">
+            <summary>
+            Gets a location representing no location.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.SourceLocation.IsValid">
+            <summary>
+            Determines whether this location is valid.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.Equals(RuleKeeper.Sdk.Abstractions.SourceLocation)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.Equals(System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.GetHashCode">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.op_Equality(RuleKeeper.Sdk.Abstractions.SourceLocation,RuleKeeper.Sdk.Abstractions.SourceLocation)">
+            <summary>
+            Equality operator.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.op_Inequality(RuleKeeper.Sdk.Abstractions.SourceLocation,RuleKeeper.Sdk.Abstractions.SourceLocation)">
+            <summary>
+            Inequality operator.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.SourceLocation.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext">
+            <summary>
+            Language-agnostic context for analyzing source code.
+            This context can be used by cross-language rules that work with the unified AST.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.Root">
+            <summary>
+            Gets or sets the root node of the syntax tree.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.Language">
+            <summary>
+            Gets or sets the programming language of the source code.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.FilePath">
+            <summary>
+            Gets or sets the file path of the source file being analyzed.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.SourceText">
+            <summary>
+            Gets or sets the raw source text of the file.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.Lines">
+            <summary>
+            Gets the lines of the source text.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.Severity">
+            <summary>
+            Gets or sets the severity level to use for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.CustomMessage">
+            <summary>
+            Gets or sets a custom message override for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.FixHint">
+            <summary>
+            Gets or sets a fix hint for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.CancellationToken">
+            <summary>
+            Gets or sets the cancellation token for the analysis.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.TypeResolver">
+            <summary>
+            Gets or sets the type resolver for semantic analysis, if available.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.Metadata">
+            <summary>
+            Gets or sets additional metadata for the analysis context.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetClasses">
+            <summary>
+            Gets all class declarations in the file.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetMethods">
+            <summary>
+            Gets all method declarations in the file.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetInterfaces">
+            <summary>
+            Gets all interface declarations in the file.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetProperties">
+            <summary>
+            Gets all property declarations in the file.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetFields">
+            <summary>
+            Gets all field declarations in the file.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetInvocations">
+            <summary>
+            Gets all invocation expressions in the file.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetLine(System.Int32)">
+            <summary>
+            Gets the source text for a specific line (0-based index).
+            </summary>
+            <param name="lineIndex">The 0-based line index.</param>
+            <returns>The line text, or empty string if out of range.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetTextAtLocation(RuleKeeper.Sdk.Abstractions.SourceLocation)">
+            <summary>
+            Gets the source text for a location.
+            </summary>
+            <param name="location">The source location.</param>
+            <returns>The source text at the location.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext.GetLineCount(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.Boolean,System.Boolean)">
+            <summary>
+            Gets the line count for a node.
+            </summary>
+            <param name="node">The syntax node.</param>
+            <param name="countBlankLines">Whether to count blank lines.</param>
+            <param name="countComments">Whether to count comment lines.</param>
+            <returns>The number of lines.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind">
+            <summary>
+            Defines common syntax node kinds that are applicable across multiple programming languages.
+            This provides a language-agnostic way to identify syntax constructs.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Unknown">
+            <summary>
+            Unknown or unrecognized syntax kind.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.CompilationUnit">
+            <summary>
+            The root node of a compilation unit (source file).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Module">
+            <summary>
+            A module or namespace declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Package">
+            <summary>
+            A package or namespace declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ClassDeclaration">
+            <summary>
+            A class declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.InterfaceDeclaration">
+            <summary>
+            An interface declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.StructDeclaration">
+            <summary>
+            A struct or value type declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.EnumDeclaration">
+            <summary>
+            An enum declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.RecordDeclaration">
+            <summary>
+            A record declaration (C#, Java).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TraitDeclaration">
+            <summary>
+            A trait or protocol declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TypeAlias">
+            <summary>
+            A type alias or typedef.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.MethodDeclaration">
+            <summary>
+            A method or function declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ConstructorDeclaration">
+            <summary>
+            A constructor declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.DestructorDeclaration">
+            <summary>
+            A destructor or finalizer declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.PropertyDeclaration">
+            <summary>
+            A property declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.FieldDeclaration">
+            <summary>
+            A field declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.EventDeclaration">
+            <summary>
+            An event declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.IndexerDeclaration">
+            <summary>
+            An indexer declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.OperatorDeclaration">
+            <summary>
+            An operator overload declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.EnumMemberDeclaration">
+            <summary>
+            An enum member declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Parameter">
+            <summary>
+            A parameter declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TypeParameter">
+            <summary>
+            A type parameter (generic).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Argument">
+            <summary>
+            An argument passed to a function/method.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ParameterList">
+            <summary>
+            A parameter list.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ArgumentList">
+            <summary>
+            An argument list.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Block">
+            <summary>
+            A block of statements.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.LocalDeclaration">
+            <summary>
+            A local variable declaration statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ExpressionStatement">
+            <summary>
+            An expression statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ReturnStatement">
+            <summary>
+            A return statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.IfStatement">
+            <summary>
+            An if statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ElseClause">
+            <summary>
+            An else clause.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.SwitchStatement">
+            <summary>
+            A switch statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.SwitchCase">
+            <summary>
+            A case clause in a switch.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.WhileStatement">
+            <summary>
+            A while loop statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.DoWhileStatement">
+            <summary>
+            A do-while loop statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ForStatement">
+            <summary>
+            A for loop statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ForEachStatement">
+            <summary>
+            A foreach/for-in loop statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TryStatement">
+            <summary>
+            A try statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.CatchClause">
+            <summary>
+            A catch clause.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.FinallyClause">
+            <summary>
+            A finally clause.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ThrowStatement">
+            <summary>
+            A throw statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.BreakStatement">
+            <summary>
+            A break statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ContinueStatement">
+            <summary>
+            A continue statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.UsingStatement">
+            <summary>
+            A using/with statement for resource management.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.LockStatement">
+            <summary>
+            A lock/synchronized statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.YieldStatement">
+            <summary>
+            A yield return statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.AwaitStatement">
+            <summary>
+            An await statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.AssertStatement">
+            <summary>
+            An assert statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.EmptyStatement">
+            <summary>
+            A pass/empty statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.DeferStatement">
+            <summary>
+            A defer/cleanup statement (Go).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.GotoStatement">
+            <summary>
+            A goto statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.LabeledStatement">
+            <summary>
+            A labeled statement.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.LiteralExpression">
+            <summary>
+            A literal expression (string, number, etc.).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Identifier">
+            <summary>
+            An identifier/name reference.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.BinaryExpression">
+            <summary>
+            A binary expression (a + b, a == b, etc.).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.UnaryExpression">
+            <summary>
+            A unary expression (!a, -a, etc.).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.InvocationExpression">
+            <summary>
+            A method/function invocation.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.MemberAccessExpression">
+            <summary>
+            A member access expression (a.b).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ElementAccessExpression">
+            <summary>
+            An element access expression (a[b]).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ObjectCreationExpression">
+            <summary>
+            An object creation expression (new T()).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ArrayCreationExpression">
+            <summary>
+            An array creation expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.AssignmentExpression">
+            <summary>
+            An assignment expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ConditionalExpression">
+            <summary>
+            A conditional/ternary expression (a ? b : c).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.LambdaExpression">
+            <summary>
+            A lambda/arrow function expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.AnonymousFunction">
+            <summary>
+            An anonymous function/delegate expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.CastExpression">
+            <summary>
+            A cast expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TypeCheckExpression">
+            <summary>
+            A type check expression (is, instanceof).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.CoalesceExpression">
+            <summary>
+            A null coalescing expression (??).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.AwaitExpression">
+            <summary>
+            An await expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ParenthesizedExpression">
+            <summary>
+            A parenthesized expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.InterpolatedString">
+            <summary>
+            An interpolated string expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TupleExpression">
+            <summary>
+            A tuple expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.RangeExpression">
+            <summary>
+            A range expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.PatternExpression">
+            <summary>
+            A pattern matching expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.QueryExpression">
+            <summary>
+            A LINQ query expression.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ComprehensionExpression">
+            <summary>
+            A list/array comprehension.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.DictionaryComprehension">
+            <summary>
+            A dictionary/map comprehension.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ThisExpression">
+            <summary>
+            A this/self reference.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.BaseExpression">
+            <summary>
+            A base/super reference.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TypeName">
+            <summary>
+            A simple type name.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.GenericType">
+            <summary>
+            A generic type name.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ArrayType">
+            <summary>
+            An array type.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.NullableType">
+            <summary>
+            A nullable type.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.TupleType">
+            <summary>
+            A tuple type.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.FunctionType">
+            <summary>
+            A function/delegate type.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.PointerType">
+            <summary>
+            A pointer type.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ReferenceType">
+            <summary>
+            A reference type.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ImportDeclaration">
+            <summary>
+            An import/using directive.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ExportDeclaration">
+            <summary>
+            An export declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.ExternDeclaration">
+            <summary>
+            An extern/native declaration.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Attribute">
+            <summary>
+            An attribute or annotation.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Decorator">
+            <summary>
+            A decorator (Python, TypeScript).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.AttributeArgument">
+            <summary>
+            An attribute argument.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.SingleLineComment">
+            <summary>
+            A single-line comment.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.MultiLineComment">
+            <summary>
+            A multi-line comment.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.DocumentationComment">
+            <summary>
+            A documentation comment (///, /**, etc.).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.PreprocessorDirective">
+            <summary>
+            A preprocessor directive.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Trivia">
+            <summary>
+            Trivia (whitespace, comments not attached to nodes).
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind.Error">
+            <summary>
+            An error node for malformed syntax.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKindExtensions">
+            <summary>
+            Extension methods for <see cref="T:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind"/>.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKindExtensions.IsTypeDeclaration(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Determines if the kind represents a type declaration.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKindExtensions.IsMemberDeclaration(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Determines if the kind represents a member declaration.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKindExtensions.IsStatement(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Determines if the kind represents a statement.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKindExtensions.IsExpression(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Determines if the kind represents an expression.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKindExtensions.IsLoop(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Determines if the kind represents a loop statement.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKindExtensions.IsBranching(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <summary>
+            Determines if the kind represents a branching statement.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase">
+            <summary>
+            Base implementation of <see cref="T:RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode"/> that provides common functionality.
+            Language adapters can extend this class to provide their own implementations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Location">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Text">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Parent">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Children">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.NativeNode">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.ContainsErrors">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Descendants">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.DescendantsOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.DescendantsOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind[])">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.Ancestors">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.FirstAncestorOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.FirstChildOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.FirstDescendantOfKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.IsKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.IsKind(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind[])">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Abstractions.UnifiedSyntaxNodeBase.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Sdk.AnalysisContext">
+            <summary>
+            Context for analyzing a single C# file.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.SyntaxTree">
+            <summary>
+            The syntax tree of the file being analyzed.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.SemanticModel">
+            <summary>
+            The semantic model for the file, if available.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.Compilation">
+            <summary>
+            The compilation containing the file, if available.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.FilePath">
+            <summary>
+            The file path of the file being analyzed.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.Severity">
+            <summary>
+            The severity level to use for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.CustomMessage">
+            <summary>
+            Custom message override for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.FixHint">
+            <summary>
+            Fix hint for violations.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.CancellationToken">
+            <summary>
+            Cancellation token for the analysis.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.AnalysisContext.Language">
+            <summary>
+            The programming language of the source file.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.AnalyzerHelpers">
+            <summary>
+            Helper methods for analyzing code in custom rules.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetClasses(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Gets all class declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetMethods(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Gets all method declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetInterfaces(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Gets all interface declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetProperties(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Gets all property declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetFields(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Gets all field declarations from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetInvocations(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Gets all invocation expressions from the syntax tree.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetSymbol(RuleKeeper.Sdk.AnalysisContext,Microsoft.CodeAnalysis.SyntaxNode)">
+            <summary>
+            Gets the symbol for a syntax node using the semantic model.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetTypeSymbol(RuleKeeper.Sdk.AnalysisContext,Microsoft.CodeAnalysis.SyntaxNode)">
+            <summary>
+            Gets the type symbol for a syntax node using the semantic model.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.IsAsync(Microsoft.CodeAnalysis.CSharp.Syntax.MethodDeclarationSyntax)">
+            <summary>
+            Checks if a method has the async modifier.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.IsPublic(Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax)">
+            <summary>
+            Checks if a member is public.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.IsPrivate(Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax)">
+            <summary>
+            Checks if a member is private.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.IsStatic(Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax)">
+            <summary>
+            Checks if a member is static.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetMethodName(Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax)">
+            <summary>
+            Gets the method name from an invocation expression.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.GetFullMethodName(Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax)">
+            <summary>
+            Gets the full method name (including type) from an invocation expression.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.AnalyzerHelpers.InheritsFrom(Microsoft.CodeAnalysis.INamedTypeSymbol,System.String)">
+            <summary>
+            Checks if a type inherits from or implements a specific type.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Attributes.FixProviderAttribute">
+            <summary>
+            Marks a class as a RuleKeeper fix provider.
+            Classes marked with this attribute will be discovered and registered automatically.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.FixProviderAttribute.Name">
+            <summary>
+            The display name for this fix provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.FixProviderAttribute.Description">
+            <summary>
+            A description of what fixes this provider offers.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.FixProviderAttribute.Category">
+            <summary>
+            The category of fixes this provider handles (e.g., "Naming", "Security").
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.FixProviderAttribute.Priority">
+            <summary>
+            The priority of this provider. Higher values are processed first.
+            Default is 0.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Attributes.FixProviderAttribute.#ctor">
+            <summary>
+            Creates a new FixProviderAttribute.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Attributes.FixProviderAttribute.#ctor(System.String)">
+            <summary>
+            Creates a new FixProviderAttribute with a name.
+            </summary>
+            <param name="name">The display name for this fix provider.</param>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Attributes.RuleAttribute">
+            <summary>
+            Marks a class as a RuleKeeper rule analyzer.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleAttribute.RuleId">
+            <summary>
+            The unique identifier for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleAttribute.Name">
+            <summary>
+            The display name for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleAttribute.Description">
+            <summary>
+            A description of what this rule checks.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleAttribute.Severity">
+            <summary>
+            The default severity level for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleAttribute.Category">
+            <summary>
+            The category this rule belongs to (e.g., "Naming", "Security", "Async").
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Attributes.RuleAttribute.#ctor(System.String)">
+            <summary>
+            Creates a new RuleAttribute with the specified rule ID.
+            </summary>
+            <param name="ruleId">The unique identifier for this rule.</param>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Attributes.RuleParameterAttribute">
+            <summary>
+            Defines a configurable parameter for a rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleParameterAttribute.Name">
+            <summary>
+            The name of the parameter in configuration.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleParameterAttribute.Description">
+            <summary>
+            A description of the parameter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleParameterAttribute.DefaultValue">
+            <summary>
+            The default value for the parameter.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Attributes.RuleParameterAttribute.Required">
+            <summary>
+            Whether this parameter is required.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Attributes.RuleParameterAttribute.#ctor(System.String)">
+            <summary>
+            Creates a new RuleParameterAttribute.
+            </summary>
+            <param name="name">The name of the parameter.</param>
+        </member>
+        <member name="T:RuleKeeper.Sdk.BaseFixProvider">
+            <summary>
+            Base class for implementing fix providers with common functionality.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseFixProvider.SupportedRuleIds">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.CanFix(RuleKeeper.Sdk.Violation)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.GetFixes(RuleKeeper.Sdk.Violation,System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.GetLines(System.String)">
+            <summary>
+            Gets the lines of the source code as an array.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.GetLine(System.String,System.Int32)">
+            <summary>
+            Gets a specific line from the source code (1-based line number).
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.GetIndentation(System.String)">
+            <summary>
+            Gets the indentation of a line.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.FindPattern(System.String,System.String)">
+            <summary>
+            Finds a pattern in a line and returns the match.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.CreateRenameFix(RuleKeeper.Sdk.Violation,System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates a replacement fix for renaming an identifier.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.ToPascalCase(System.String)">
+            <summary>
+            Converts a string to PascalCase.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.ToCamelCase(System.String)">
+            <summary>
+            Converts a string to camelCase.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseFixProvider.ToUnderscoreCamelCase(System.String)">
+            <summary>
+            Converts a string to _camelCase (for private fields).
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.BaseRuleAnalyzer">
+            <summary>
+            Base class for rule analyzers that provides common functionality.
+            This base class supports C# analysis using Roslyn.
+            </summary>
+            <remarks>
+            For cross-language rules, use <see cref="T:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule"/> instead.
+            </remarks>
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.RuleId">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.RuleName">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.Category">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.DefaultSeverity">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.SupportedLanguages">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.TargetLanguage">
+            <summary>
+            Gets the target language for this rule. For backward compatibility, defaults to C#.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.BaseRuleAnalyzer.Parameters">
+            <summary>
+            Configuration parameters for this rule.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Sdk.BaseRuleAnalyzer"/> class.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.ApplyParameterAttributes">
+            <summary>
+            Applies RuleParameterAttribute values from the parameters dictionary.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.Analyze(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Analyzes the given context and returns any violations found.
+            </summary>
+            <param name="context">The analysis context containing the syntax tree and semantic model.</param>
+            <returns>Enumerable of violations found.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.CreateViolation(Microsoft.CodeAnalysis.Location,System.String,RuleKeeper.Sdk.AnalysisContext,System.String)">
+            <summary>
+            Creates a violation at the specified location.
+            </summary>
+            <param name="location">The Roslyn location.</param>
+            <param name="message">The violation message.</param>
+            <param name="context">The analysis context.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.CreateViolation(Microsoft.CodeAnalysis.Location,System.String,RuleKeeper.Sdk.SeverityLevel,System.String)">
+            <summary>
+            Creates a violation at the specified location with custom severity.
+            </summary>
+            <param name="location">The Roslyn location.</param>
+            <param name="message">The violation message.</param>
+            <param name="severity">The severity level.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.CreateViolation(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,RuleKeeper.Sdk.AnalysisContext,System.String)">
+            <summary>
+            Creates a violation from a unified syntax node.
+            </summary>
+            <param name="node">The unified syntax node.</param>
+            <param name="message">The violation message.</param>
+            <param name="context">The analysis context.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.GetParameter``1(System.String,``0)">
+            <summary>
+            Gets a parameter value with a default fallback.
+            </summary>
+            <typeparam name="T">The type of the parameter.</typeparam>
+            <param name="name">The parameter name.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns>The parameter value or default.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.BaseRuleAnalyzer.HasParameter(System.String)">
+            <summary>
+            Checks if a parameter exists.
+            </summary>
+            <param name="name">The parameter name.</param>
+            <returns>True if the parameter exists.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.CodeFix">
+            <summary>
+            Represents a code fix that can be applied to resolve a violation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.FixId">
+            <summary>
+            Unique identifier for this fix.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.RuleId">
+            <summary>
+            The rule ID this fix addresses.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.Description">
+            <summary>
+            Human-readable description of what this fix does.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.FilePath">
+            <summary>
+            The file path where the fix should be applied.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.Operation">
+            <summary>
+            The type of fix operation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.StartLine">
+            <summary>
+            Starting line number (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.StartColumn">
+            <summary>
+            Starting column (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.EndLine">
+            <summary>
+            Ending line number (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.EndColumn">
+            <summary>
+            Ending column (1-based).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.OriginalText">
+            <summary>
+            The original text to be replaced.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.ReplacementText">
+            <summary>
+            The new text to replace with.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.Severity">
+            <summary>
+            Severity of the issue being fixed.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.IsSafe">
+            <summary>
+            Whether this fix is considered safe (won't change behavior).
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.CodeFix.Category">
+            <summary>
+            Category of the fix (naming, async, security, etc.).
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CodeFix.CreateReplacement(RuleKeeper.Sdk.Violation,System.String,System.Int32,System.Int32,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a simple replacement fix.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.CodeFix.CreateInsertion(RuleKeeper.Sdk.Violation,System.String,System.Int32,System.Int32,System.String,System.Boolean)">
+            <summary>
+            Creates an insertion fix.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.FixOperation">
+            <summary>
+            Types of fix operations.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.FixOperation.Replace">
+            <summary>
+            Replace text at the specified location.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.FixOperation.Insert">
+            <summary>
+            Insert text at the specified location.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.FixOperation.Delete">
+            <summary>
+            Delete text at the specified location.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.FixOperation.AddUsing">
+            <summary>
+            Add a using directive.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.FixOperation.RemoveUsing">
+            <summary>
+            Remove a using directive.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.IFixProvider">
+            <summary>
+            Interface for components that can provide code fixes for violations.
+            Implement this interface to create custom fix providers.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.IFixProvider.SupportedRuleIds">
+            <summary>
+            The rule ID(s) this provider can fix.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.IFixProvider.CanFix(RuleKeeper.Sdk.Violation)">
+            <summary>
+            Whether this provider can fix the given violation.
+            </summary>
+            <param name="violation">The violation to check.</param>
+            <returns>True if this provider can fix the violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.IFixProvider.GetFixes(RuleKeeper.Sdk.Violation,System.String)">
+            <summary>
+            Gets the available fixes for a violation.
+            </summary>
+            <param name="violation">The violation to fix.</param>
+            <param name="sourceCode">The source code of the file containing the violation.</param>
+            <returns>Zero or more fixes that can resolve the violation.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.IRuleAnalyzer">
+            <summary>
+            Interface for rule analyzers that inspect code.
+            </summary>
+            <remarks>
+            This interface supports C# analysis using Roslyn's AnalysisContext.
+            For cross-language rules, see <c>RuleKeeper.Sdk.Rules.ICrossLanguageRule</c>.
+            </remarks>
+        </member>
+        <member name="P:RuleKeeper.Sdk.IRuleAnalyzer.RuleId">
+            <summary>
+            The unique identifier for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.IRuleAnalyzer.RuleName">
+            <summary>
+            The display name for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.IRuleAnalyzer.Category">
+            <summary>
+            The category this rule belongs to.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.IRuleAnalyzer.Description">
+            <summary>
+            A description of what this rule checks.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.IRuleAnalyzer.DefaultSeverity">
+            <summary>
+            The default severity level for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.IRuleAnalyzer.SupportedLanguages">
+            <summary>
+            The languages this rule supports.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.IRuleAnalyzer.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Initializes the analyzer with configuration parameters.
+            </summary>
+            <param name="parameters">Configuration parameters for the rule.</param>
+        </member>
+        <member name="M:RuleKeeper.Sdk.IRuleAnalyzer.Analyze(RuleKeeper.Sdk.AnalysisContext)">
+            <summary>
+            Analyzes the given context and returns any violations found.
+            </summary>
+            <param name="context">The analysis context containing the syntax tree and semantic model.</param>
+            <returns>Enumerable of violations found.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Language">
+            <summary>
+            Supported programming languages for analysis.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.CSharp">
+            <summary>
+            C# programming language.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.Python">
+            <summary>
+            Python programming language.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.JavaScript">
+            <summary>
+            JavaScript programming language.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.TypeScript">
+            <summary>
+            TypeScript programming language.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.Java">
+            <summary>
+            Java programming language.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.Go">
+            <summary>
+            Go programming language.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.FSharp">
+            <summary>
+            F# programming language.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.Language.VisualBasic">
+            <summary>
+            Visual Basic .NET programming language.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.LanguageExtensions">
+            <summary>
+            Extension methods for the <see cref="T:RuleKeeper.Sdk.Language"/> enum.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.LanguageExtensions.GetDisplayName(RuleKeeper.Sdk.Language)">
+            <summary>
+            Gets the display name for a language.
+            </summary>
+            <param name="language">The language.</param>
+            <returns>The display name.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.LanguageExtensions.GetFileExtensions(RuleKeeper.Sdk.Language)">
+            <summary>
+            Gets the file extensions for a language.
+            </summary>
+            <param name="language">The language.</param>
+            <returns>The file extensions.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.LanguageExtensions.GetDefaultIncludePatterns(RuleKeeper.Sdk.Language)">
+            <summary>
+            Gets the default include patterns for a language.
+            </summary>
+            <param name="language">The language.</param>
+            <returns>The default include patterns.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.LanguageExtensions.GetDefaultExcludePatterns(RuleKeeper.Sdk.Language)">
+            <summary>
+            Gets the default exclude patterns for a language.
+            </summary>
+            <param name="language">The language.</param>
+            <returns>The default exclude patterns.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.LanguageExtensions.UsesAntlr(RuleKeeper.Sdk.Language)">
+            <summary>
+            Determines if the language uses ANTLR for parsing.
+            </summary>
+            <param name="language">The language.</param>
+            <returns>True if the language uses ANTLR parsing.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.IRuleProvider">
+            <summary>
+            Interface for external DLL-based rule providers.
+            Plugins implement this interface to provide custom rules that can be loaded dynamically.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.IRuleProvider.Metadata">
+            <summary>
+            Gets metadata about this rule provider.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.IRuleProvider.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Initialize the provider with configuration.
+            Called once when the plugin is loaded.
+            </summary>
+            <param name="configuration">Configuration dictionary from YAML.</param>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.IRuleProvider.GetRuleAnalyzers">
+            <summary>
+            Get all rule analyzers provided by this plugin.
+            </summary>
+            <returns>Collection of rule analyzers.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.IRuleProvider.GetCrossLanguageRules">
+            <summary>
+            Get all cross-language rules provided by this plugin.
+            </summary>
+            <returns>Collection of cross-language rules.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.RuleProviderBase">
+            <summary>
+            Base class for rule providers with common functionality.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.RuleProviderBase.GetConfig``1(System.String,``0)">
+            <summary>
+            Get a configuration value with default.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.RuleProviderAttribute">
+            <summary>
+            Attribute to mark a class as a rule provider for automatic discovery.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.ProviderId">
+            <summary>
+            Unique identifier for the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Name">
+            <summary>
+            Display name of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Description">
+            <summary>
+            Description of what rules this provider offers.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Version">
+            <summary>
+            Version of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderAttribute.Author">
+            <summary>
+            Author or organization.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.RuleProviderMetadata">
+            <summary>
+            Metadata about a rule provider plugin.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.ProviderId">
+            <summary>
+            Unique identifier for the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Name">
+            <summary>
+            Display name of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Description">
+            <summary>
+            Description of what rules this provider offers.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Version">
+            <summary>
+            Version of the provider.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Author">
+            <summary>
+            Author or organization name.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Url">
+            <summary>
+            URL for more information.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.SupportedLanguages">
+            <summary>
+            Languages supported by rules in this provider.
+            Empty means all languages.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Categories">
+            <summary>
+            Categories of rules provided.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.MinRuleKeeperVersion">
+            <summary>
+            Minimum RuleKeeper version required.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.Properties">
+            <summary>
+            Additional metadata properties.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Plugins.RuleProviderMetadata.FromAttribute(RuleKeeper.Sdk.Plugins.RuleProviderAttribute)">
+            <summary>
+            Create metadata from a RuleProviderAttribute.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Plugins.PluginInfo">
+            <summary>
+            Information about a loaded plugin.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.Metadata">
+            <summary>
+            The provider metadata.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.Provider">
+            <summary>
+            The provider instance.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.AssemblyPath">
+            <summary>
+            Path to the assembly file.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.LoadedAt">
+            <summary>
+            When the plugin was loaded.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.RuleCount">
+            <summary>
+            Number of rules provided.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.IsLoaded">
+            <summary>
+            Whether the plugin loaded successfully.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Plugins.PluginInfo.ErrorMessage">
+            <summary>
+            Error message if loading failed.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule">
+            <summary>
+            Base class for cross-language rules that provides common functionality.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.RuleId">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.RuleName">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.Category">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.Description">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.DefaultSeverity">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.SupportedLanguages">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.Parameters">
+            <summary>
+            Configuration parameters for this rule.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule"/> class.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.ApplyParameterAttributes">
+            <summary>
+            Applies RuleParameterAttribute values from the parameters dictionary.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.Analyze(RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.CreateViolation(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext,System.String)">
+            <summary>
+            Creates a violation at the specified node.
+            </summary>
+            <param name="node">The syntax node where the violation occurred.</param>
+            <param name="message">The violation message.</param>
+            <param name="context">The analysis context.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.CreateViolation(RuleKeeper.Sdk.Abstractions.SourceLocation,System.String,RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext,System.String)">
+            <summary>
+            Creates a violation at the specified location.
+            </summary>
+            <param name="location">The source location.</param>
+            <param name="message">The violation message.</param>
+            <param name="context">The analysis context.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new violation.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.GetParameter``1(System.String,``0)">
+            <summary>
+            Gets a parameter value with a default fallback.
+            </summary>
+            <typeparam name="T">The type of the parameter.</typeparam>
+            <param name="name">The parameter name.</param>
+            <param name="defaultValue">The default value.</param>
+            <returns>The parameter value or default.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.HasParameter(System.String)">
+            <summary>
+            Checks if a parameter exists.
+            </summary>
+            <param name="name">The parameter name.</param>
+            <returns>True if the parameter exists.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.BaseCrossLanguageRule.SupportsLanguage(RuleKeeper.Sdk.Language)">
+            <summary>
+            Checks if the rule supports the specified language.
+            </summary>
+            <param name="language">The language to check.</param>
+            <returns>True if the language is supported.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Rules.ICrossLanguageRule">
+            <summary>
+            Interface for rules that operate on the unified AST and can analyze code in multiple languages.
+            Cross-language rules use the language-agnostic <see cref="T:RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext"/> for analysis.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.ICrossLanguageRule.RuleId">
+            <summary>
+            Gets the unique identifier for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.ICrossLanguageRule.RuleName">
+            <summary>
+            Gets the display name for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.ICrossLanguageRule.Category">
+            <summary>
+            Gets the category this rule belongs to.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.ICrossLanguageRule.Description">
+            <summary>
+            Gets a description of what this rule checks.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.ICrossLanguageRule.DefaultSeverity">
+            <summary>
+            Gets the default severity level for this rule.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.ICrossLanguageRule.SupportedLanguages">
+            <summary>
+            Gets the languages this rule supports.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.ICrossLanguageRule.Initialize(System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Initializes the rule with configuration parameters.
+            </summary>
+            <param name="parameters">Configuration parameters for the rule.</param>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.ICrossLanguageRule.Analyze(RuleKeeper.Sdk.Abstractions.UnifiedAnalysisContext)">
+            <summary>
+            Analyzes the given unified context and returns any violations found.
+            </summary>
+            <param name="context">The unified analysis context containing the syntax tree.</param>
+            <returns>An enumerable of violations found.</returns>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Rules.ILanguageSpecificRule">
+            <summary>
+            Marker interface for rules that are specific to a single language.
+            Language-specific rules may use native language features not available in the unified AST.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.ILanguageSpecificRule.TargetLanguage">
+            <summary>
+            Gets the programming language this rule is designed for.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Rules.SupportedLanguagesAttribute">
+            <summary>
+            Attribute to specify the languages a rule supports.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Rules.SupportedLanguagesAttribute.Languages">
+            <summary>
+            Gets the supported languages.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Rules.SupportedLanguagesAttribute.#ctor(RuleKeeper.Sdk.Language[])">
+            <summary>
+            Initializes a new instance with the specified languages.
+            </summary>
+            <param name="languages">The supported languages.</param>
+        </member>
+        <member name="T:RuleKeeper.Sdk.SeverityLevel">
+            <summary>
+            Defines the severity levels for rule violations.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.SeverityLevel.Info">
+            <summary>
+            Informational message, no action required.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.SeverityLevel.Low">
+            <summary>
+            Minor issue that should be addressed.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.SeverityLevel.Medium">
+            <summary>
+            Moderate issue that should be fixed.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.SeverityLevel.High">
+            <summary>
+            Significant issue that must be addressed.
+            </summary>
+        </member>
+        <member name="F:RuleKeeper.Sdk.SeverityLevel.Critical">
+            <summary>
+            Critical issue that must be fixed immediately.
+            </summary>
+        </member>
+        <member name="T:RuleKeeper.Sdk.Violation">
+            <summary>
+            Represents a rule violation found during analysis.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.RuleId">
+            <summary>
+            The unique identifier of the rule that was violated.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.RuleName">
+            <summary>
+            The name of the rule that was violated.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.Message">
+            <summary>
+            A message describing the violation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.Severity">
+            <summary>
+            The severity level of the violation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.FilePath">
+            <summary>
+            The file path where the violation occurred.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.StartLine">
+            <summary>
+            The line number where the violation starts.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.StartColumn">
+            <summary>
+            The column number where the violation starts.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.EndLine">
+            <summary>
+            The line number where the violation ends.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.EndColumn">
+            <summary>
+            The column number where the violation ends.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.FixHint">
+            <summary>
+            Optional hint for how to fix the violation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.CodeSnippet">
+            <summary>
+            The code snippet containing the violation.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Sdk.Violation.Language">
+            <summary>
+            The programming language of the source file where the violation occurred.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Violation.FromSourceLocation(RuleKeeper.Sdk.Abstractions.SourceLocation,System.String,System.String,System.String,RuleKeeper.Sdk.SeverityLevel,RuleKeeper.Sdk.Language,System.String,System.String)">
+            <summary>
+            Creates a Violation from a SourceLocation.
+            </summary>
+            <param name="location">The source location.</param>
+            <param name="ruleId">The rule ID.</param>
+            <param name="ruleName">The rule name.</param>
+            <param name="message">The violation message.</param>
+            <param name="severity">The severity level.</param>
+            <param name="language">The programming language.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <param name="codeSnippet">Optional code snippet.</param>
+            <returns>A new Violation instance.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Violation.FromUnifiedNode(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,System.String,RuleKeeper.Sdk.SeverityLevel,System.String,System.String)">
+            <summary>
+            Creates a Violation from a unified syntax node.
+            </summary>
+            <param name="node">The syntax node where the violation occurred.</param>
+            <param name="ruleId">The rule ID.</param>
+            <param name="ruleName">The rule name.</param>
+            <param name="message">The violation message.</param>
+            <param name="severity">The severity level.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <param name="sourceText">Optional source text for snippet extraction.</param>
+            <returns>A new Violation instance.</returns>
+        </member>
+        <member name="M:RuleKeeper.Sdk.Violation.FromLocation(Microsoft.CodeAnalysis.Location,System.String,System.String,System.String,RuleKeeper.Sdk.SeverityLevel,System.String)">
+            <summary>
+            Creates a Violation from a Roslyn Location.
+            </summary>
+            <param name="location">The Roslyn location.</param>
+            <param name="ruleId">The rule ID.</param>
+            <param name="ruleName">The rule name.</param>
+            <param name="message">The violation message.</param>
+            <param name="severity">The severity level.</param>
+            <param name="fixHint">Optional fix hint.</param>
+            <returns>A new Violation instance.</returns>
+        </member>
+    </members>
+</doc>

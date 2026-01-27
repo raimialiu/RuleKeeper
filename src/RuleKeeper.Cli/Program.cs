@@ -21,6 +21,7 @@ class Program
         rootCommand.AddCommand(ExplainCommand.Create());
         rootCommand.AddCommand(GenerateEditorConfigCommand.Create());
         rootCommand.AddCommand(GenerateAnalyzerConfigCommand.Create());
+        rootCommand.AddCommand(BaselineCommand.Create());
 
         return await rootCommand.InvokeAsync(args);
     }

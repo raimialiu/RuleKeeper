@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyDescriptionAttribute(("Multi-language policy-as-code static analysis CLI. Supports C#, Python, JavaScrip" +
     "t, TypeScript, Java, and Go."))]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("2.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+8a6becc904ad3262daac293739156ff607be9381")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("2.0.0+3487db4f53f4fdd36a3e5ae2714275d331c3ba7d")]
 [assembly: System.Reflection.AssemblyProductAttribute("RuleKeeper.Cli")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RuleKeeper.Cli")]
 [assembly: System.Reflection.AssemblyVersionAttribute("2.0.0.0")]

@@ -389,7 +389,7 @@ scan:
 
   baseline:
     enabled: false
-    mode: git  # git, file, or date
+    mode: git  # git, file, date, or legacy_files
     git_ref: main
     baseline_file: ".rulekeeper-baseline.json"
     since_date: "2024-01-01"
@@ -398,7 +398,48 @@ scan:
     filter_to_diff: true
     auto_update: false
     on_missing: warn  # warn, fail, or ignore
+    track_modifications: true  # For legacy_files mode
 ```
+
+#### Baseline Modes
+
+| Mode | Description | Use Case |
+|------|-------------|----------|
+| `git` | Compare against a git reference (branch, tag, commit) | CI/CD pipelines, PR checks |
+| `file` | Store known violations in a file | Gradual violation reduction |
+| `date` | Only scan files modified after a date | Time-based adoption |
+| `legacy_files` | Skip files captured at baseline creation | **Legacy code adoption** |
+
+#### Legacy Files Mode (Recommended for Existing Projects)
+
+The `legacy_files` mode is designed for adopting RuleKeeper in existing projects. It captures all current files as "legacy" and only analyzes:
+- **New files** added after the baseline was created
+- **Modified files** (when `track_modifications: true`)
+
+**Setup:**
+
+```bash
+# Step 1: Initialize the baseline
+rulekeeper baseline init
+
+# Step 2: Configure in rulekeeper.yaml
+```
+
+```yaml
+scan:
+  baseline:
+    enabled: true
+    mode: legacy_files
+    baseline_file: ".rulekeeper-baseline.json"
+    track_modifications: true  # Set false to always skip legacy files
+```
+
+**Workflow:**
+1. Run `rulekeeper baseline init` to capture all existing files
+2. Commit the `.rulekeeper-baseline.json` file
+3. Run `rulekeeper scan` - only new/modified files are analyzed
+4. Use `rulekeeper baseline status` to monitor progress
+5. Use `rulekeeper baseline remove <file>` when legacy files are refactored
 
 ### output
 

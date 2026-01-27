@@ -279,6 +279,7 @@
         <h3>Commands</h3>
         <a href="#scan">scan</a>
         <a href="#init">init</a>
+        <a href="#baseline">baseline</a>
         <a href="#list-rules">list-rules</a>
         <a href="#explain">explain</a>
         <a href="#validate">validate</a>
@@ -618,6 +619,203 @@ dotnet run --project src/RuleKeeper.Cli -- --help</code></pre>
                     </tr>
                 </tbody>
             </table>
+        </section>
+
+        <section id="baseline">
+            <h2>baseline Command</h2>
+            <p>Manage baselines for legacy code adoption. This command helps you adopt RuleKeeper in existing projects by capturing current files as "legacy" and only analyzing new or modified files.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper baseline &lt;subcommand&gt; [options]</div>
+            </div>
+
+            <h3>Subcommands</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subcommand</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>init</code></td>
+                        <td>Initialize a baseline capturing all current files as legacy</td>
+                    </tr>
+                    <tr>
+                        <td><code>status</code></td>
+                        <td>Show baseline status and statistics</td>
+                    </tr>
+                    <tr>
+                        <td><code>add</code></td>
+                        <td>Add files to the baseline (mark as legacy)</td>
+                    </tr>
+                    <tr>
+                        <td><code>remove</code></td>
+                        <td>Remove files from the baseline (start tracking them)</td>
+                    </tr>
+                    <tr>
+                        <td><code>refresh</code></td>
+                        <td>Refresh baseline file metadata</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>baseline init</h3>
+            <p>Captures all current files as "legacy" files that will be skipped during scans.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper baseline init [options]</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Alias</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--output</code></td>
+                        <td><code>-o</code></td>
+                        <td>Output path for baseline file</td>
+                        <td><code>.rulekeeper-baseline.json</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--config</code></td>
+                        <td><code>-c</code></td>
+                        <td>Path to RuleKeeper config file</td>
+                        <td>Auto-detected</td>
+                    </tr>
+                    <tr>
+                        <td><code>--include</code></td>
+                        <td><code>-i</code></td>
+                        <td>File patterns to include</td>
+                        <td>From config or defaults</td>
+                    </tr>
+                    <tr>
+                        <td><code>--exclude</code></td>
+                        <td><code>-e</code></td>
+                        <td>File patterns to exclude</td>
+                        <td>From config or defaults</td>
+                    </tr>
+                    <tr>
+                        <td><code>--force</code></td>
+                        <td><code>-f</code></td>
+                        <td>Overwrite existing baseline</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--track-modifications</code></td>
+                        <td></td>
+                        <td>Track file modifications (scan modified legacy files)</td>
+                        <td><code>true</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="example-box">
+                <h4>Examples</h4>
+                <pre><code># Initialize baseline for C#, JS, and Python files
+rulekeeper baseline init -i "**/*.cs" -i "**/*.js" -i "**/*.py"
+
+# Initialize with modification tracking disabled (always skip legacy files)
+rulekeeper baseline init --track-modifications false</code></pre>
+            </div>
+
+            <h3>baseline status</h3>
+            <p>Shows statistics about the baseline including legacy files, modified files, and new files.</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper baseline status [options]</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Alias</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--baseline</code></td>
+                        <td><code>-b</code></td>
+                        <td>Path to baseline file</td>
+                        <td><code>.rulekeeper-baseline.json</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>baseline add</h3>
+            <p>Add files to the baseline (mark them as legacy).</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper baseline add &lt;files...&gt; [options]</div>
+            </div>
+
+            <div class="example-box">
+                <h4>Examples</h4>
+                <pre><code># Add specific files
+rulekeeper baseline add src/legacy/OldService.cs src/legacy/OldHelper.cs
+
+# Add files matching a pattern
+rulekeeper baseline add "src/legacy/**/*.cs"</code></pre>
+            </div>
+
+            <h3>baseline remove</h3>
+            <p>Remove files from the baseline (start tracking them for violations).</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper baseline remove &lt;files...&gt; [options]</div>
+            </div>
+
+            <div class="example-box">
+                <h4>Examples</h4>
+                <pre><code># Remove specific file from baseline (will now be scanned)
+rulekeeper baseline remove src/services/RefactoredService.cs
+
+# Remove all files in a directory from baseline
+rulekeeper baseline remove "src/refactored/**/*.cs"</code></pre>
+            </div>
+
+            <h3>baseline refresh</h3>
+            <p>Update baseline metadata (remove deleted files, update hashes).</p>
+
+            <div class="command-box">
+                <div class="command">rulekeeper baseline refresh [options]</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Option</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>--remove-deleted</code></td>
+                        <td>Remove entries for deleted files</td>
+                        <td><code>false</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--update-hashes</code></td>
+                        <td>Update file hashes (reset modification tracking)</td>
+                        <td><code>false</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note" style="background: #f0f9ff; border-left: 4px solid #3b82f6; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+                <strong>Tip:</strong> Use <code>rulekeeper baseline init</code> when adopting RuleKeeper in existing projects. Only new files and modified legacy files will be scanned, allowing gradual improvement without breaking builds.
+            </div>
         </section>
 
         <section id="list-rules">

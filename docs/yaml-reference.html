@@ -490,9 +490,58 @@
   <span class="yaml-key">max_file_size:</span> <span class="yaml-number">1048576</span>  <span class="yaml-comment"># 1MB</span>
   <span class="yaml-key">baseline:</span>
     <span class="yaml-key">enabled:</span> <span class="yaml-bool">false</span>
-    <span class="yaml-key">mode:</span> <span class="yaml-string">git</span>  <span class="yaml-comment"># git, file, or date</span>
+    <span class="yaml-key">mode:</span> <span class="yaml-string">git</span>  <span class="yaml-comment"># git, file, date, or legacy_files</span>
     <span class="yaml-key">git_ref:</span> <span class="yaml-string">main</span>
-    <span class="yaml-key">filter_to_diff:</span> <span class="yaml-bool">true</span></pre>
+    <span class="yaml-key">filter_to_diff:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">baseline_file:</span> <span class="yaml-string">.rulekeeper-baseline.json</span>
+    <span class="yaml-key">track_modifications:</span> <span class="yaml-bool">true</span>  <span class="yaml-comment"># For legacy_files mode</span></pre>
+
+                <h4>Baseline Modes</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mode</th>
+                            <th>Description</th>
+                            <th>Use Case</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>git</code></td>
+                            <td>Compare against a git reference (branch/tag/commit)</td>
+                            <td>CI/CD - only check changes in PR</td>
+                        </tr>
+                        <tr>
+                            <td><code>file</code></td>
+                            <td>Compare against stored violations</td>
+                            <td>Track new violations over time</td>
+                        </tr>
+                        <tr>
+                            <td><code>date</code></td>
+                            <td>Only scan files modified after a date</td>
+                            <td>Time-based incremental scanning</td>
+                        </tr>
+                        <tr>
+                            <td><code>legacy_files</code></td>
+                            <td>Skip files captured in baseline, scan new/modified files</td>
+                            <td>Adopting RuleKeeper in existing projects</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Legacy Files Mode</h4>
+                <p>The <code>legacy_files</code> mode is designed for adopting RuleKeeper in existing codebases without being overwhelmed by existing violations:</p>
+                <pre><span class="yaml-comment"># Initialize baseline (captures all current files)</span>
+<span class="yaml-comment"># Run: rulekeeper baseline init</span>
+
+<span class="yaml-key">scan:</span>
+  <span class="yaml-key">baseline:</span>
+    <span class="yaml-key">enabled:</span> <span class="yaml-bool">true</span>
+    <span class="yaml-key">mode:</span> <span class="yaml-string">legacy_files</span>
+    <span class="yaml-key">baseline_file:</span> <span class="yaml-string">.rulekeeper-baseline.json</span>
+    <span class="yaml-key">track_modifications:</span> <span class="yaml-bool">true</span>  <span class="yaml-comment"># Scan modified legacy files</span></pre>
+
+                <p>With <code>track_modifications: true</code>, legacy files are re-scanned when modified. Set to <code>false</code> to always skip legacy files.</p>
 
                 <h3>output</h3>
                 <pre><span class="yaml-key">output:</span>

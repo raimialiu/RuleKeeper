@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuleKeeper.Languages.JavaScript</name>
+    </assembly>
+    <members>
+        <member name="T:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter">
+            <summary>
+            Language adapter for JavaScript using ANTLR.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.SupportedExtensions">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.DefaultIncludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.DefaultExcludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.ParseAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.CreateTypeResolverAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.CanHandle(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.JavaScriptLanguageAdapter.GetNativeContext(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,RuleKeeper.Sdk.Abstractions.ITypeResolver)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode">
+            <summary>
+            A simple JavaScript syntax node implementation using basic parsing.
+            This is a placeholder until ANTLR grammar integration is complete.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.#ctor(System.String,System.String)">
+            <summary>
+            Creates a root JavaScript node from source code.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.#ctor(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind,System.String,System.String,System.Int32,System.Int32,System.Int32,System.Int32,RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode)">
+            <summary>
+            Creates a child JavaScript node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.Location">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.Text">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.Parent">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.Children">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.NativeNode">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.JavaScriptSimpleNode.ContainsErrors">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter">
+            <summary>
+            Language adapter for TypeScript using ANTLR.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.SupportedExtensions">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.DefaultIncludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.DefaultExcludePatterns">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.ParseAsync(System.String,System.String,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.CreateTypeResolverAsync(System.Collections.Generic.IEnumerable{System.String},System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.CanHandle(System.String)">
+            <inheritdoc />
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.TypeScriptLanguageAdapter.GetNativeContext(RuleKeeper.Sdk.Abstractions.IUnifiedSyntaxNode,System.String,System.String,RuleKeeper.Sdk.Abstractions.ITypeResolver)">
+            <inheritdoc />
+        </member>
+        <member name="T:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode">
+            <summary>
+            A simple TypeScript syntax node implementation using basic parsing.
+            This is a placeholder until ANTLR grammar integration is complete.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.#ctor(System.String,System.String)">
+            <summary>
+            Creates a root TypeScript node from source code.
+            </summary>
+        </member>
+        <member name="M:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.#ctor(RuleKeeper.Sdk.Abstractions.UnifiedSyntaxKind,System.String,System.String,System.Int32,System.Int32,System.Int32,System.Int32,RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode)">
+            <summary>
+            Creates a child TypeScript node.
+            </summary>
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.Kind">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.Location">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.Text">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.Parent">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.Children">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.NativeNode">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.Language">
+            <inheritdoc />
+        </member>
+        <member name="P:RuleKeeper.Languages.JavaScript.TypeScriptSimpleNode.ContainsErrors">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

@@ -14,6 +14,8 @@ Practical examples for using RuleKeeper in your projects
 - [Custom Rules](#custom-rules)
 - [Output Formats](#output-formats)
 - [Common Workflows](#common-workflows)
+  - [Legacy Code Adoption](#legacy-code-adoption)
+  - [Baseline Workflow](#baseline-workflow)
 
 ---
 
@@ -961,11 +963,125 @@ exit 0
 
 ---
 
+### Legacy Code Adoption
+
+When adding RuleKeeper to an existing project, you may have thousands of existing violations that you don't want to fix immediately. The **legacy_files** baseline mode solves this by:
+
+1. Capturing all current files as "legacy"
+2. Only analyzing new files and modified files
+3. Allowing gradual migration of legacy code
+
+#### Quick Start: Legacy Adoption
+
+```bash
+# Step 1: Install RuleKeeper
+dotnet tool install -g RuleKeeper.Cli
+
+# Step 2: Initialize baseline (captures all current files)
+rulekeeper baseline init
+
+# Step 3: Check what was captured
+rulekeeper baseline status
+
+# Step 4: Add configuration to your project
+```
+
+Add to your `rulekeeper.yaml`:
+
+```yaml
+scan:
+  baseline:
+    enabled: true
+    mode: legacy_files
+    baseline_file: ".rulekeeper-baseline.json"
+    track_modifications: true
+```
+
+```bash
+# Step 5: Run scans - only new/modified files analyzed
+rulekeeper scan ./src
+```
+
+#### Managing Legacy Files
+
+```bash
+# View baseline status
+rulekeeper baseline status
+
+# Output:
+# ╭──────────────────────────────┬───────────────────────────╮
+# │ Property                     │ Value                     │
+# ├──────────────────────────────┼───────────────────────────┤
+# │ Legacy files                 │ 250                       │
+# │   Still exist                │ 248                       │
+# │   Missing/deleted            │ 2                         │
+# │   Modified (will be scanned) │ 8                         │
+# │ New files (will be scanned)  │ 15                        │
+# ╰──────────────────────────────┴───────────────────────────╯
+
+# When you refactor a legacy file and want it fully tracked:
+rulekeeper baseline remove src/services/RefactoredService.cs
+
+# When you need to add a file back to legacy (temporary):
+rulekeeper baseline add src/legacy/NotReadyYet.cs
+
+# Clean up deleted files from baseline:
+rulekeeper baseline refresh --remove-deleted
+
+# Reset modification tracking (after a major refactor):
+rulekeeper baseline refresh --update-hashes
+```
+
+#### Modification Tracking Options
+
+**With modification tracking (default):**
+```yaml
+scan:
+  baseline:
+    enabled: true
+    mode: legacy_files
+    track_modifications: true  # Modified legacy files ARE scanned
+```
+
+- Legacy files that are modified will be scanned
+- Encourages fixing violations when touching legacy code
+- Recommended for most projects
+
+**Without modification tracking:**
+```yaml
+scan:
+  baseline:
+    enabled: true
+    mode: legacy_files
+    track_modifications: false  # Legacy files ALWAYS skipped
+```
+
+- Legacy files are always skipped, even if modified
+- Useful when you want strict separation
+- Files must be explicitly removed from baseline to be scanned
+
+#### IDE Integration with Legacy Files
+
+When you generate IDE configs with a baseline, legacy files are automatically excluded:
+
+```bash
+rulekeeper generate-editorconfig -c rulekeeper.yaml
+```
+
+This adds path-based exclusions to:
+- `.editorconfig` (C#) - Suppresses analyzer warnings
+- `.eslintrc.json` (JS/TS) - Adds to ignorePatterns
+- `pyproject.toml` (Python) - Adds per-file-ignores
+- `.golangci.yml` (Go) - Adds exclude rules
+- `checkstyle-suppressions.xml` (Java) - Suppresses checks
+
+---
+
 ### Baseline Workflow
 
-RuleKeeper supports three baseline modes for incremental scanning: git-based, file-based, and date-based.
+RuleKeeper supports four baseline modes for incremental scanning: git-based, file-based, date-based, and legacy_files.
 
-#### Git-Based Baseline (Recommended)
+#### Git-Based Baseline (For CI/CD)
 
 Only scan files changed since a specific git reference:
 

@@ -3,6 +3,7 @@ using System.CommandLine.Invocation;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using RuleKeeper.Core.Analysis;
 using RuleKeeper.Core.Configuration;
 using RuleKeeper.Core.Configuration.Models;
 using RuleKeeper.Sdk;
@@ -182,6 +183,21 @@ public static class GenerateEditorConfigCommand
                 if (GenerateFile(checkstylePath, () => GenerateCheckstyleConfig(config), force))
                 {
                     generatedFiles.Add(checkstylePath);
+                }
+
+                // Generate suppressions file if baseline has Java files
+                if (config?.Scan?.Baseline?.Enabled == true)
+                {
+                    var legacyFiles = GetBaselineFilePaths(config);
+                    var hasJavaFiles = legacyFiles.Any(f => f.EndsWith(".java", StringComparison.OrdinalIgnoreCase));
+                    if (hasJavaFiles)
+                    {
+                        var suppressionsPath = Path.Combine(fullPath, "checkstyle-suppressions.xml");
+                        if (GenerateFile(suppressionsPath, () => GenerateCheckstyleSuppressionsConfig(config), force))
+                        {
+                            generatedFiles.Add(suppressionsPath);
+                        }
+                    }
                 }
             }
 
@@ -906,6 +922,53 @@ public static class GenerateEditorConfigCommand
             sb.AppendLine();
         }
 
+        // Add legacy file exclusions from baseline
+        var legacyFiles = GetBaselineFilePaths(config);
+        if (legacyFiles.Count > 0)
+        {
+            // Filter to only C# files for .editorconfig
+            var csFiles = legacyFiles
+                .Where(f => f.EndsWith(".cs", StringComparison.OrdinalIgnoreCase))
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            if (csFiles.Count > 0)
+            {
+                sb.AppendLine("# Legacy Code Exclusions (from baseline)");
+                sb.AppendLine("# Files in the baseline are considered legacy and have reduced analyzer enforcement.");
+                sb.AppendLine("# This allows gradual adoption without breaking existing code.");
+                sb.AppendLine();
+
+                var filesByDir = GroupFilesByDirectory(csFiles);
+
+                foreach (var (dir, files) in filesByDir.OrderBy(kvp => kvp.Key))
+                {
+                    if (ShouldUseDirectoryWildcard(dir, files, csFiles))
+                    {
+                        // Use directory wildcard for directories with many baselined files
+                        var pattern = string.IsNullOrEmpty(dir) ? "*.cs" : $"{dir.Replace('\\', '/')}/*.cs";
+                        sb.AppendLine($"[{pattern}]");
+                        sb.AppendLine("# Legacy directory - disable all RuleKeeper diagnostics");
+                        sb.AppendLine("dotnet_analyzer_diagnostic.severity = suggestion");
+                        sb.AppendLine();
+                    }
+                    else
+                    {
+                        // Individual file exclusions
+                        foreach (var file in files.OrderBy(f => f))
+                        {
+                            var filePath = string.IsNullOrEmpty(dir) ? file : $"{dir.Replace('\\', '/')}/{file}";
+                            sb.AppendLine($"[{filePath}]");
+                            sb.AppendLine("dotnet_analyzer_diagnostic.severity = none");
+                            sb.AppendLine();
+                        }
+                    }
+                }
+
+                sb.AppendLine($"# Total legacy C# files excluded: {csFiles.Count}");
+                sb.AppendLine();
+            }
+        }
+
         return sb.ToString();
     }
 
@@ -965,6 +1028,44 @@ public static class GenerateEditorConfigCommand
 
         eslintConfig["rules"] = rules;
 
+        // Add legacy file exclusions from baseline
+        var legacyFiles = GetBaselineFilePaths(config);
+        if (legacyFiles.Count > 0)
+        {
+            // Filter to only JS/TS files
+            var jsFiles = legacyFiles
+                .Where(f => f.EndsWith(".js", StringComparison.OrdinalIgnoreCase) ||
+                           f.EndsWith(".jsx", StringComparison.OrdinalIgnoreCase) ||
+                           f.EndsWith(".ts", StringComparison.OrdinalIgnoreCase) ||
+                           f.EndsWith(".tsx", StringComparison.OrdinalIgnoreCase))
+                .Select(f => f.Replace('\\', '/'))
+                .OrderBy(f => f)
+                .ToList();
+
+            if (jsFiles.Count > 0)
+            {
+                var filesByDir = GroupFilesByDirectory(new HashSet<string>(jsFiles));
+                var ignorePatterns = new List<string>();
+
+                foreach (var (dir, files) in filesByDir.OrderBy(kvp => kvp.Key))
+                {
+                    if (ShouldUseDirectoryWildcard(dir, files, new HashSet<string>(jsFiles)))
+                    {
+                        // Use directory wildcard
+                        var pattern = string.IsNullOrEmpty(dir) ? "*" : $"{dir}/**";
+                        ignorePatterns.Add(pattern);
+                    }
+                    else
+                    {
+                        ignorePatterns.AddRange(files.Select(f =>
+                            string.IsNullOrEmpty(dir) ? f : $"{dir}/{f}"));
+                    }
+                }
+
+                eslintConfig["ignorePatterns"] = ignorePatterns;
+            }
+        }
+
         return JsonSerializer.Serialize(eslintConfig, new JsonSerializerOptions { WriteIndented = true });
     }
 
@@ -997,6 +1098,42 @@ public static class GenerateEditorConfigCommand
         sb.AppendLine("[tool.ruff.lint.per-file-ignores]");
         sb.AppendLine("\"tests/**/*.py\" = [\"S101\"]");
         sb.AppendLine("\"__init__.py\" = [\"F401\"]");
+
+        // Add legacy file exclusions from baseline
+        var legacyFiles = GetBaselineFilePaths(config);
+        if (legacyFiles.Count > 0)
+        {
+            // Filter to only Python files
+            var pyFiles = legacyFiles
+                .Where(f => f.EndsWith(".py", StringComparison.OrdinalIgnoreCase))
+                .Select(f => f.Replace('\\', '/'))
+                .OrderBy(f => f)
+                .ToList();
+
+            if (pyFiles.Count > 0)
+            {
+                sb.AppendLine("# Legacy files from baseline - all rules ignored");
+                var filesByDir = GroupFilesByDirectory(new HashSet<string>(pyFiles));
+
+                foreach (var (dir, files) in filesByDir.OrderBy(kvp => kvp.Key))
+                {
+                    if (ShouldUseDirectoryWildcard(dir, files, new HashSet<string>(pyFiles)))
+                    {
+                        // Use directory wildcard
+                        var pattern = string.IsNullOrEmpty(dir) ? "*.py" : $"{dir}/**/*.py";
+                        sb.AppendLine($"\"{pattern}\" = [\"ALL\"]");
+                    }
+                    else
+                    {
+                        foreach (var file in files.OrderBy(f => f))
+                        {
+                            var filePath = string.IsNullOrEmpty(dir) ? file : $"{dir}/{file}";
+                            sb.AppendLine($"\"{filePath}\" = [\"ALL\"]");
+                        }
+                    }
+                }
+            }
+        }
         sb.AppendLine();
 
         sb.AppendLine("[tool.mypy]");
@@ -1045,6 +1182,44 @@ public static class GenerateEditorConfigCommand
         sb.AppendLine("  exclude-rules:");
         sb.AppendLine("    - path: _test\\.go");
         sb.AppendLine("      linters: [errcheck, gosec]");
+
+        // Add legacy file exclusions from baseline
+        var legacyFiles = GetBaselineFilePaths(config);
+        if (legacyFiles.Count > 0)
+        {
+            // Filter to only Go files
+            var goFiles = legacyFiles
+                .Where(f => f.EndsWith(".go", StringComparison.OrdinalIgnoreCase))
+                .Select(f => f.Replace('\\', '/'))
+                .OrderBy(f => f)
+                .ToList();
+
+            if (goFiles.Count > 0)
+            {
+                sb.AppendLine("    # Legacy files from baseline - excluded from all linters");
+                var filesByDir = GroupFilesByDirectory(new HashSet<string>(goFiles));
+
+                foreach (var (dir, files) in filesByDir.OrderBy(kvp => kvp.Key))
+                {
+                    if (ShouldUseDirectoryWildcard(dir, files, new HashSet<string>(goFiles)))
+                    {
+                        // Use directory wildcard
+                        var pattern = string.IsNullOrEmpty(dir) ? ".*\\.go$" : $"{Regex.Escape(dir)}/.*\\.go$";
+                        sb.AppendLine($"    - path: \"{pattern}\"");
+                        sb.AppendLine("      linters: [all]");
+                    }
+                    else
+                    {
+                        foreach (var file in files.OrderBy(f => f))
+                        {
+                            var filePath = string.IsNullOrEmpty(dir) ? file : $"{dir}/{file}";
+                            sb.AppendLine($"    - path: \"{Regex.Escape(filePath)}$\"");
+                            sb.AppendLine("      linters: [all]");
+                        }
+                    }
+                }
+            }
+        }
         sb.AppendLine();
 
         return sb.ToString();
@@ -1076,10 +1251,154 @@ public static class GenerateEditorConfigCommand
         sb.AppendLine("    <module name=\"EmptyCatchBlock\"/>");
         sb.AppendLine("    <module name=\"MethodLength\"><property name=\"max\" value=\"50\"/></module>");
         sb.AppendLine("    <module name=\"CyclomaticComplexity\"><property name=\"max\" value=\"10\"/></module>");
+
+        // Add legacy file exclusions from baseline
+        var legacyFiles = GetBaselineFilePaths(config);
+        if (legacyFiles.Count > 0)
+        {
+            // Filter to only Java files
+            var javaFiles = legacyFiles
+                .Where(f => f.EndsWith(".java", StringComparison.OrdinalIgnoreCase))
+                .Select(f => f.Replace('\\', '/'))
+                .OrderBy(f => f)
+                .ToList();
+
+            if (javaFiles.Count > 0)
+            {
+                sb.AppendLine("    <!-- Legacy files from baseline - suppressed -->");
+                sb.AppendLine("    <module name=\"SuppressionFilter\">");
+                sb.AppendLine("      <property name=\"file\" value=\"checkstyle-suppressions.xml\"/>");
+                sb.AppendLine("      <property name=\"optional\" value=\"true\"/>");
+                sb.AppendLine("    </module>");
+            }
+        }
+
         sb.AppendLine("  </module>");
         sb.AppendLine("</module>");
 
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// Generates a checkstyle suppressions file for legacy files from baseline.
+    /// </summary>
+    private static string GenerateCheckstyleSuppressionsConfig(RuleKeeperConfig? config)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("<?xml version=\"1.0\"?>");
+        sb.AppendLine("<!DOCTYPE suppressions PUBLIC \"-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN\" \"https://checkstyle.org/dtds/suppressions_1_2.dtd\">");
+        sb.AppendLine($"<!-- Generated by RuleKeeper: {DateTime.Now:yyyy-MM-dd HH:mm:ss} -->");
+        sb.AppendLine("<!-- Legacy files from baseline - excluded from checkstyle analysis -->");
+        sb.AppendLine("<suppressions>");
+
+        var legacyFiles = GetBaselineFilePaths(config);
+        if (legacyFiles.Count > 0)
+        {
+            var javaFiles = legacyFiles
+                .Where(f => f.EndsWith(".java", StringComparison.OrdinalIgnoreCase))
+                .Select(f => f.Replace('\\', '/'))
+                .OrderBy(f => f)
+                .ToList();
+
+            var filesByDir = GroupFilesByDirectory(new HashSet<string>(javaFiles));
+
+            foreach (var (dir, files) in filesByDir.OrderBy(kvp => kvp.Key))
+            {
+                if (ShouldUseDirectoryWildcard(dir, files, new HashSet<string>(javaFiles)))
+                {
+                    // Use directory wildcard
+                    var pattern = string.IsNullOrEmpty(dir) ? ".*\\.java$" : $"{Regex.Escape(dir)}/.*\\.java$";
+                    sb.AppendLine($"  <suppress files=\"{pattern}\" checks=\".*\"/>");
+                }
+                else
+                {
+                    foreach (var file in files.OrderBy(f => f))
+                    {
+                        var filePath = string.IsNullOrEmpty(dir) ? file : $"{dir}/{file}";
+                        sb.AppendLine($"  <suppress files=\"{Regex.Escape(filePath)}$\" checks=\".*\"/>");
+                    }
+                }
+            }
+        }
+
+        sb.AppendLine("</suppressions>");
+        return sb.ToString();
+    }
+
+    #endregion
+
+    #region Baseline Legacy File Exclusions
+
+    /// <summary>
+    /// Reads the baseline file and extracts unique file paths for legacy exclusions.
+    /// </summary>
+    private static HashSet<string> GetBaselineFilePaths(RuleKeeperConfig? config)
+    {
+        var legacyFiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        if (config?.Scan?.Baseline == null || !config.Scan.Baseline.Enabled)
+            return legacyFiles;
+
+        // Only file-based baselines have stored violation paths
+        if (!config.Scan.Baseline.Mode.Equals("file", StringComparison.OrdinalIgnoreCase))
+            return legacyFiles;
+
+        var baselineFile = config.Scan.Baseline.BaselineFile;
+        if (string.IsNullOrEmpty(baselineFile) || !File.Exists(baselineFile))
+            return legacyFiles;
+
+        try
+        {
+            var json = File.ReadAllText(baselineFile);
+            var baseline = JsonSerializer.Deserialize<BaselineData>(json);
+
+            if (baseline?.Violations != null)
+            {
+                foreach (var violation in baseline.Violations)
+                {
+                    if (!string.IsNullOrEmpty(violation.FilePath))
+                    {
+                        legacyFiles.Add(violation.FilePath);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AnsiConsole.MarkupLine($"[yellow]Warning:[/] Could not read baseline file for legacy exclusions: {ex.Message}");
+        }
+
+        return legacyFiles;
+    }
+
+    /// <summary>
+    /// Groups baseline files by directory for more efficient editorconfig sections.
+    /// </summary>
+    private static Dictionary<string, List<string>> GroupFilesByDirectory(HashSet<string> files)
+    {
+        var groups = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var file in files)
+        {
+            var dir = Path.GetDirectoryName(file) ?? "";
+            if (!groups.ContainsKey(dir))
+            {
+                groups[dir] = new List<string>();
+            }
+            groups[dir].Add(Path.GetFileName(file));
+        }
+
+        return groups;
+    }
+
+    /// <summary>
+    /// Determines if a directory has enough files to warrant a wildcard exclusion.
+    /// </summary>
+    private static bool ShouldUseDirectoryWildcard(string dir, List<string> files, HashSet<string> allFiles)
+    {
+        // If more than 50% of files in a directory are baselined, use wildcard
+        // This is a heuristic - adjust threshold as needed
+        return files.Count >= 3;
     }
 
     #endregion

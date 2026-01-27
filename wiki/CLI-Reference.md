@@ -13,6 +13,7 @@ Command-line interface for multi-language static code analysis
 - [Commands](#commands)
   - [scan](#scan-command)
   - [init](#init-command)
+  - [baseline](#baseline-command)
   - [list-rules](#list-rules-command)
   - [explain](#explain-command)
   - [validate](#validate-command)
@@ -132,6 +133,151 @@ rulekeeper init [options]
 | `--output` | Output file path | `rulekeeper.yaml` |
 | `--force` | Overwrite existing file | `false` |
 | `--minimal` | Create minimal configuration | `false` |
+
+---
+
+### baseline Command
+
+Manage baselines for legacy code adoption. This command helps you adopt RuleKeeper in existing projects by capturing current files as "legacy" and only analyzing new or modified files.
+
+```bash
+rulekeeper baseline <subcommand> [options]
+```
+
+#### Subcommands
+
+| Subcommand | Description |
+|------------|-------------|
+| `init` | Initialize a baseline capturing all current files as legacy |
+| `status` | Show baseline status and statistics |
+| `add` | Add files to the baseline (mark as legacy) |
+| `remove` | Remove files from the baseline (start tracking them) |
+| `refresh` | Refresh baseline file metadata |
+
+#### baseline init
+
+Captures all current files as "legacy" files that will be skipped during scans.
+
+```bash
+rulekeeper baseline init [options]
+```
+
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `--output` | `-o` | Output path for baseline file | `.rulekeeper-baseline.json` |
+| `--config` | `-c` | Path to RuleKeeper config file | Auto-detected |
+| `--include` | `-i` | File patterns to include | From config or defaults |
+| `--exclude` | `-e` | File patterns to exclude | From config or defaults |
+| `--force` | `-f` | Overwrite existing baseline | `false` |
+| `--track-modifications` | | Track file modifications | `true` |
+
+**Example:**
+
+```bash
+# Initialize baseline for C#, JS, and Python files
+rulekeeper baseline init -i "**/*.cs" -i "**/*.js" -i "**/*.py"
+
+# Initialize with modification tracking disabled (always skip legacy files)
+rulekeeper baseline init --track-modifications false
+```
+
+#### baseline status
+
+Shows statistics about the baseline including legacy files, modified files, and new files.
+
+```bash
+rulekeeper baseline status [options]
+```
+
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `--baseline` | `-b` | Path to baseline file | `.rulekeeper-baseline.json` |
+
+**Example Output:**
+
+```
+╭──────────────────────────────┬───────────────────────────╮
+│ Property                     │ Value                     │
+├──────────────────────────────┼───────────────────────────┤
+│ Baseline file                │ .rulekeeper-baseline.json │
+│ Created                      │ 2024-01-27 10:00:00 UTC   │
+│ Mode                         │ legacy_files              │
+│ Track modifications          │ Yes                       │
+│ Legacy files                 │ 150                       │
+│   Still exist                │ 148                       │
+│   Missing/deleted            │ 2                         │
+│   Modified (will be scanned) │ 5                         │
+│ New files (will be scanned)  │ 12                        │
+╰──────────────────────────────┴───────────────────────────╯
+```
+
+#### baseline add
+
+Add files to the baseline (mark them as legacy).
+
+```bash
+rulekeeper baseline add <files...> [options]
+```
+
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `--baseline` | `-b` | Path to baseline file | `.rulekeeper-baseline.json` |
+
+**Example:**
+
+```bash
+# Add specific files
+rulekeeper baseline add src/legacy/OldService.cs src/legacy/OldHelper.cs
+
+# Add files matching a pattern
+rulekeeper baseline add "src/legacy/**/*.cs"
+```
+
+#### baseline remove
+
+Remove files from the baseline (start tracking them for violations).
+
+```bash
+rulekeeper baseline remove <files...> [options]
+```
+
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `--baseline` | `-b` | Path to baseline file | `.rulekeeper-baseline.json` |
+
+**Example:**
+
+```bash
+# Remove specific file from baseline (will now be scanned)
+rulekeeper baseline remove src/services/RefactoredService.cs
+
+# Remove all files in a directory from baseline
+rulekeeper baseline rm "src/refactored/**/*.cs"
+```
+
+#### baseline refresh
+
+Update baseline metadata (remove deleted files, update hashes).
+
+```bash
+rulekeeper baseline refresh [options]
+```
+
+| Option | Alias | Description | Default |
+|--------|-------|-------------|---------|
+| `--baseline` | `-b` | Path to baseline file | `.rulekeeper-baseline.json` |
+| `--remove-deleted` | | Remove entries for deleted files | `false` |
+| `--update-hashes` | | Update file hashes (reset modification tracking) | `false` |
+
+**Example:**
+
+```bash
+# Clean up deleted files from baseline
+rulekeeper baseline refresh --remove-deleted
+
+# Reset modification tracking (mark all as unmodified)
+rulekeeper baseline refresh --update-hashes
+```
 
 ---
 
